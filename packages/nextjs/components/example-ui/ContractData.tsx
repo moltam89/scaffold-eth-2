@@ -46,7 +46,7 @@ export const ContractData = () => {
     contractName: "YourContract",
     eventName: "GreetingChange",
     fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
-    filters: { greetingSetter: address },
+    filters: [address],
     blockData: true,
   });
 

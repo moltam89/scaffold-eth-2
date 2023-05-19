@@ -47,30 +47,11 @@ export const useScaffoldEventHistory = <
           throw new Error("Contract not found");
         }
 
-        const fragment = contract.interface.getEvent(eventName);
-        const emptyIface = new ethers.utils.Interface([]);
-        const topicHash = emptyIface.getEventTopic(fragment);
-        const topics = [topicHash] as any[];
-
-        const indexedParameters = fragment.inputs.filter(input => input.indexed);
-
-        if (indexedParameters.length > 0 && filters) {
-          const indexedTopics = indexedParameters.map(input => {
-            const value = (filters as any)[input.name];
-            if (value === undefined) {
-              return null;
-            }
-            if (Array.isArray(value)) {
-              return value.map(v => ethers.utils.hexZeroPad(ethers.utils.hexlify(v), 32));
-            }
-            return ethers.utils.hexZeroPad(ethers.utils.hexlify(value), 32);
-          });
-          topics.push(...indexedTopics);
-        }
+        const encodedFilterTopics = contract.interface.encodeFilterTopics(eventName, filters ?? []);
 
         const logs = await provider.getLogs({
           address: deployedContractData?.address,
-          topics: topics,
+          topics: encodedFilterTopics,
           fromBlock: fromBlock,
         });
         const newEvents = [];
@@ -118,7 +99,6 @@ export const useScaffoldEventHistory = <
     deployedContractData?.address,
     contract,
     deployedContractData,
-    filters,
     blockData,
     transactionData,
     receiptData,
