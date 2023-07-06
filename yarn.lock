@@ -1004,6 +1004,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@matterlabs/zksync-contracts@npm:^0.6.1":
+  version: 0.6.1
+  resolution: "@matterlabs/zksync-contracts@npm:0.6.1"
+  peerDependencies:
+    "@openzeppelin/contracts": 4.6.0
+    "@openzeppelin/contracts-upgradeable": 4.6.0
+  checksum: 736215697fb7529de2bfbb1d73f2a2656d4d048cd2b6fa46e67deceb6c0cbe7ceebc1c6dcb762c7522f527f7bfcd335bf4421061e85d9779c36602f967da4f25
+  languageName: node
+  linkType: hard
+
 "@metamask/eth-sig-util@npm:^4.0.0":
   version: 4.0.1
   resolution: "@metamask/eth-sig-util@npm:4.0.1"
@@ -1847,6 +1857,7 @@ __metadata:
     "@ethersproject/providers": ^5.7.1
     "@matterlabs/hardhat-zksync-solc": ^0.3.17
     "@matterlabs/hardhat-zksync-verify": ^0.1.8
+    "@matterlabs/zksync-contracts": ^0.6.1
     "@nomicfoundation/hardhat-chai-matchers": ^1.0.3
     "@nomicfoundation/hardhat-network-helpers": ^1.0.6
     "@nomicfoundation/hardhat-toolbox": ^2.0.0
