@@ -12,4 +12,12 @@ contract RapidExample is RapidDemoConsumerBase {
     bytes32 dataFeedId = bytes32("ETH");
     return getOracleNumericValueFromTxMsg(dataFeedId);
   }
+
+  /**
+   * Returns the latest price of USDC
+   */
+  function getLatestUSDCPrice() public view returns (uint256) {
+    bytes32 dataFeedId = bytes32("USDC");
+    return getOracleNumericValueFromTxMsg(dataFeedId);
+  }
 }
