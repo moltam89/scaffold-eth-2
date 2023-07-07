@@ -42,6 +42,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     autoMine: true,
   });
 */
+  /*
   await deploy("GetOraclePrice", {
     from: deployer,
     // Contract constructor arguments
@@ -51,6 +52,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
   });
+*/
 
   /*
   await deploy("MyERC20", {
@@ -63,17 +65,16 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     autoMine: true,
   });
 */
-  /*
+
   await deploy("MyPaymaster", {
     from: deployer,
     // Contract constructor arguments
-    args: ["0x1a43e6741Ad9cE1FeAD3f9FEeb5C757f81C9131d"],
+    args: ["0x0faF6df7054946141266420b43783387A78d82A9"],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
   });
-*/
 
   // Get the deployed contract
   // const yourContract = await hre.ethers.getContract("YourContract", deployer);
