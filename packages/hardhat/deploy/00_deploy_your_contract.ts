@@ -20,7 +20,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   */
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
-/*
+  /*
   await deploy("YourContract", {
     from: deployer,
     // Contract constructor arguments
@@ -31,7 +31,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     autoMine: true,
   });
 */
-/*
+
   await deploy("RapidExample", {
     from: deployer,
     // Contract constructor arguments
@@ -41,8 +41,8 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
   });
-*/
-/*
+
+  /*
   await deploy("MyERC20", {
     from: deployer,
     // Contract constructor arguments
@@ -53,7 +53,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     autoMine: true,
   });
 */
-
+  /*
   await deploy("MyPaymaster", {
     from: deployer,
     // Contract constructor arguments
@@ -63,8 +63,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
   });
-
-
+*/
 
   // Get the deployed contract
   // const yourContract = await hre.ethers.getContract("YourContract", deployer);
