@@ -4,39 +4,8 @@ const contracts = {
       chainId: "280",
       name: "zkSyncTestnet",
       contracts: {
-        GetOraclePrice: {
-          address: "0xeD1894b58500e55e95A86fB0FCa8964Bd8799017",
-          abi: [
-            {
-              inputs: [],
-              name: "getLatestEthPrice",
-              outputs: [
-                {
-                  internalType: "uint256",
-                  name: "",
-                  type: "uint256",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "getLatestUSDCPrice",
-              outputs: [
-                {
-                  internalType: "uint256",
-                  name: "",
-                  type: "uint256",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-          ],
-        },
         MyPaymaster: {
-          address: "0x6230F5dA929878e8dAF904830Cc0e0F5dbFDFdA4",
+          address: "0x84F78Eaa5f47D9967C6Af19763Aa720D4C99E357",
           abi: [
             {
               inputs: [
