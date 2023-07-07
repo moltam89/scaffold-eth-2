@@ -1,11 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface IRapidExample {
-    function getLatestEthPrice() external view returns (uint256);
-    function getLatestUSDCPrice() external view returns (uint256);
-}
-
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import {IPaymaster, ExecutionResult, PAYMASTER_VALIDATION_SUCCESS_MAGIC} from "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IPaymaster.sol";
@@ -72,24 +67,18 @@ contract MyPaymaster is IPaymaster {
                 userAddress,
                 thisAddress
             );
+            require(
+                providedAllowance >= PRICE_FOR_PAYING_FEES,
+                "Min allowance too low"
+            );
 
             // Note, that while the minimal amount of ETH needed is tx.gasPrice * tx.gasLimit,
             // neither paymaster nor account are allowed to access this context variable.
             uint256 requiredETH = _transaction.gasLimit *
                 _transaction.maxFeePerGas;
 
-            uint256 ETHUSDCPrice = IRapidExample(0x717CE2Df7fc98792852fb6d45Cd4Cb165a5D159e).getLatestEthPrice();
-            uint256 USDCUSDPrice = IRapidExample(0x717CE2Df7fc98792852fb6d45Cd4Cb165a5D159e).getLatestUSDCPrice();
-
-            uint256 requiredERC20 = (requiredETH * ETHUSDCPrice)/USDCUSDPrice;
-
-            require(
-                providedAllowance >= requiredERC20,
-                "Min allowance too low"
-            );
-
             try
-                IERC20(token).transferFrom(userAddress, thisAddress, requiredERC20)
+                IERC20(token).transferFrom(userAddress, thisAddress, amount)
             {} catch (bytes memory revertReason) {
                 // If the revert reason is empty or represented by just a function selector,
                 // we replace the error with a more user-friendly message
