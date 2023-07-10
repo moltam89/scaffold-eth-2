@@ -78,7 +78,18 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   });
 */
 
+  /*
   await deploy("ManualPayloadExample", {
+    from: deployer,
+    // Contract constructor arguments
+    //args: ["0x0faF6df7054946141266420b43783387A78d82A9"],
+    log: true,
+    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+    // automatically mining the contract deployment transaction. There is no effect on live networks.
+    autoMine: true,
+  });
+*/
+  await deploy("GetManualOraclePrice", {
     from: deployer,
     // Contract constructor arguments
     //args: ["0x0faF6df7054946141266420b43783387A78d82A9"],

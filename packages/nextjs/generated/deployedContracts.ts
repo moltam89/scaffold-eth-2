@@ -4,6 +4,35 @@ const contracts = {
       chainId: "280",
       name: "zkSyncTestnet",
       contracts: {
+        GetManualOraclePrice: {
+          address: "0x81FE283eD448a59e8fE5060886a450AD945bBB0C",
+          abi: [
+            {
+              inputs: [
+                {
+                  internalType: "bytes",
+                  name: "redstonePayload",
+                  type: "bytes",
+                },
+                {
+                  internalType: "bytes32",
+                  name: "assetDataFeedId",
+                  type: "bytes32",
+                },
+              ],
+              name: "getPrice",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+          ],
+        },
         ManualPayloadExample: {
           address: "0x3B0AAD4e39F484e346125d64f936F12dB8fbBD04",
           abi: [
