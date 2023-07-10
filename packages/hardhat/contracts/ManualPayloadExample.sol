@@ -5,6 +5,17 @@ pragma solidity ^0.8.4;
 import "@redstone-finance/evm-connector/contracts/data-services/MainDemoConsumerBase.sol";
 
 contract ManualPayloadExample is MainDemoConsumerBase {
+  bytes32 constant ETH = "ETH";
+  bytes32 constant USDC = "USDC";
+
+  function getLatestEthPrice(bytes calldata redstonePayload) public view returns (uint256) {
+    return getLatestPrice(redstonePayload, ETH);
+  }
+
+  function getLatestUSDCPrice(bytes calldata redstonePayload) public view returns (uint256) {
+    return getLatestPrice(redstonePayload, USDC);
+  }
+
   function proxyRequestToBaseContract(bytes32 assetId) public view returns (uint256) {
     return getOracleNumericValueFromTxMsg(assetId);
   }
