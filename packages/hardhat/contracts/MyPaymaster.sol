@@ -9,6 +9,12 @@ import {TransactionHelper, Transaction} from "@matterlabs/zksync-contracts/l2/sy
 
 import "@matterlabs/zksync-contracts/l2/system-contracts/Constants.sol";
 
+interface IManualPayloadExample {
+    function getLatestEthPrice(bytes calldata redstonePayload) external view returns (uint256);
+    function getLatestUSDCPrice(bytes calldata redstonePayload) external view returns (uint256);
+    function getLatestPrice(bytes calldata redstonePayload, bytes32 assetDataFeedId) external view returns (uint256);
+}
+
 contract MyPaymaster is IPaymaster {
     uint256 constant PRICE_FOR_PAYING_FEES = 1;
 
@@ -67,18 +73,26 @@ contract MyPaymaster is IPaymaster {
                 userAddress,
                 thisAddress
             );
-            require(
-                providedAllowance >= PRICE_FOR_PAYING_FEES,
-                "Min allowance too low"
-            );
 
             // Note, that while the minimal amount of ETH needed is tx.gasPrice * tx.gasLimit,
             // neither paymaster nor account are allowed to access this context variable.
             uint256 requiredETH = _transaction.gasLimit *
                 _transaction.maxFeePerGas;
 
+            // 0xb1C4529BC1Ea4A05CDcDDBDE891B7d2B25fa8Cbc ManualPayloadExample
+            // data is the redStonePayload
+            uint256 ETHUSDCPrice = IManualPayloadExample(0xb1C4529BC1Ea4A05CDcDDBDE891B7d2B25fa8Cbc).getLatestEthPrice(data);
+            uint256 USDCUSDPrice = IManualPayloadExample(0xb1C4529BC1Ea4A05CDcDDBDE891B7d2B25fa8Cbc).getLatestUSDCPrice(data);
+
+            uint256 requiredERC20 = (requiredETH * ETHUSDCPrice)/USDCUSDPrice;
+
+            require(
+                providedAllowance >= requiredERC20,
+                "Min allowance too low"
+            );
+
             try
-                IERC20(token).transferFrom(userAddress, thisAddress, amount)
+                IERC20(token).transferFrom(userAddress, thisAddress, requiredERC20)
             {} catch (bytes memory revertReason) {
                 // If the revert reason is empty or represented by just a function selector,
                 // we replace the error with a more user-friendly message
