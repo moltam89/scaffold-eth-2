@@ -5,8 +5,19 @@ const contracts = {
       name: "zkSyncTestnet",
       contracts: {
         GetManualOraclePrice: {
-          address: "0x81FE283eD448a59e8fE5060886a450AD945bBB0C",
+          address: "0x238899D42F3550650dab1c9C4dF860d94b45dA83",
           abi: [
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "_manualPayloadExampleAddress",
+                  type: "address",
+                },
+              ],
+              stateMutability: "nonpayable",
+              type: "constructor",
+            },
             {
               inputs: [
                 {
@@ -31,10 +42,23 @@ const contracts = {
               stateMutability: "view",
               type: "function",
             },
+            {
+              inputs: [],
+              name: "manualPayloadExampleAddress",
+              outputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
           ],
         },
         ManualPayloadExample: {
-          address: "0x3B0AAD4e39F484e346125d64f936F12dB8fbBD04",
+          address: "0x6B3776E1E314f0e734b6280d5425429aEd25eB13",
           abi: [
             {
               inputs: [],

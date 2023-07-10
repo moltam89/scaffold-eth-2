@@ -7,7 +7,13 @@ pragma solidity ^0.8.4;
 
 
 contract GetManualOraclePrice {
+  address public manualPayloadExampleAddress;
+
+  constructor(address _manualPayloadExampleAddress) {
+    manualPayloadExampleAddress = _manualPayloadExampleAddress;
+  }
+
   function getPrice(bytes calldata redstonePayload, bytes32 assetDataFeedId) public view returns (uint256) {
-    return IManualPayloadExample(0x3B0AAD4e39F484e346125d64f936F12dB8fbBD04).getLatestPrice(redstonePayload, assetDataFeedId);
+    return IManualPayloadExample(manualPayloadExampleAddress).getLatestPrice(redstonePayload, assetDataFeedId);
   }
 }
