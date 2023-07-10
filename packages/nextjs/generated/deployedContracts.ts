@@ -5,7 +5,7 @@ const contracts = {
       name: "zkSyncTestnet",
       contracts: {
         ManualPayloadExample: {
-          address: "0x00dCd65A8dc9322A499ccA4d83155C51ffBFEe42",
+          address: "0xCB01e966413706e87B1E7181a60A5e6ae88E877B",
           abi: [
             {
               inputs: [],
