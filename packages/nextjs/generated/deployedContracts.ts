@@ -4,28 +4,182 @@ const contracts = {
       chainId: "280",
       name: "zkSyncTestnet",
       contracts: {
-        MyPaymaster: {
-          address: "0x84F78Eaa5f47D9967C6Af19763Aa720D4C99E357",
+        ManualPayloadExample: {
+          address: "0x3B0AAD4e39F484e346125d64f936F12dB8fbBD04",
           abi: [
+            {
+              inputs: [],
+              name: "CalldataMustHaveValidPayload",
+              type: "error",
+            },
+            {
+              inputs: [],
+              name: "CalldataOverOrUnderFlow",
+              type: "error",
+            },
+            {
+              inputs: [],
+              name: "CanNotPickMedianOfEmptyArray",
+              type: "error",
+            },
+            {
+              inputs: [],
+              name: "DataPackageTimestampMustNotBeZero",
+              type: "error",
+            },
+            {
+              inputs: [],
+              name: "DataPackageTimestampsMustBeEqual",
+              type: "error",
+            },
+            {
+              inputs: [],
+              name: "EachSignerMustProvideTheSameValue",
+              type: "error",
+            },
+            {
+              inputs: [],
+              name: "EmptyCalldataPointersArr",
+              type: "error",
+            },
+            {
+              inputs: [],
+              name: "GetDataServiceIdNotImplemented",
+              type: "error",
+            },
+            {
+              inputs: [],
+              name: "IncorrectUnsignedMetadataSize",
+              type: "error",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "receivedSignersCount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "requiredSignersCount",
+                  type: "uint256",
+                },
+              ],
+              name: "InsufficientNumberOfUniqueSigners",
+              type: "error",
+            },
+            {
+              inputs: [],
+              name: "InvalidCalldataPointer",
+              type: "error",
+            },
+            {
+              inputs: [],
+              name: "RedstonePayloadMustHaveAtLeastOneDataPackage",
+              type: "error",
+            },
             {
               inputs: [
                 {
                   internalType: "address",
-                  name: "_erc20",
+                  name: "receivedSigner",
                   type: "address",
                 },
               ],
-              stateMutability: "nonpayable",
-              type: "constructor",
+              name: "SignerNotAuthorised",
+              type: "error",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "receivedTimestampSeconds",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "blockTimestamp",
+                  type: "uint256",
+                },
+              ],
+              name: "TimestampFromTooLongFuture",
+              type: "error",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "receivedTimestampSeconds",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "blockTimestamp",
+                  type: "uint256",
+                },
+              ],
+              name: "TimestampIsTooOld",
+              type: "error",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256[]",
+                  name: "values",
+                  type: "uint256[]",
+                },
+              ],
+              name: "aggregateValues",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
             },
             {
               inputs: [],
-              name: "allowedToken",
+              name: "extractTimestampsAndAssertAllAreEqual",
               outputs: [
                 {
+                  internalType: "uint256",
+                  name: "extractedTimestamp",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "pure",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
                   internalType: "address",
-                  name: "",
+                  name: "signerAddress",
                   type: "address",
+                },
+              ],
+              name: "getAuthorisedSignerIndex",
+              outputs: [
+                {
+                  internalType: "uint8",
+                  name: "",
+                  type: "uint8",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "getDataServiceId",
+              outputs: [
+                {
+                  internalType: "string",
+                  name: "",
+                  type: "string",
                 },
               ],
               stateMutability: "view",
@@ -35,241 +189,70 @@ const contracts = {
               inputs: [
                 {
                   internalType: "bytes",
-                  name: "_context",
+                  name: "redstonePayload",
                   type: "bytes",
                 },
                 {
-                  components: [
-                    {
-                      internalType: "uint256",
-                      name: "txType",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "from",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "to",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "gasLimit",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "gasPerPubdataByteLimit",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "maxFeePerGas",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "maxPriorityFeePerGas",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "paymaster",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "nonce",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "value",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256[4]",
-                      name: "reserved",
-                      type: "uint256[4]",
-                    },
-                    {
-                      internalType: "bytes",
-                      name: "data",
-                      type: "bytes",
-                    },
-                    {
-                      internalType: "bytes",
-                      name: "signature",
-                      type: "bytes",
-                    },
-                    {
-                      internalType: "bytes32[]",
-                      name: "factoryDeps",
-                      type: "bytes32[]",
-                    },
-                    {
-                      internalType: "bytes",
-                      name: "paymasterInput",
-                      type: "bytes",
-                    },
-                    {
-                      internalType: "bytes",
-                      name: "reservedDynamic",
-                      type: "bytes",
-                    },
-                  ],
-                  internalType: "struct Transaction",
-                  name: "_transaction",
-                  type: "tuple",
-                },
-                {
                   internalType: "bytes32",
-                  name: "",
+                  name: "assetDataFeedId",
                   type: "bytes32",
                 },
-                {
-                  internalType: "bytes32",
-                  name: "",
-                  type: "bytes32",
-                },
-                {
-                  internalType: "enum ExecutionResult",
-                  name: "_txResult",
-                  type: "uint8",
-                },
+              ],
+              name: "getLatestPrice",
+              outputs: [
                 {
                   internalType: "uint256",
-                  name: "_maxRefundedGas",
+                  name: "",
                   type: "uint256",
                 },
               ],
-              name: "postTransaction",
-              outputs: [],
-              stateMutability: "payable",
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "getUniqueSignersThreshold",
+              outputs: [
+                {
+                  internalType: "uint8",
+                  name: "",
+                  type: "uint8",
+                },
+              ],
+              stateMutability: "view",
               type: "function",
             },
             {
               inputs: [
                 {
                   internalType: "bytes32",
-                  name: "",
+                  name: "assetId",
                   type: "bytes32",
-                },
-                {
-                  internalType: "bytes32",
-                  name: "",
-                  type: "bytes32",
-                },
-                {
-                  components: [
-                    {
-                      internalType: "uint256",
-                      name: "txType",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "from",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "to",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "gasLimit",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "gasPerPubdataByteLimit",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "maxFeePerGas",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "maxPriorityFeePerGas",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "paymaster",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "nonce",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "value",
-                      type: "uint256",
-                    },
-                    {
-                      internalType: "uint256[4]",
-                      name: "reserved",
-                      type: "uint256[4]",
-                    },
-                    {
-                      internalType: "bytes",
-                      name: "data",
-                      type: "bytes",
-                    },
-                    {
-                      internalType: "bytes",
-                      name: "signature",
-                      type: "bytes",
-                    },
-                    {
-                      internalType: "bytes32[]",
-                      name: "factoryDeps",
-                      type: "bytes32[]",
-                    },
-                    {
-                      internalType: "bytes",
-                      name: "paymasterInput",
-                      type: "bytes",
-                    },
-                    {
-                      internalType: "bytes",
-                      name: "reservedDynamic",
-                      type: "bytes",
-                    },
-                  ],
-                  internalType: "struct Transaction",
-                  name: "_transaction",
-                  type: "tuple",
                 },
               ],
-              name: "validateAndPayForPaymasterTransaction",
+              name: "proxyRequestToBaseContract",
               outputs: [
                 {
-                  internalType: "bytes4",
-                  name: "magic",
-                  type: "bytes4",
-                },
-                {
-                  internalType: "bytes",
-                  name: "context",
-                  type: "bytes",
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
                 },
               ],
-              stateMutability: "payable",
+              stateMutability: "view",
               type: "function",
             },
             {
-              stateMutability: "payable",
-              type: "receive",
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "receivedTimestampMilliseconds",
+                  type: "uint256",
+                },
+              ],
+              name: "validateTimestamp",
+              outputs: [],
+              stateMutability: "view",
+              type: "function",
             },
           ],
         },
