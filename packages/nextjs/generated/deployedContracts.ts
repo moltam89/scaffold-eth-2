@@ -5,7 +5,7 @@ const contracts = {
       name: "zkSyncTestnet",
       contracts: {
         GetManualOraclePrice: {
-          address: "0x238899D42F3550650dab1c9C4dF860d94b45dA83",
+          address: "0x2A9AB22343d49109650772A678a6D9A2D7196Ad6",
           abi: [
             {
               inputs: [
@@ -58,7 +58,7 @@ const contracts = {
           ],
         },
         ManualPayloadExample: {
-          address: "0x6B3776E1E314f0e734b6280d5425429aEd25eB13",
+          address: "0x88a63367dfb21CbF6c28d81828Bb8e55BE9EC6fB",
           abi: [
             {
               inputs: [],
@@ -245,6 +245,25 @@ const contracts = {
                   name: "redstonePayload",
                   type: "bytes",
                 },
+              ],
+              name: "getLatestEthPrice",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "bytes",
+                  name: "redstonePayload",
+                  type: "bytes",
+                },
                 {
                   internalType: "bytes32",
                   name: "assetDataFeedId",
@@ -252,6 +271,25 @@ const contracts = {
                 },
               ],
               name: "getLatestPrice",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "bytes",
+                  name: "redstonePayload",
+                  type: "bytes",
+                },
+              ],
+              name: "getLatestUSDCPrice",
               outputs: [
                 {
                   internalType: "uint256",
