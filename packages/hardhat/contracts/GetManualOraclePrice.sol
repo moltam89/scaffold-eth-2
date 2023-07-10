@@ -1,4 +1,6 @@
 interface IManualPayloadExample {
+    function getLatestEthPrice(bytes calldata redstonePayload) external view returns (uint256);
+    function getLatestUSDCPrice(bytes calldata redstonePayload) external view returns (uint256);
     function getLatestPrice(bytes calldata redstonePayload, bytes32 assetDataFeedId) external view returns (uint256);
 }
 
@@ -11,6 +13,14 @@ contract GetManualOraclePrice {
 
   constructor(address _manualPayloadExampleAddress) {
     manualPayloadExampleAddress = _manualPayloadExampleAddress;
+  }
+
+  function getEthPrice(bytes calldata redstonePayload) public view returns (uint256) {
+    return IManualPayloadExample(manualPayloadExampleAddress).getLatestEthPrice(redstonePayload);
+  }
+
+  function getUSDCPrice(bytes calldata redstonePayload) public view returns (uint256) {
+    return IManualPayloadExample(manualPayloadExampleAddress).getLatestUSDCPrice(redstonePayload);
   }
 
   function getPrice(bytes calldata redstonePayload, bytes32 assetDataFeedId) public view returns (uint256) {

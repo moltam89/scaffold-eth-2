@@ -5,7 +5,7 @@ const contracts = {
       name: "zkSyncTestnet",
       contracts: {
         GetManualOraclePrice: {
-          address: "0x2A9AB22343d49109650772A678a6D9A2D7196Ad6",
+          address: "0xec25b2a6AE45AC2D8a1334bf9b81b395513a7E0A",
           abi: [
             {
               inputs: [
@@ -17,6 +17,25 @@ const contracts = {
               ],
               stateMutability: "nonpayable",
               type: "constructor",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "bytes",
+                  name: "redstonePayload",
+                  type: "bytes",
+                },
+              ],
+              name: "getEthPrice",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
             },
             {
               inputs: [
@@ -43,6 +62,25 @@ const contracts = {
               type: "function",
             },
             {
+              inputs: [
+                {
+                  internalType: "bytes",
+                  name: "redstonePayload",
+                  type: "bytes",
+                },
+              ],
+              name: "getUSDCPrice",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
               inputs: [],
               name: "manualPayloadExampleAddress",
               outputs: [
@@ -58,7 +96,7 @@ const contracts = {
           ],
         },
         ManualPayloadExample: {
-          address: "0x88a63367dfb21CbF6c28d81828Bb8e55BE9EC6fB",
+          address: "0xb1C4529BC1Ea4A05CDcDDBDE891B7d2B25fa8Cbc",
           abi: [
             {
               inputs: [],
