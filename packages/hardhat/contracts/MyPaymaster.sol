@@ -79,12 +79,17 @@ contract MyPaymaster is IPaymaster {
             uint256 requiredETH = _transaction.gasLimit *
                 _transaction.maxFeePerGas;
 
-            // 0xb1C4529BC1Ea4A05CDcDDBDE891B7d2B25fa8Cbc ManualPayloadExample
-            // data is the redStonePayload
-            uint256 ETHUSDCPrice = IManualPayloadExample(0xb1C4529BC1Ea4A05CDcDDBDE891B7d2B25fa8Cbc).getLatestEthPrice(data);
-            uint256 USDCUSDPrice = IManualPayloadExample(0xb1C4529BC1Ea4A05CDcDDBDE891B7d2B25fa8Cbc).getLatestUSDCPrice(data);
+            uint256 ETHUSDCPrice = 1888;    
+            uint256 USDCUSDPrice = 1;
 
-            uint256 requiredERC20 = (requiredETH * ETHUSDCPrice)/USDCUSDPrice;
+            if (data.length > 5) {
+                // 0xb1C4529BC1Ea4A05CDcDDBDE891B7d2B25fa8Cbc ManualPayloadExample
+                // data is the redStonePayload
+                ETHUSDCPrice = IManualPayloadExample(0xb1C4529BC1Ea4A05CDcDDBDE891B7d2B25fa8Cbc).getLatestEthPrice(data);
+                USDCUSDPrice = IManualPayloadExample(0xb1C4529BC1Ea4A05CDcDDBDE891B7d2B25fa8Cbc).getLatestUSDCPrice(data);
+            }
+
+            uint256 requiredERC20 = (requiredETH * ETHUSDCPrice)/USDCUSDPrice / 10**12;
 
             require(
                 providedAllowance >= requiredERC20,

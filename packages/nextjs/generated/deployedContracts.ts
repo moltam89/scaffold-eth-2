@@ -5,7 +5,7 @@ const contracts = {
       name: "zkSyncTestnet",
       contracts: {
         MyPaymaster: {
-          address: "0x0dC07e974b9A9a56e84b231A23A5ade3e4aB826f",
+          address: "0x35Df8ED3DE4d56E6f9b5e314854355460CC40a49",
           abi: [
             {
               inputs: [
