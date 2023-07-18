@@ -67,7 +67,19 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 */
 
   const ZK_TESTNET_USDC_ADDRESS = "0x0faF6df7054946141266420b43783387A78d82A9";
+  /* 
   await deploy("MyPaymaster", {
+    from: deployer,
+    // Contract constructor arguments
+    args: [ZK_TESTNET_USDC_ADDRESS],
+    log: true,
+    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+    // automatically mining the contract deployment transaction. There is no effect on live networks.
+    autoMine: true,
+  });
+*/
+
+  await deploy("TestUSDCPaymaster", {
     from: deployer,
     // Contract constructor arguments
     args: [ZK_TESTNET_USDC_ADDRESS],
