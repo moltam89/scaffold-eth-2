@@ -15,6 +15,8 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (!number || !secret) {
+      setBlindedNumber(null);
+
       return;
     }
 
