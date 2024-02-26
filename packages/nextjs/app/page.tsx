@@ -8,7 +8,7 @@ import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { InputBase } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
-  const [number, setNumber] = useState<number>(0);
+  const [number, setNumber] = useState<number | null>(null);
   const [secret, setSecret] = useState<string>("");
 
   const [blindedNumber, setBlindedNumber] = useState<string | null>(null);
@@ -26,6 +26,8 @@ const Home: NextPage = () => {
 
     if (!Number.isNaN(number) && number > 0) {
       setNumber(number);
+    } else {
+      setNumber(null);
     }
   };
 
@@ -43,7 +45,7 @@ const Home: NextPage = () => {
         </div>
 
         <div>
-          <InputBase onChange={handleChangeNumber} placeholder={"Number"} value={number.toString()} />
+          <InputBase onChange={handleChangeNumber} placeholder={"Number"} value={number ? number.toString() : ""} />
           <InputBase onChange={handleChangeSecret} placeholder={"Secret"} value={secret} />
 
           {blindedNumber && blindedNumber}
