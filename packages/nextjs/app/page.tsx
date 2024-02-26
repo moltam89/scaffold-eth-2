@@ -1,17 +1,15 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ethers } from "ethers";
 import type { NextPage } from "next";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { InputBase } from "~~/components/scaffold-eth";
 
-import { useEffect, useState } from "react";
-
-import { ethers } from "ethers";
-
 const Home: NextPage = () => {
-  const [number, setNumber] = useState<number | null>(null);
-  const [secret, setSecret] = useState<string | null>(null);
+  const [number, setNumber] = useState<number>(0);
+  const [secret, setSecret] = useState<string>("");
 
   const [blindedNumber, setBlindedNumber] = useState<string | null>(null);
 
@@ -20,9 +18,20 @@ const Home: NextPage = () => {
       return;
     }
 
-    setBlindedNumber(ethers.utils.solidityKeccak256([ "uint256", "string" ], [ number, secret ]));
-
+    setBlindedNumber(ethers.utils.solidityKeccak256(["uint256", "string"], [number, secret]));
   }, [number, secret]);
+
+  const handleChangeNumber = (newValue: string) => {
+    const number = parseInt(newValue);
+
+    if (!Number.isNaN(number) && number > 0) {
+      setNumber(number);
+    }
+  };
+
+  const handleChangeSecret = (newValue: string) => {
+    setSecret(newValue);
+  };
 
   return (
     <>
@@ -34,25 +43,8 @@ const Home: NextPage = () => {
         </div>
 
         <div>
-          <InputBase
-            onChange={
-              (value) => {
-                const number = parseInt(value);
-                if (!Number.isNaN(number) && (number > 0)) {
-                  setNumber(number);
-                }
-              }
-            }
-            placeholder={"Number"}
-          />
-          <InputBase
-            onChange={
-              (secret) => {
-                setSecret(secret);
-              }
-            }
-            placeholder={"Secret"}
-          />
+          <InputBase onChange={handleChangeNumber} placeholder={"Number"} value={number.toString()} />
+          <InputBase onChange={handleChangeSecret} placeholder={"Secret"} value={secret} />
 
           {blindedNumber && blindedNumber}
         </div>
