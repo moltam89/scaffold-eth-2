@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: WTFPL
+//SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
 
@@ -34,7 +34,7 @@ contract OneNumber {
     error GameEnded();
     error NoPlayers();
 
-    function newGame(uint64 cost, uint32 blindDuration, uint24 revealDuration) external returns (uint gameId) {
+    function newGame(uint72 cost, uint32 blindDuration, uint32 revealDuration) external returns (uint gameId) {
         gameId = numGames++;
 
         Game storage game = games[gameId];
