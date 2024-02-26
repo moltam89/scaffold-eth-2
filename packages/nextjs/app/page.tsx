@@ -4,78 +4,33 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ethers } from "ethers";
 import type { NextPage } from "next";
+import { usePublicClient } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { InputBase, notification } from "~~/components/scaffold-eth";
-import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
-import { useContractRead } from "wagmi";
-import { usePublicClient } from 'wagmi'
-
+import { InputBase } from "~~/components/scaffold-eth";
 import { getAllContracts } from "~~/utils/scaffold-eth/contractsData";
 
 const contractsData = getAllContracts();
-
-const COST_INDEX = 0;
-const BLIND_DURATION_INDEX = 1;
-const REVEAL_DURATION_INDEX = 2;
-const START_INDEX = 3;
-const PRIZE_INDEX = 4;
 
 const Home: NextPage = () => {
   const publicClient = usePublicClient();
 
   const oneNumberContract = contractsData["OneNumber"];
 
+  const [numGames, setNumGames] = useState<number | null>(null);
+
   useEffect(() => {
     const fetchGameData = async () => {
       const numGames = await publicClient.readContract({
         address: oneNumberContract.address,
         abi: oneNumberContract.abi,
-        functionName: 'numGames',
-      })
+        functionName: "numGames",
+      });
 
-      const latestGame = await publicClient.readContract({
-        address: oneNumberContract.address,
-        abi: oneNumberContract.abi,
-        functionName: 'games',
-        args: [numGames - 1n],
-      })
-
-      console.log("latestGame", latestGame);
-    }
+      setNumGames(Number(numGames));
+    };
 
     fetchGameData();
-  }, []);
-
-  const {
-    data: numGames,
-  } = useContractRead({
-    address: oneNumberContract.address,
-    functionName: "numGames",
-    abi: oneNumberContract.abi,
-    onError: error => {
-      notification.error(error.message);
-    },
-  });
-
-  console.log("numGames", numGames);
-
-  const {
-    data: latestGame,
-  } = useContractRead({
-    address: oneNumberContract.address,
-    functionName: "games",
-    abi: oneNumberContract.abi,
-    args: [numGames - 1n],
-    onError: error => {
-      notification.error(error.message);
-    },
-  });
-
-  const currentTimeStamp = Math.floor(new Date().getTime() / 1000);
-
-  const isBiddingPhase = latestGame && (currentTimeStamp < latestGame[START_INDEX] + latestGame[BLIND_DURATION_INDEX]);
-  const isRevealPhase = latestGame && (currentTimeStamp > latestGame[START_INDEX] + latestGame[BLIND_DURATION_INDEX]) && 
-    (currentTimeStamp < latestGame[START_INDEX] + latestGame[BLIND_DURATION_INDEX] + latestGame[REVEAL_DURATION_INDEX]);
+  }, [oneNumberContract.address, oneNumberContract.abi, publicClient]);
 
   const [number, setNumber] = useState<number | null>(null);
   const [secret, setSecret] = useState<string>("");
@@ -115,10 +70,7 @@ const Home: NextPage = () => {
           </h1>
         </div>
 
-        <div>
-          {isBiddingPhase && "Time to submit your Number"}
-          {isRevealPhase && "Time to reveal your Number"}
-        </div>
+        <div>{numGames && numGames}</div>
 
         <div>
           <InputBase onChange={handleChangeNumber} placeholder={"Number"} value={number ? number.toString() : ""} />
