@@ -11,26 +11,55 @@ import { getAllContracts } from "~~/utils/scaffold-eth/contractsData";
 
 const contractsData = getAllContracts();
 
+//const COST_INDEX = 0;
+const BLIND_DURATION_INDEX = 1;
+const REVEAL_DURATION_INDEX = 2;
+const START_INDEX = 3;
+//const PRIZE_INDEX = 4;
+
 const Home: NextPage = () => {
   const publicClient = usePublicClient();
 
   const oneNumberContract = contractsData["OneNumber"];
 
   const [numGames, setNumGames] = useState<number | null>(null);
+  const [currentGame, setCurrentGame] = useState<Array<bigint> | null>(null);
 
   useEffect(() => {
     const fetchGameData = async () => {
-      const numGames = await publicClient.readContract({
+      const numGames = Number(
+        await publicClient.readContract({
+          address: oneNumberContract.address,
+          abi: oneNumberContract.abi,
+          functionName: "numGames",
+        }),
+      );
+
+      setNumGames(numGames);
+
+      const latestGame = (await publicClient.readContract({
         address: oneNumberContract.address,
         abi: oneNumberContract.abi,
-        functionName: "numGames",
-      });
+        functionName: "games",
+        args: [numGames - 1],
+      })) as bigint[];
 
-      setNumGames(Number(numGames));
+      console.log("latestGame", latestGame);
+
+      setCurrentGame(latestGame);
     };
 
     fetchGameData();
   }, [oneNumberContract.address, oneNumberContract.abi, publicClient]);
+
+  const currentTimeStamp = Math.floor(new Date().getTime() / 1000);
+
+  const isBiddingPhase = currentGame && currentTimeStamp < currentGame[START_INDEX] + currentGame[BLIND_DURATION_INDEX];
+  const isRevealPhase =
+    currentGame &&
+    currentTimeStamp > currentGame[START_INDEX] + currentGame[BLIND_DURATION_INDEX] &&
+    currentTimeStamp <
+      currentGame[START_INDEX] + currentGame[BLIND_DURATION_INDEX] + currentGame[REVEAL_DURATION_INDEX];
 
   const [number, setNumber] = useState<number | null>(null);
   const [secret, setSecret] = useState<string>("");
@@ -71,6 +100,11 @@ const Home: NextPage = () => {
         </div>
 
         <div>{numGames && numGames}</div>
+
+        <div>
+          {isBiddingPhase && "Time to submit your Number"}
+          {isRevealPhase && "Time to reveal your Number"}
+        </div>
 
         <div>
           <InputBase onChange={handleChangeNumber} placeholder={"Number"} value={number ? number.toString() : ""} />
