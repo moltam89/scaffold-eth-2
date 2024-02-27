@@ -106,11 +106,27 @@ const Home: NextPage = () => {
           {isRevealPhase && "Time to reveal your Number"}
         </div>
 
-        <div>
-          <InputBase onChange={handleChangeNumber} placeholder={"Number"} value={number ? number.toString() : ""} />
-          <InputBase onChange={handleChangeSecret} placeholder={"Secret"} value={secret} />
+        <div className="flex items-center flex-col">
+          <div>
+            <InputBase onChange={handleChangeNumber} placeholder={"Number"} value={number ? number.toString() : ""} />
+          </div>
 
-          {blindedNumber && blindedNumber}
+          <div>
+            <InputBase onChange={handleChangeSecret} placeholder={"Secret"} value={secret} />
+          </div>
+
+          <div>{blindedNumber && blindedNumber}</div>
+
+          <div>
+            <button
+              className="btn btn-primary btn-sm"
+              disabled={!blindedNumber}
+              onClick={() => console.log("yo")}
+              type="button"
+            >
+              Submit Blinded Number
+            </button>
+          </div>
         </div>
 
         <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
