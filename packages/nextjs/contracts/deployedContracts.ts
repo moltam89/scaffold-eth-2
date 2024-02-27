@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   137: {
     OneNumber: {
-      address: "0x55c179c1346862Ea2729dD5bB05D8879621e8611",
+      address: "0x2F3307d5336661E49aE982D7385B63e2747078E2",
       abi: [
         {
           inputs: [],
@@ -65,6 +65,88 @@ const deployedContracts = {
           type: "error",
         },
         {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "gameId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "player",
+              type: "address",
+            },
+          ],
+          name: "BlindedNumber",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "gameId",
+              type: "uint256",
+            },
+          ],
+          name: "GameCreated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "gameId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "player",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "number",
+              type: "uint256",
+            },
+          ],
+          name: "RevealNumber",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "gameId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "winner",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "number",
+              type: "uint256",
+            },
+          ],
+          name: "Winner",
+          type: "event",
+        },
+        {
           inputs: [
             {
               internalType: "uint256",
@@ -119,9 +201,9 @@ const deployedContracts = {
         {
           inputs: [
             {
-              internalType: "uint64",
+              internalType: "uint72",
               name: "cost",
-              type: "uint64",
+              type: "uint72",
             },
             {
               internalType: "uint32",
@@ -129,9 +211,9 @@ const deployedContracts = {
               type: "uint32",
             },
             {
-              internalType: "uint24",
+              internalType: "uint32",
               name: "revealDuration",
-              type: "uint24",
+              type: "uint32",
             },
           ],
           name: "newGame",
