@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ethers } from "ethers";
 import type { NextPage } from "next";
-import { usePublicClient } from "wagmi";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { InputBase } from "~~/components/scaffold-eth";
 import { getAllContracts } from "~~/utils/scaffold-eth/contractsData";
@@ -19,6 +19,14 @@ const START_INDEX = 3;
 
 const Home: NextPage = () => {
   const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
+
+  console.log("publicClient", publicClient);
+  console.log("walletClient", walletClient);
+
+  const { address } = useAccount();
+
+  console.log("address", address);
 
   const oneNumberContract = contractsData["OneNumber"];
 
@@ -121,7 +129,21 @@ const Home: NextPage = () => {
             <button
               className="btn btn-primary btn-sm"
               disabled={!blindedNumber}
-              onClick={() => console.log("yo")}
+              onClick={async () => {
+                console.log("yo");
+
+                const { request } = await publicClient.simulateContract({
+                  account: address,
+                  address: oneNumberContract.address,
+                  abi: oneNumberContract.abi,
+                  functionName: "setBlindedNumber",
+                  args: [(numGames ?? 1) - 1, blindedNumber],
+                });
+
+                if (walletClient) {
+                  await walletClient.writeContract(request);
+                }
+              }}
               type="button"
             >
               Submit Blinded Number
