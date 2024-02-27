@@ -175,12 +175,3 @@ contract OneNumber {
         emit Winner(gameId, winner, lowestUniqueNumber);
     }
 }
-
-
-
-
-
-
-
-
-
