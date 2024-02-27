@@ -5,9 +5,9 @@
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
-  31337: {
+  137: {
     OneNumber: {
-      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      address: "0x55c179c1346862Ea2729dD5bB05D8879621e8611",
       abi: [
         {
           inputs: [],
@@ -65,19 +65,6 @@ const deployedContracts = {
           type: "error",
         },
         {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "gameId",
-              type: "uint256",
-            },
-          ],
-          name: "GameCreated",
-          type: "event",
-        },
-        {
           inputs: [
             {
               internalType: "uint256",
@@ -132,9 +119,9 @@ const deployedContracts = {
         {
           inputs: [
             {
-              internalType: "uint72",
+              internalType: "uint64",
               name: "cost",
-              type: "uint72",
+              type: "uint64",
             },
             {
               internalType: "uint32",
@@ -142,9 +129,9 @@ const deployedContracts = {
               type: "uint32",
             },
             {
-              internalType: "uint32",
+              internalType: "uint24",
               name: "revealDuration",
-              type: "uint32",
+              type: "uint24",
             },
           ],
           name: "newGame",

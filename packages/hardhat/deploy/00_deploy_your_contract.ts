@@ -33,8 +33,7 @@ const deployOneNumber: DeployFunction = async function (hre: HardhatRuntimeEnvir
   });
 
   // Get the deployed contract to interact with it after deploying.
-  // const OneNumber = await hre.ethers.getContract<Contract>("OneNumber", deployer);
-  // console.log("👋 Initial greeting:", await OneNumber.greeting());
+  await hre.ethers.getContract<Contract>("OneNumber", deployer);
 };
 
 export default deployOneNumber;
