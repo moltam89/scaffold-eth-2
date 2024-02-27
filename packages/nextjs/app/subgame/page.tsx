@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CountdownTimer } from "./CountdownTimer";
+import { CountdownTimer } from "../CountdownTimer";
 // import { useSearchParams } from "next/navigation";
 import { CommitPhase } from "./phases/CommitPhase";
 import { EndGamePhase } from "./phases/EndGamePhase";
@@ -10,7 +10,7 @@ import { StartPhase } from "./phases/StartPhase";
 import type { NextPage } from "next";
 import { Phases } from "~~/types/onenumber";
 
-const Home: NextPage = () => {
+const SubGame: NextPage = () => {
   const [gameId, setGameId] = useState<bigint>(0n);
   const [cost, setCost] = useState<bigint>(0n);
   const [startTime, setStartTime] = useState<number>(0);
@@ -116,4 +116,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default SubGame;
