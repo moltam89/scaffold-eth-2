@@ -6,7 +6,7 @@ contract OneNumber {
     struct NumberData {
         address player;
         uint96 count;
-    } 
+    }
 
     struct Game {
         uint72 cost;
@@ -23,6 +23,9 @@ contract OneNumber {
     mapping(uint => Game) public games;
 
     event GameCreated(uint gameId);
+    event BlindedNumber(uint indexed gameId, address player);
+    event RevealNumber(uint indexed gameId, address player, uint indexed number);
+    event Winner(uint indexed gameId, address winner, uint number);
 
     error InvalidCost();
     error InvalidGame();
@@ -73,6 +76,8 @@ contract OneNumber {
         game.blindedNumbers[msg.sender] = blindedNumber;
 
         game.prize += uint88(msg.value);
+
+        emit BlindedNumber(gameId, msg.sender);
     }
 
     function revealNumber(uint gameId, uint number, bytes32 secret) external {
@@ -113,6 +118,8 @@ contract OneNumber {
         }
 
         numberData.count++;
+
+        emit RevealNumber(gameId, msg.sender, number);
     }
 
     function endGame(uint gameId) external {
@@ -164,6 +171,8 @@ contract OneNumber {
         game.prize = 0;
 
         payable(winner).transfer(prize);
+
+        emit Winner(gameId, winner, lowestUniqueNumber);
     }
 }
 
