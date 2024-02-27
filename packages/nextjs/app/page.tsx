@@ -102,8 +102,6 @@ const Home: NextPage = () => {
           </h1>
         </div>
 
-        <div>{numGames && numGames}</div>
-
         <div>
           {isBiddingPhase && "Time to submit your Number"}
           {isRevealPhase && "Time to reveal your Number"}
@@ -127,22 +125,36 @@ const Home: NextPage = () => {
               onClick={async () => {
                 console.log("yo");
 
-                const { request } = await publicClient.simulateContract({
-                  account: address,
-                  address: oneNumberContract.address,
-                  abi: oneNumberContract.abi,
-                  functionName: "setBlindedNumber",
-                  value: currentGame ? currentGame[COST_INDEX] : 0n,
-                  args: [(numGames ?? 1) - 1, blindedNumber],
-                });
+                if (isBiddingPhase) {
+                  const { request } = await publicClient.simulateContract({
+                    account: address,
+                    address: oneNumberContract.address,
+                    abi: oneNumberContract.abi,
+                    functionName: "setBlindedNumber",
+                    value: currentGame ? currentGame[COST_INDEX] : 0n,
+                    args: [(numGames ?? 1) - 1, blindedNumber],
+                  });
 
-                if (walletClient) {
-                  await walletClient.writeContract(request);
+                  if (walletClient) {
+                    await walletClient.writeContract(request);
+                  }
+                } else {
+                  const { request } = await publicClient.simulateContract({
+                    account: address,
+                    address: oneNumberContract.address,
+                    abi: oneNumberContract.abi,
+                    functionName: "revealNumber",
+                    args: [(numGames ?? 1) - 1, number, secret],
+                  });
+
+                  if (walletClient) {
+                    await walletClient.writeContract(request);
+                  }
                 }
               }}
               type="button"
             >
-              Submit Blinded Number
+              {isBiddingPhase ? "Submit Blinded Number" : "Reveal Number"}
             </button>
           </div>
         </div>
