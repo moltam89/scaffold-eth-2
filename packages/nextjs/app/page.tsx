@@ -11,7 +11,7 @@ import { getAllContracts } from "~~/utils/scaffold-eth/contractsData";
 
 const contractsData = getAllContracts();
 
-//const COST_INDEX = 0;
+const COST_INDEX = 0;
 const BLIND_DURATION_INDEX = 1;
 const REVEAL_DURATION_INDEX = 2;
 const START_INDEX = 3;
@@ -21,12 +21,7 @@ const Home: NextPage = () => {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
-  console.log("publicClient", publicClient);
-  console.log("walletClient", walletClient);
-
   const { address } = useAccount();
-
-  console.log("address", address);
 
   const oneNumberContract = contractsData["OneNumber"];
 
@@ -137,6 +132,7 @@ const Home: NextPage = () => {
                   address: oneNumberContract.address,
                   abi: oneNumberContract.abi,
                   functionName: "setBlindedNumber",
+                  value: currentGame ? currentGame[COST_INDEX] : 0n,
                   args: [(numGames ?? 1) - 1, blindedNumber],
                 });
 
