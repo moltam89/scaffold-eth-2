@@ -12,7 +12,7 @@ interface CommitPhaseProps {
   setNumber: (number: number) => void;
   setSecret: (secret: string) => void;
   setBlindedNumber: (blindedNumber: string) => void;
-  nextPhase: () => void;
+  setBlindedNumberCommitted: (blindedNumberCommitted: boolean) => void;
 }
 
 export const CommitPhase = ({
@@ -24,7 +24,7 @@ export const CommitPhase = ({
   setNumber,
   setSecret,
   setBlindedNumber,
-  nextPhase,
+  setBlindedNumberCommitted,
 }: CommitPhaseProps) => {
   useEffect(() => {
     if (!number || !secret) {
@@ -41,7 +41,7 @@ export const CommitPhase = ({
     value: cost,
     onBlockConfirmation: async receipt => {
       console.log("receipt", receipt);
-      nextPhase();
+      setBlindedNumberCommitted(true);
     },
   });
 

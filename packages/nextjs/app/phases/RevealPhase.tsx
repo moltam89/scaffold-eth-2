@@ -2,7 +2,7 @@ import React from "react";
 
 interface RevealPhaseProps {
   selectedNumber: number;
-  nextPhase: () => void;
+  setNumberRevealed: (numberRevealed: boolean) => void;
 }
 
 export const RevealPhase = ({ selectedNumber }: RevealPhaseProps) => {
