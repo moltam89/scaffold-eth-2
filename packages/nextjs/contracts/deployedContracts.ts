@@ -4,6 +4,228 @@
  */
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
-const deployedContracts = {} as const;
+const deployedContracts = {
+  137: {
+    OneNumber: {
+      address: "0x55c179c1346862Ea2729dD5bB05D8879621e8611",
+      abi: [
+        {
+          inputs: [],
+          name: "BlindedNumberMissing",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "BlindedNumberTooLate",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "EndGameTooEarly",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "GameEnded",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "InvalidCost",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "InvalidGame",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NoPlayers",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "OnlyOneNumber",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "RevealIncorrect",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "RevealTooEarly",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "RevealTooLate",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "gameId",
+              type: "uint256",
+            },
+          ],
+          name: "endGame",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "games",
+          outputs: [
+            {
+              internalType: "uint72",
+              name: "cost",
+              type: "uint72",
+            },
+            {
+              internalType: "uint32",
+              name: "blindDuration",
+              type: "uint32",
+            },
+            {
+              internalType: "uint32",
+              name: "revealDuration",
+              type: "uint32",
+            },
+            {
+              internalType: "uint32",
+              name: "start",
+              type: "uint32",
+            },
+            {
+              internalType: "uint88",
+              name: "prize",
+              type: "uint88",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint64",
+              name: "cost",
+              type: "uint64",
+            },
+            {
+              internalType: "uint32",
+              name: "blindDuration",
+              type: "uint32",
+            },
+            {
+              internalType: "uint24",
+              name: "revealDuration",
+              type: "uint24",
+            },
+          ],
+          name: "newGame",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "gameId",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "numGames",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "gameId",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "number",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "secret",
+              type: "string",
+            },
+          ],
+          name: "revealNumber",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "gameId",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "number",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes32",
+              name: "secret",
+              type: "bytes32",
+            },
+          ],
+          name: "revealNumber",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "gameId",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes32",
+              name: "blindedNumber",
+              type: "bytes32",
+            },
+          ],
+          name: "setBlindedNumber",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+    },
+  },
+} as const;
 
 export default deployedContracts satisfies GenericContractsDeclaration;
