@@ -1,86 +1,86 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
+// import { useSearchParams } from "next/navigation";
+import { CommitPhase } from "./phases/CommitPhase";
+import { EndGamePhase } from "./phases/EndGamePhase";
+import { RevealPhase } from "./phases/RevealPhase";
+import { StartPhase } from "./phases/StartPhase";
 import type { NextPage } from "next";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { InputBase } from "~~/components/scaffold-eth";
-
-import { useEffect, useState } from "react";
-
-import { ethers } from "ethers";
+import { Phases } from "~~/types/onenumber";
 
 const Home: NextPage = () => {
-  const [number, setNumber] = useState<number | null>(null);
-  const [secret, setSecret] = useState<string | null>(null);
+  const [gameId, setGameId] = useState<bigint>(0n);
+  const [cost, setCost] = useState<bigint>(0n);
+  const [blindDuration, setBlindDuration] = useState<number>(0);
+  const [revealDuration, setRevealDuration] = useState<number>(0);
+  const [phase, setPhase] = useState<Phases>(Phases.Start);
+  const [number, setNumber] = useState<number>(0);
+  const [secret, setSecret] = useState<string>("");
+  const [blindedNumber, setBlindedNumber] = useState<string>("");
 
-  const [blindedNumber, setBlindedNumber] = useState<string | null>(null);
+  // const searchParams = useSearchParams();
+  // const urlGameId = searchParams.get("gameId");
+  // if (urlGameId) {
+  //   setGameId(parseInt(urlGameId));
+  //   setPhase(Phases.Commit);
+  // }
 
-  useEffect(() => {
-    if (!number || !secret) {
-      return;
+  const nextPhase = () => {
+    console.log("currentPhase", phase);
+    if (phase == Phases.Start) {
+      setPhase(Phases.Commit);
+      console.log("nextPhase", Phases.Commit);
     }
-
-    setBlindedNumber(ethers.utils.solidityKeccak256([ "uint256", "string" ], [ number, secret ]));
-
-  }, [number, secret]);
+    if (phase == Phases.Commit) {
+      setPhase(Phases.Reveal);
+      console.log("nextPhase", Phases.Reveal);
+    }
+    if (phase == Phases.Reveal) {
+      setPhase(Phases.EndGame);
+      console.log("nextPhase", Phases.EndGame);
+    }
+    if (phase == Phases.EndGame) {
+      setPhase(Phases.Start);
+      console.log("nextPhase", Phases.Start);
+    }
+  };
 
   return (
     <>
+      <div className="px-5">
+        <h1 className="text-center">
+          <span className="block text-4xl font-bold">One Number to rule them all</span>
+        </h1>
+      </div>
       <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center">
-            <span className="block text-4xl font-bold">One Number to rule them all</span>
-          </h1>
-        </div>
-
-        <div>
-          <InputBase
-            onChange={
-              (value) => {
-                const number = parseInt(value);
-                if (!Number.isNaN(number) && (number > 0)) {
-                  setNumber(number);
-                }
-              }
-            }
-            placeholder={"Number"}
+        {phase == Phases.Start && (
+          <StartPhase
+            cost={BigInt(cost)}
+            blindDuration={blindDuration}
+            revealDuration={revealDuration}
+            setCost={setCost}
+            setBlindDuration={setBlindDuration}
+            setRevealDuration={setRevealDuration}
+            setGameId={setGameId}
+            nextPhase={nextPhase}
           />
-          <InputBase
-            onChange={
-              (secret) => {
-                setSecret(secret);
-              }
-            }
-            placeholder={"Secret"}
+        )}
+        {phase == Phases.Commit && (
+          <CommitPhase
+            gameId={gameId}
+            cost={BigInt(cost)}
+            number={number}
+            secret={secret}
+            blindedNumber={blindedNumber}
+            setNumber={setNumber}
+            setSecret={setSecret}
+            setBlindedNumber={setBlindedNumber}
+            nextPhase={nextPhase}
           />
-
-          {blindedNumber && blindedNumber}
-        </div>
-
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contract
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-          </div>
-        </div>
+        )}
+        {phase == Phases.Reveal && <RevealPhase selectedNumber={number} nextPhase={nextPhase} />}
+        {phase == Phases.EndGame && <EndGamePhase selectedNumber={number} />}
       </div>
     </>
   );

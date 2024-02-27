@@ -22,6 +22,8 @@ contract OneNumber {
     uint public numGames;
     mapping(uint => Game) public games;
 
+    event GameCreated(uint gameId);
+
     error InvalidCost();
     error InvalidGame();
     error BlindedNumberTooLate();
@@ -44,6 +46,8 @@ contract OneNumber {
         game.revealDuration = revealDuration;
         game.start = uint32(block.timestamp);
 
+        emit GameCreated(gameId);
+        
         return gameId;
     }
 
