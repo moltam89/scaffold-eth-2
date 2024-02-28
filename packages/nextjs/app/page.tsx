@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Winner } from "./onenumber/Winner";
 import { ethers } from "ethers";
 import type { NextPage } from "next";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { InputBase } from "~~/components/scaffold-eth";
+//import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 import { getAllContracts } from "~~/utils/scaffold-eth/contractsData";
 
 const contractsData = getAllContracts();
@@ -55,6 +57,28 @@ const Home: NextPage = () => {
     fetchGameData();
   }, [oneNumberContract.address, oneNumberContract.abi, publicClient]);
 
+  //const {
+  //  data: revealedNumberEvents,
+  //} = useScaffoldEventHistory({
+  //  contractName: "OneNumber",
+  //  eventName: "RevealNumber",
+  //  fromBlock: 54030525n,
+  //  watch: true,
+  //  filters: { gameId: numGames ? numGames -1 : 1 },
+  //});
+  //console.log("revealedNumberEvents", revealedNumberEvents);
+  //
+  //const {
+  //  data: winnerEvents,
+  //} = useScaffoldEventHistory({
+  //  contractName: "OneNumber",
+  //  eventName: "Winner",
+  //  fromBlock: 54030525n,
+  //  watch: true,
+  //  filters: { gameId: numGames ? numGames -1 : 1 },
+  //});
+  //console.log("winnerEvents", winnerEvents);
+
   const currentTimeStamp = Math.floor(new Date().getTime() / 1000);
 
   const isBiddingPhase = currentGame && currentTimeStamp < currentGame[START_INDEX] + currentGame[BLIND_DURATION_INDEX];
@@ -63,6 +87,11 @@ const Home: NextPage = () => {
     currentTimeStamp > currentGame[START_INDEX] + currentGame[BLIND_DURATION_INDEX] &&
     currentTimeStamp <
       currentGame[START_INDEX] + currentGame[BLIND_DURATION_INDEX] + currentGame[REVEAL_DURATION_INDEX];
+
+  //const isGameEnded =
+  //  currentGame &&
+  //  currentTimeStamp >
+  //    currentGame[START_INDEX] + currentGame[BLIND_DURATION_INDEX] + currentGame[REVEAL_DURATION_INDEX];
 
   const [number, setNumber] = useState<number | null>(null);
   const [secret, setSecret] = useState<string>("");
@@ -108,55 +137,68 @@ const Home: NextPage = () => {
         </div>
 
         <div className="flex items-center flex-col">
-          <div>
-            <InputBase onChange={handleChangeNumber} placeholder={"Number"} value={number ? number.toString() : ""} />
-          </div>
+          {isBiddingPhase || isRevealPhase ? (
+            <>
+              <div>
+                <InputBase
+                  onChange={handleChangeNumber}
+                  placeholder={"Number"}
+                  value={number ? number.toString() : ""}
+                />
+              </div>
+              <div>
+                <InputBase onChange={handleChangeSecret} placeholder={"Secret"} value={secret} />
+              </div>
 
-          <div>
-            <InputBase onChange={handleChangeSecret} placeholder={"Secret"} value={secret} />
-          </div>
+              <div>{blindedNumber && blindedNumber}</div>
 
-          <div>{blindedNumber && blindedNumber}</div>
+              <div>
+                <button
+                  className="btn btn-primary btn-sm"
+                  disabled={!blindedNumber}
+                  onClick={async () => {
+                    console.log("yo");
 
-          <div>
-            <button
-              className="btn btn-primary btn-sm"
-              disabled={!blindedNumber}
-              onClick={async () => {
-                console.log("yo");
+                    if (isBiddingPhase) {
+                      const { request } = await publicClient.simulateContract({
+                        account: address,
+                        address: oneNumberContract.address,
+                        abi: oneNumberContract.abi,
+                        functionName: "setBlindedNumber",
+                        value: currentGame ? currentGame[COST_INDEX] : 0n,
+                        args: [(numGames ?? 1) - 1, blindedNumber],
+                      });
 
-                if (isBiddingPhase) {
-                  const { request } = await publicClient.simulateContract({
-                    account: address,
-                    address: oneNumberContract.address,
-                    abi: oneNumberContract.abi,
-                    functionName: "setBlindedNumber",
-                    value: currentGame ? currentGame[COST_INDEX] : 0n,
-                    args: [(numGames ?? 1) - 1, blindedNumber],
-                  });
+                      if (walletClient) {
+                        await walletClient.writeContract(request);
+                      }
+                    } else {
+                      const { request } = await publicClient.simulateContract({
+                        account: address,
+                        address: oneNumberContract.address,
+                        abi: oneNumberContract.abi,
+                        functionName: "revealNumber",
+                        args: [(numGames ?? 1) - 1, number, secret],
+                      });
 
-                  if (walletClient) {
-                    await walletClient.writeContract(request);
-                  }
-                } else {
-                  const { request } = await publicClient.simulateContract({
-                    account: address,
-                    address: oneNumberContract.address,
-                    abi: oneNumberContract.abi,
-                    functionName: "revealNumber",
-                    args: [(numGames ?? 1) - 1, number, secret],
-                  });
+                      if (walletClient) {
+                        await walletClient.writeContract(request);
+                      }
+                    }
+                  }}
+                  type="button"
+                >
+                  {isBiddingPhase ? "Submit Blinded Number" : "Reveal Number"}
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="font-bold">Game Over</div>
 
-                  if (walletClient) {
-                    await walletClient.writeContract(request);
-                  }
-                }
-              }}
-              type="button"
-            >
-              {isBiddingPhase ? "Submit Blinded Number" : "Reveal Number"}
-            </button>
-          </div>
+              <div>{numGames && <Winner gameId={1} />}</div>
+            </>
+          )}
         </div>
 
         <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
