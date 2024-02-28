@@ -58,8 +58,6 @@ export const NumberSecret = ({
 
   return (
     <>
-      <div>NumberSecret</div>
-
       <div>{blindedNumber && blindedNumber}</div>
 
       <div>
