@@ -18,5 +18,15 @@ export const Reveal = ({ gameId, game, oneNumberContract, isBlindedNumberExist }
     return <>{"You haven't submitted a number"}</>;
   }
 
-  return <NumberSecret gameId={gameId} game={game} oneNumberContract={oneNumberContract} isBiddingPhase={false} />;
+  return (
+    <NumberSecret
+      gameId={gameId}
+      game={game}
+      oneNumberContract={oneNumberContract}
+      isBiddingPhase={false}
+      setBlindedNumberExists={bool => {
+        console.log(bool);
+      }}
+    />
+  );
 };

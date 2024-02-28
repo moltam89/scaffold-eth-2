@@ -7,9 +7,16 @@ interface GameProps {
   game: bigint[];
   oneNumberContract: GenericContract;
   isBlindedNumberExist: boolean;
+  setBlindedNumberExists: (type: boolean) => void;
 }
 
-export const Bidding = ({ gameId, game, oneNumberContract, isBlindedNumberExist }: GameProps) => {
+export const Bidding = ({
+  gameId,
+  game,
+  oneNumberContract,
+  isBlindedNumberExist,
+  setBlindedNumberExists,
+}: GameProps) => {
   if (!gameId || !game) {
     return <></>;
   }
@@ -18,5 +25,13 @@ export const Bidding = ({ gameId, game, oneNumberContract, isBlindedNumberExist 
     return <>You have submitted your number!</>;
   }
 
-  return <NumberSecret gameId={gameId} game={game} oneNumberContract={oneNumberContract} isBiddingPhase={true} />;
+  return (
+    <NumberSecret
+      gameId={gameId}
+      game={game}
+      oneNumberContract={oneNumberContract}
+      isBiddingPhase={true}
+      setBlindedNumberExists={setBlindedNumberExists}
+    />
+  );
 };

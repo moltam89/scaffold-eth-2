@@ -10,9 +10,16 @@ interface NumberSecretProps {
   game: bigint[];
   oneNumberContract: GenericContract;
   isBiddingPhase: boolean;
+  setBlindedNumberExists: (type: boolean) => void;
 }
 
-export const NumberSecret = ({ gameId, game, oneNumberContract, isBiddingPhase }: NumberSecretProps) => {
+export const NumberSecret = ({
+  gameId,
+  game,
+  oneNumberContract,
+  isBiddingPhase,
+  setBlindedNumberExists,
+}: NumberSecretProps) => {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { address } = useAccount();
@@ -78,6 +85,7 @@ export const NumberSecret = ({ gameId, game, oneNumberContract, isBiddingPhase }
 
               if (walletClient) {
                 await walletClient.writeContract(request);
+                setBlindedNumberExists(true);
               }
             } else {
               const { request } = await publicClient.simulateContract({

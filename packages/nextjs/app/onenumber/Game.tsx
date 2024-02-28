@@ -81,6 +81,7 @@ export const Game = ({ gameId, game, oneNumberContract }: GameProps) => {
           game={game}
           oneNumberContract={oneNumberContract}
           isBlindedNumberExist={blindedNumberExists}
+          setBlindedNumberExists={setBlindedNumberExists}
         />
       )}
       {isRevealPhase && (
