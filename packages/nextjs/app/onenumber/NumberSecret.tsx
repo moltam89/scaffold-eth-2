@@ -28,6 +28,7 @@ export const NumberSecret = ({
   const [secret, setSecret] = useState<string>("");
 
   const [blindedNumber, setBlindedNumber] = useState<string | null>(null);
+  const [buttonLoading, setButtonLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!number || !secret) {
@@ -72,6 +73,7 @@ export const NumberSecret = ({
           disabled={!blindedNumber}
           onClick={async () => {
             console.log("yo");
+            setButtonLoading(true);
 
             if (isBiddingPhase) {
               const { request } = await publicClient.simulateContract({
@@ -100,9 +102,12 @@ export const NumberSecret = ({
                 await walletClient.writeContract(request);
               }
             }
+
+            setButtonLoading(false);
           }}
           type="button"
         >
+          {buttonLoading && <span className="loading loading-spinner loading-xs"></span>}
           {isBiddingPhase ? "Submit Blinded Number" : "Reveal Number"}
         </button>
       </div>
