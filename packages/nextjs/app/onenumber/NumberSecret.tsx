@@ -72,8 +72,8 @@ export const NumberSecret = ({ gameId, game, oneNumberContract, isBiddingPhase }
                 address: oneNumberContract.address,
                 abi: oneNumberContract.abi,
                 functionName: "setBlindedNumber",
-                value: game[COST_INDEX] ?? 0n,
-                args: [gameId],
+                value: game[COST_INDEX],
+                args: [gameId, blindedNumber],
               });
 
               if (walletClient) {
@@ -85,7 +85,7 @@ export const NumberSecret = ({ gameId, game, oneNumberContract, isBiddingPhase }
                 address: oneNumberContract.address,
                 abi: oneNumberContract.abi,
                 functionName: "revealNumber",
-                args: [gameId],
+                args: [gameId, number, secret],
               });
 
               if (walletClient) {
