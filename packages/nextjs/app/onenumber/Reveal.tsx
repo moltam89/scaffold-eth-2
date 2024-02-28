@@ -9,14 +9,14 @@ interface GameProps {
   isBlindedNumberExist: boolean;
 }
 
-export const Bidding = ({ gameId, game, oneNumberContract, isBlindedNumberExist }: GameProps) => {
+export const Reveal = ({ gameId, game, oneNumberContract, isBlindedNumberExist }: GameProps) => {
   if (!gameId || !game) {
     return <></>;
   }
 
-  if (isBlindedNumberExist) {
-    return <>You have submitted your number!</>;
+  if (!isBlindedNumberExist) {
+    return <>{"You haven't submitted a number"}</>;
   }
 
-  return <NumberSecret gameId={gameId} game={game} oneNumberContract={oneNumberContract} isBiddingPhase={true} />;
+  return <NumberSecret gameId={gameId} game={game} oneNumberContract={oneNumberContract} isBiddingPhase={false} />;
 };
