@@ -1,12 +1,15 @@
 import React from "react";
 import { BLIND_DURATION_INDEX, START_INDEX } from "./Game";
+import { NumberSecret } from "./NumberSecret";
+import { GenericContract } from "~~/utils/scaffold-eth/contract";
 
 interface GameProps {
   gameId: number;
-  game: Array<bigint> | null;
+  game: bigint[];
+  oneNumberContract: GenericContract;
 }
 
-export const Bidding = ({ gameId, game }: GameProps) => {
+export const Bidding = ({ gameId, game, oneNumberContract }: GameProps) => {
   if (!gameId || !game) {
     return <></>;
   }
@@ -18,5 +21,5 @@ export const Bidding = ({ gameId, game }: GameProps) => {
     return <></>;
   }
 
-  return <div className="flex items-center flex-col">Bidding</div>;
+  return <NumberSecret gameId={gameId} game={game} oneNumberContract={oneNumberContract} isBiddingPhase={true} />;
 };

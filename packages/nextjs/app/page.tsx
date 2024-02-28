@@ -3,30 +3,18 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Game } from "./onenumber/Game";
-import { Winner } from "./onenumber/Winner";
-import { ethers } from "ethers";
 import type { NextPage } from "next";
-import { useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { usePublicClient } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { InputBase } from "~~/components/scaffold-eth";
-//import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 import { getAllContracts } from "~~/utils/scaffold-eth/contractsData";
 
 const contractsData = getAllContracts();
 
-const COST_INDEX = 0;
-const BLIND_DURATION_INDEX = 1;
-const REVEAL_DURATION_INDEX = 2;
-const START_INDEX = 3;
-//const PRIZE_INDEX = 4;
-
 const Home: NextPage = () => {
   const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
-
-  const { address } = useAccount();
 
   const oneNumberContract = contractsData["OneNumber"];
+  console.log("oneNumberContract", oneNumberContract);
 
   const [numGames, setNumGames] = useState<number | null>(null);
   const [currentGame, setCurrentGame] = useState<Array<bigint> | null>(null);
@@ -80,48 +68,18 @@ const Home: NextPage = () => {
   //});
   //console.log("winnerEvents", winnerEvents);
 
-  const currentTimeStamp = Math.floor(new Date().getTime() / 1000);
+  //const currentTimeStamp = Math.floor(new Date().getTime() / 1000);
 
-  const isBiddingPhase = currentGame && currentTimeStamp < currentGame[START_INDEX] + currentGame[BLIND_DURATION_INDEX];
-  const isRevealPhase =
-    currentGame &&
-    currentTimeStamp > currentGame[START_INDEX] + currentGame[BLIND_DURATION_INDEX] &&
-    currentTimeStamp <
-      currentGame[START_INDEX] + currentGame[BLIND_DURATION_INDEX] + currentGame[REVEAL_DURATION_INDEX];
+  //const isRevealPhase =
+  //  currentGame &&
+  //  currentTimeStamp > currentGame[START_INDEX] + currentGame[BLIND_DURATION_INDEX] &&
+  //  currentTimeStamp <
+  //    currentGame[START_INDEX] + currentGame[BLIND_DURATION_INDEX] + currentGame[REVEAL_DURATION_INDEX];
 
   //const isGameEnded =
   //  currentGame &&
   //  currentTimeStamp >
   //    currentGame[START_INDEX] + currentGame[BLIND_DURATION_INDEX] + currentGame[REVEAL_DURATION_INDEX];
-
-  const [number, setNumber] = useState<number | null>(null);
-  const [secret, setSecret] = useState<string>("");
-
-  const [blindedNumber, setBlindedNumber] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!number || !secret) {
-      setBlindedNumber(null);
-
-      return;
-    }
-
-    setBlindedNumber(ethers.utils.solidityKeccak256(["uint256", "string"], [number, secret]));
-  }, [number, secret]);
-
-  const handleChangeNumber = (newValue: string) => {
-    const number = parseInt(newValue);
-
-    if (!Number.isNaN(number) && number > 0) {
-      setNumber(number);
-    } else {
-      setNumber(null);
-    }
-  };
-
-  const handleChangeSecret = (newValue: string) => {
-    setSecret(newValue);
-  };
 
   return (
     <>
@@ -132,71 +90,9 @@ const Home: NextPage = () => {
           </h1>
         </div>
 
-        <div>{isRevealPhase && "Time to reveal your Number"}</div>
-
-        <div className="flex items-center flex-col">
-          {isBiddingPhase || isRevealPhase ? (
-            <>
-              <div>
-                <InputBase
-                  onChange={handleChangeNumber}
-                  placeholder={"Number"}
-                  value={number ? number.toString() : ""}
-                />
-              </div>
-              <div>
-                <InputBase onChange={handleChangeSecret} placeholder={"Secret"} value={secret} />
-              </div>
-
-              <div>{blindedNumber && blindedNumber}</div>
-
-              <div>
-                <button
-                  className="btn btn-primary btn-sm"
-                  disabled={!blindedNumber}
-                  onClick={async () => {
-                    console.log("yo");
-
-                    if (isBiddingPhase) {
-                      const { request } = await publicClient.simulateContract({
-                        account: address,
-                        address: oneNumberContract.address,
-                        abi: oneNumberContract.abi,
-                        functionName: "setBlindedNumber",
-                        value: currentGame ? currentGame[COST_INDEX] : 0n,
-                        args: [(numGames ?? 1) - 1, blindedNumber],
-                      });
-
-                      if (walletClient) {
-                        await walletClient.writeContract(request);
-                      }
-                    } else {
-                      const { request } = await publicClient.simulateContract({
-                        account: address,
-                        address: oneNumberContract.address,
-                        abi: oneNumberContract.abi,
-                        functionName: "revealNumber",
-                        args: [(numGames ?? 1) - 1, number, secret],
-                      });
-
-                      if (walletClient) {
-                        await walletClient.writeContract(request);
-                      }
-                    }
-                  }}
-                  type="button"
-                >
-                  {isBiddingPhase ? "Submit Blinded Number" : "Reveal Number"}
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="font-bold">Game Over</div>
-
-              <div>{numGames && currentGame && <Game gameId={numGames - 1} game={currentGame} />}</div>
-              <div>{numGames && <Winner gameId={1} />}</div>
-            </>
+        <div>
+          {numGames && currentGame && (
+            <Game gameId={numGames - 1} game={currentGame} oneNumberContract={oneNumberContract} />
           )}
         </div>
 
