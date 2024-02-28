@@ -17,7 +17,7 @@ export const Winner = ({ gameId }: WinnerProps) => {
   console.log("winnerEvents", winnerEvents, gameId);
 
   if (!winnerEvents || winnerEvents.length == 0) {
-    return <div>yoooo</div>;
+    return <div>Waiting for the game results...</div>;
   }
 
   return (

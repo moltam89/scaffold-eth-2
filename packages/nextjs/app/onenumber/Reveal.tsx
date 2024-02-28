@@ -27,7 +27,7 @@ export const Reveal = ({
     return <>{"You haven't submitted a number"}</>;
   }
 
-  if (!isRevealedNumberExist) {
+  if (isRevealedNumberExist) {
     return <>{"You have revealed your number"}</>;
   }
 

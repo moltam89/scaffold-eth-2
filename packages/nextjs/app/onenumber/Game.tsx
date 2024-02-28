@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Bidding } from "./Bidding";
 import { Reveal } from "./Reveal";
+import { Winner } from "./Winner";
 import { useAccount } from "wagmi";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 import { GenericContract } from "~~/utils/scaffold-eth/contract";
@@ -101,6 +102,7 @@ export const Game = ({ gameId, game, oneNumberContract }: GameProps) => {
   const isRevealPhase =
     currentTimeStamp >= game[START_INDEX] + game[BLIND_DURATION_INDEX] &&
     currentTimeStamp <= game[START_INDEX] + game[BLIND_DURATION_INDEX] + game[REVEAL_DURATION_INDEX];
+  const isGameEnded = currentTimeStamp > game[START_INDEX] + game[BLIND_DURATION_INDEX] + game[REVEAL_DURATION_INDEX];
 
   console.log(currentTimeStamp, isBiddingPhase, isRevealPhase);
 
@@ -125,6 +127,7 @@ export const Game = ({ gameId, game, oneNumberContract }: GameProps) => {
           setRevealedNumberExists={setRevealedNumberExists}
         />
       )}
+      {isGameEnded && <Winner gameId={gameId} />}
     </div>
   );
 };
