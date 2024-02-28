@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Game } from "./onenumber/Game";
 import { Winner } from "./onenumber/Winner";
 import { ethers } from "ethers";
 import type { NextPage } from "next";
@@ -196,6 +197,7 @@ const Home: NextPage = () => {
             <>
               <div className="font-bold">Game Over</div>
 
+              <div>{numGames && currentGame && <Game gameId={numGames - 1} game={currentGame} />}</div>
               <div>{numGames && <Winner gameId={1} />}</div>
             </>
           )}
