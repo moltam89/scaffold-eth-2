@@ -132,10 +132,7 @@ const Home: NextPage = () => {
           </h1>
         </div>
 
-        <div>
-          {isBiddingPhase && "Time to submit your Number"}
-          {isRevealPhase && "Time to reveal your Number"}
-        </div>
+        <div>{isRevealPhase && "Time to reveal your Number"}</div>
 
         <div className="flex items-center flex-col">
           {isBiddingPhase || isRevealPhase ? (
