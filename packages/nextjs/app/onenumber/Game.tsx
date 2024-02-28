@@ -40,7 +40,6 @@ export const Game = ({ gameId, game, oneNumberContract }: GameProps) => {
     watch: true,
     filters: { gameId: BigInt(gameId) },
   });
-
   useEffect(() => {
     setBlindedNumberEventsLoading(isBlindedNumberEventsLoading);
 
@@ -48,7 +47,6 @@ export const Game = ({ gameId, game, oneNumberContract }: GameProps) => {
       setBlindedNumberEventsReady(true);
     }
   }, [isBlindedNumberEventsLoading, blindedNumberEventsLoading]);
-
   useEffect(() => {
     if (!blindedNumberEventsReady) {
       return;
@@ -62,7 +60,40 @@ export const Game = ({ gameId, game, oneNumberContract }: GameProps) => {
     setBlindedNumberExists(isBlindedNumberExist);
   }, [blindedNumberEventsReady, address, blindedNumberEvents]);
 
-  if (!gameId || !game || !blindedNumberEventsReady) {
+  const [revealedNumberExists, setRevealedNumberExists] = useState<boolean>(false);
+  const [revealedNumberEventsReady, setRevealedNumberEventsReady] = useState<boolean>(false);
+  const [revealedNumberEventsLoading, setRevealedNumberEventsLoading] = useState<boolean>(false);
+
+  const { data: revealedNumberEvents, isLoading: isRevealedNumberEventsLoading } = useScaffoldEventHistory({
+    contractName: "OneNumber",
+    eventName: "RevealNumber",
+    fromBlock: 54030525n,
+    watch: true,
+    filters: { gameId: BigInt(gameId) },
+  });
+  useEffect(() => {
+    setRevealedNumberEventsLoading(isRevealedNumberEventsLoading);
+
+    if (revealedNumberEventsLoading && !isRevealedNumberEventsLoading) {
+      setRevealedNumberEventsReady(true);
+    }
+  }, [isRevealedNumberEventsLoading, revealedNumberEventsLoading]);
+  useEffect(() => {
+    if (!revealedNumberEventsReady) {
+      return;
+    }
+
+    let isRevealedNumberExist = false;
+    if (revealedNumberEvents && revealedNumberEvents.length > 0) {
+      isRevealedNumberExist = revealedNumberEvents.find(event => event.args.player === address) ? true : false;
+    }
+
+    setRevealedNumberExists(isRevealedNumberExist);
+  }, [revealedNumberEventsReady, address, revealedNumberEvents]);
+
+  console.log("revealedNumberEvents", revealedNumberEvents);
+
+  if (!gameId || !game || !blindedNumberEventsReady || !revealedNumberEventsReady) {
     return <></>;
   }
 
@@ -90,6 +121,8 @@ export const Game = ({ gameId, game, oneNumberContract }: GameProps) => {
           game={game}
           oneNumberContract={oneNumberContract}
           isBlindedNumberExist={blindedNumberExists}
+          isRevealedNumberExist={revealedNumberExists}
+          setRevealedNumberExists={setRevealedNumberExists}
         />
       )}
     </div>

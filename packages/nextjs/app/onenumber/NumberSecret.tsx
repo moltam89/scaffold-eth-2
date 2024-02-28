@@ -11,6 +11,7 @@ interface NumberSecretProps {
   oneNumberContract: GenericContract;
   isBiddingPhase: boolean;
   setBlindedNumberExists: (type: boolean) => void;
+  setRevealedNumberExists: (type: boolean) => void;
 }
 
 export const NumberSecret = ({
@@ -19,6 +20,7 @@ export const NumberSecret = ({
   oneNumberContract,
   isBiddingPhase,
   setBlindedNumberExists,
+  setRevealedNumberExists,
 }: NumberSecretProps) => {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
@@ -100,6 +102,7 @@ export const NumberSecret = ({
 
               if (walletClient) {
                 await walletClient.writeContract(request);
+                setRevealedNumberExists(true);
               }
             }
 

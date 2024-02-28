@@ -32,6 +32,9 @@ export const Bidding = ({
       oneNumberContract={oneNumberContract}
       isBiddingPhase={true}
       setBlindedNumberExists={setBlindedNumberExists}
+      setRevealedNumberExists={bool => {
+        console.log(bool);
+      }}
     />
   );
 };
