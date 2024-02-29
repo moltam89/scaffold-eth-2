@@ -14,9 +14,12 @@ contract OneNumber {
         uint32 revealDuration;
         uint32 start;
         uint88 prize;
-        mapping(address => bytes32) blindedNumbers;
+        mapping(address => bytes32) blindedNumbersMap;
         mapping(uint => NumberData) revealedNumbersData;
         uint[] revealedNumbers;
+        mapping(address => uint) revealedNumbersMap;
+        address winningAddress;
+        uint winningNumber;
     }
 
     uint public numGames;
@@ -26,6 +29,7 @@ contract OneNumber {
     event BlindedNumber(uint indexed gameId, address player);
     event RevealNumber(uint indexed gameId, address player, uint indexed number);
     event Winner(uint indexed gameId, address winner, uint number);
+    event ClaimedWinner(uint indexed gameId, address winner, uint number);
 
     error InvalidCost();
     error InvalidGame();
@@ -36,8 +40,14 @@ contract OneNumber {
     error RevealIncorrect();
     error BlindedNumberMissing();
     error EndGameTooEarly();
+    error ClaimEndGameTooEarly();
+    error ClaimWinnerTooEarly();
     error GameEnded();
     error NoPlayers();
+    error NoZero();
+    error AlreadyRevealed();
+    error NotTheWinner();
+    error WinnerNotClaimed();
 
     function newGame(uint72 cost, uint32 blindDuration, uint32 revealDuration) external returns (uint gameId) {
         gameId = numGames++;
@@ -69,11 +79,11 @@ contract OneNumber {
             revert BlindedNumberTooLate();
         }
 
-        if (game.blindedNumbers[msg.sender] != 0) {
+        if (game.blindedNumbersMap[msg.sender] != 0) {
             revert OnlyOneNumber();
         }
 
-        game.blindedNumbers[msg.sender] = blindedNumber;
+        game.blindedNumbersMap[msg.sender] = blindedNumber;
 
         game.prize += uint88(msg.value);
 
@@ -99,7 +109,11 @@ contract OneNumber {
             revert RevealTooLate();
         }
 
-        bytes32 storedBlindedNumber = game.blindedNumbers[msg.sender];
+        if (number == 0) {
+            revert NoZero();
+        }
+
+        bytes32 storedBlindedNumber = game.blindedNumbersMap[msg.sender];
 
         if (storedBlindedNumber == 0) {
             revert BlindedNumberMissing();
@@ -108,6 +122,12 @@ contract OneNumber {
         if (storedBlindedNumber != blindedNumber) {
             revert RevealIncorrect();
         }
+
+        if (game.revealedNumbersMap[msg.sender] != 0) {
+            revert AlreadyRevealed();
+        }
+
+        game.revealedNumbersMap[msg.sender] = number;
 
         NumberData storage numberData = game.revealedNumbersData[number];
 
@@ -173,5 +193,72 @@ contract OneNumber {
         payable(winner).transfer(prize);
 
         emit Winner(gameId, winner, lowestUniqueNumber);
+    }
+
+    function claimWinningNumber(uint gameId, address winner, uint number) external {
+        Game storage game = games[gameId];
+
+        if (block.timestamp <= game.start + game.blindDuration + game.revealDuration) {
+            revert ClaimWinnerTooEarly();
+        }
+
+        uint[] memory revealedNumbers = game.revealedNumbers;
+
+        if (revealedNumbers.length == 0) {
+            revert NoPlayers();
+        }
+
+        if (game.prize == 0) {
+            revert GameEnded();
+        }
+
+        NumberData memory numberData = game.revealedNumbersData[number];
+
+        if (numberData.player != winner) {
+            revert NotTheWinner();
+        }
+
+        if (numberData.count != 1) {
+            revert NotTheWinner();
+        }
+
+        if ((number > game.winningNumber) && (game.winningNumber != 0)) {
+            revert NotTheWinner();
+        }
+
+        game.winningAddress = winner;
+        game.winningNumber = number;
+
+        emit ClaimedWinner(gameId, winner, number);
+    }
+
+    function claimEndGame(uint gameId) external {
+        Game storage game = games[gameId];
+
+        if (block.timestamp <= game.start + 2 * (game.blindDuration + game.revealDuration)) {
+            revert ClaimEndGameTooEarly();
+        }
+
+        uint[] memory revealedNumbers = game.revealedNumbers;
+
+        if (revealedNumbers.length == 0) {
+            revert NoPlayers();
+        }
+
+        if (game.prize == 0) {
+            revert GameEnded();
+        }
+
+        if (game.winningNumber == 0) {
+            revert WinnerNotClaimed();
+        }
+
+        uint prize = game.prize;
+
+        game.prize = 0;
+
+        payable(game.winningAddress).transfer(prize);
+
+        emit Winner(gameId, game.winningAddress, game.winningNumber);
     }
 }
