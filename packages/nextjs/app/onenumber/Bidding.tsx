@@ -1,4 +1,5 @@
 import React from "react";
+import { CountdownTimer } from "../CountdownTimer";
 import { NumberSecret } from "./NumberSecret";
 import { GenericContract } from "~~/utils/scaffold-eth/contract";
 
@@ -21,20 +22,32 @@ export const Bidding = ({
     return <></>;
   }
 
-  if (isBlindedNumberExist) {
-    return <>You have submitted your number!</>;
-  }
+  const startTime = Number(game[3].toString() + "000");
+  const blindDuration = Number(game[1].toString() + "000");
 
   return (
-    <NumberSecret
-      gameId={gameId}
-      game={game}
-      oneNumberContract={oneNumberContract}
-      isBiddingPhase={true}
-      setBlindedNumberExists={setBlindedNumberExists}
-      setRevealedNumberExists={bool => {
-        console.log(bool);
-      }}
-    />
+    <>
+      <CountdownTimer
+        endTime={startTime + blindDuration}
+        text="Time until next phase:"
+        passedTimeAction={() => {
+          return;
+        }}
+      />
+      {isBlindedNumberExist ? (
+        <>You have submitted your number!</>
+      ) : (
+        <NumberSecret
+          gameId={gameId}
+          game={game}
+          oneNumberContract={oneNumberContract}
+          isBiddingPhase={true}
+          setBlindedNumberExists={setBlindedNumberExists}
+          setRevealedNumberExists={bool => {
+            console.log(bool);
+          }}
+        />
+      )}
+    </>
   );
 };

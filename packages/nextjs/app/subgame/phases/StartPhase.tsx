@@ -13,7 +13,7 @@ interface StartPhaseProps {
   setCost: (cost: bigint) => void;
   setBlindDuration: (blindDuration: number) => void;
   setRevealDuration: (revealDuration: number) => void;
-  nextPhase: () => void;
+  nextPhase: (start?: number) => void;
 }
 
 export const StartPhase = ({
@@ -42,13 +42,14 @@ export const StartPhase = ({
       const gameId = BigInt(receipt.logs[0].data);
       setGameId(gameId);
       if (!gameId) return;
-      const gameData = await getGameData(BigInt(gameId));
+      const gameData = await getGameData(gameId);
       const { cost: gameCost, blindDuration: gameBlindDuration, revealDuration: gameRevealDuration, start } = gameData;
+      console.log("gameData", gameData);
       setStartTime(start);
       setCost(gameCost);
       setBlindDuration(gameBlindDuration);
       setRevealDuration(gameRevealDuration);
-      nextPhase();
+      nextPhase(start);
     },
   });
 
