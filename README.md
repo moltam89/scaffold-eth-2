@@ -1,3 +1,9 @@
+# OneNumber game
+OneNumber is a simple game, players have to pick a number, the winner is the lowest unique number. 
+Commit-reveal pattern is used, built with scaffold-eth-2
+
+https://onenumber.vercel.app/
+
 # 🏗 Scaffold-ETH 2
 
 <h4 align="center">
