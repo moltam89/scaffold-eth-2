@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CountdownTimer } from "../CountdownTimer";
+import { useState } from "react";
 // import { useSearchParams } from "next/navigation";
 import { CommitPhase } from "./phases/CommitPhase";
 import { EndGamePhase } from "./phases/EndGamePhase";
@@ -21,11 +20,6 @@ const SubGame: NextPage = () => {
   const [number, setNumber] = useState<number>(0);
   const [secret, setSecret] = useState<string>("");
   const [blindedNumber, setBlindedNumber] = useState<string>("");
-  const [blindedNumberCommitted, setBlindedNumberCommitted] = useState<boolean>(false);
-  const [numberRevealed, setNumberRevealed] = useState<boolean>(false);
-  const [passedTimeAction, setPassedTimeAction] = useState<() => void>(() => {
-    console.log("time is passed");
-  });
 
   // const searchParams = useSearchParams();
   // const urlGameId = searchParams.get("gameId");
@@ -34,14 +28,19 @@ const SubGame: NextPage = () => {
   //   setPhase(Phases.Commit);
   // }
 
-  const nextPhase = () => {
+  const nextPhase = (start?: number) => {
     console.log("currentPhase", phase);
     if (phase == Phases.Start) {
       setPhase(Phases.Commit);
+      console.log("start", start);
+      console.log("startTime", startTime);
+      console.log("blindDuration", blindDuration);
+      setEndTime(((start || startTime) + blindDuration) * 1000);
       console.log("nextPhase", Phases.Commit);
     }
     if (phase == Phases.Commit) {
       setPhase(Phases.Reveal);
+      setEndTime((startTime + blindDuration + revealDuration) * 1000);
       console.log("nextPhase", Phases.Reveal);
     }
     if (phase == Phases.Reveal) {
@@ -54,26 +53,6 @@ const SubGame: NextPage = () => {
     }
   };
 
-  useEffect(() => {
-    if (phase == Phases.Commit) {
-      console.log("setting passedTimeAction");
-      setEndTime((startTime + blindDuration) * 1000);
-      setPassedTimeAction(() => {
-        if (blindedNumberCommitted) {
-          nextPhase();
-        }
-      });
-    }
-    if (phase == Phases.Reveal) {
-      setEndTime((startTime + blindDuration + revealDuration) * 1000);
-      setPassedTimeAction(() => {
-        if (numberRevealed) {
-          nextPhase();
-        }
-      });
-    }
-  }, [phase, blindDuration, revealDuration, startTime]);
-
   return (
     <>
       <div className="px-5">
@@ -82,7 +61,6 @@ const SubGame: NextPage = () => {
         </h1>
       </div>
       <div className="flex items-center flex-col flex-grow pt-10">
-        {phase != Phases.Start && <CountdownTimer endTime={endTime} passedTimeAction={passedTimeAction} />}
         {phase == Phases.Start && (
           <StartPhase
             cost={BigInt(cost)}
@@ -102,14 +80,23 @@ const SubGame: NextPage = () => {
             cost={BigInt(cost)}
             number={number}
             secret={secret}
+            endTime={endTime}
             blindedNumber={blindedNumber}
             setNumber={setNumber}
             setSecret={setSecret}
             setBlindedNumber={setBlindedNumber}
-            setBlindedNumberCommitted={setBlindedNumberCommitted}
+            nextPhase={nextPhase}
           />
         )}
-        {phase == Phases.Reveal && <RevealPhase selectedNumber={number} setNumberRevealed={setNumberRevealed} />}
+        {phase == Phases.Reveal && (
+          <RevealPhase
+            gameId={gameId}
+            selectedNumber={number}
+            secret={secret}
+            endTime={endTime}
+            nextPhase={nextPhase}
+          />
+        )}
         {phase == Phases.EndGame && <EndGamePhase selectedNumber={number} />}
       </div>
     </>

@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { encodePacked, keccak256 } from "viem";
+import { CountdownTimer } from "~~/app/CountdownTimer";
 import { InputBase } from "~~/components/scaffold-eth";
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
@@ -8,11 +9,12 @@ interface CommitPhaseProps {
   cost: bigint;
   number: number;
   secret: string;
+  endTime: number;
   blindedNumber: string;
   setNumber: (number: number) => void;
   setSecret: (secret: string) => void;
   setBlindedNumber: (blindedNumber: string) => void;
-  setBlindedNumberCommitted: (blindedNumberCommitted: boolean) => void;
+  nextPhase: () => void;
 }
 
 export const CommitPhase = ({
@@ -21,11 +23,19 @@ export const CommitPhase = ({
   number,
   secret,
   blindedNumber,
+  endTime,
   setNumber,
   setSecret,
   setBlindedNumber,
-  setBlindedNumberCommitted,
+  nextPhase,
 }: CommitPhaseProps) => {
+  const [blindedNumberCommitted, setBlindedNumberCommitted] = useState<boolean>(false);
+
+  const timeUpCheckActionCompleted = () => {
+    if (blindedNumberCommitted) {
+      nextPhase();
+    }
+  };
   useEffect(() => {
     if (!number || !secret) {
       return;
@@ -47,6 +57,7 @@ export const CommitPhase = ({
 
   return (
     <div className="my-10">
+      <CountdownTimer endTime={endTime} passedTimeAction={timeUpCheckActionCompleted} />
       <div>
         <InputBase
           value={number?.toString()}
