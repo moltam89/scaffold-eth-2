@@ -1,3 +1,10 @@
+# Uniswap V2 swap
+Start with **yarn fork** instead of yarn chain for local testing.
+
+
+https://github.com/user-attachments/assets/2d6c8900-51e0-40c2-a836-27ed45356a8e
+
+
 # 🏗 Scaffold-ETH 2
 
 <h4 align="center">
