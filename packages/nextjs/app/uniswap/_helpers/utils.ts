@@ -1,7 +1,7 @@
-import { isTokenWETH } from "./tokens";
+import { isTokenWETH, isTokensSame } from "./tokens";
 import { Token, TradeType } from "@uniswap/sdk-core";
 import { Trade } from "@uniswap/v2-sdk";
-import { parseEther, parseUnits } from "viem";
+import { parseEther, parseUnits, zeroAddress } from "viem";
 
 export function isValidAmount(amount: string): boolean {
   try {
@@ -36,6 +36,10 @@ export type Balance = {
   symbol: string;
   value: bigint;
 };
+
+export function checkNoPairExists(tokenA: Token, tokenB: Token, pairAddress: string | undefined): boolean {
+  return !isTokensSame(tokenA, tokenB) && pairAddress === zeroAddress;
+}
 
 export function checkEthEnough(
   trade: Trade<Token, Token, TradeType> | undefined,
@@ -90,7 +94,16 @@ export function checkApproval(allowance: bigint | undefined, parsedAmount: bigin
   return allowance >= requiredAllowance;
 }
 
-export function getDataTipMessage(isTokenEnough: boolean, isEthEnough: boolean, tokenA: Token): string {
+export function getDataTipMessage(
+  isNoPairExists: boolean,
+  isTokenEnough: boolean,
+  isEthEnough: boolean,
+  tokenA: Token,
+): string {
+  if (isNoPairExists) {
+    return "No pair exists for the selected tokens";
+  }
+
   if (!isTokenEnough) {
     return `Insufficient ${tokenA.symbol} balance`;
   } else if (!isEthEnough) {
@@ -106,7 +119,6 @@ export function checkSwapPossible(
   isTokenEnough: boolean,
   isApproved: boolean,
 ): boolean {
-
   if (!trade) {
     return false;
   }
