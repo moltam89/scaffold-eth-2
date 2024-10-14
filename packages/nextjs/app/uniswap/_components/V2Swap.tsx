@@ -114,7 +114,7 @@ export const V2Swap = () => {
   return (
     <div className="flex flex-col justify-center items-center bg-base-300 w-full mt-8 px-8 pt-6 pb-12">
       <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center w-full md:w-2/4 rounded-3xl mt-10">
-        <h3 className="text-2xl font-bold">Swap Tokens {chainId}</h3>
+        <h3 className="text-2xl font-bold">Swap Tokens</h3>
 
         <TokenPanel
           token={tokenA}
