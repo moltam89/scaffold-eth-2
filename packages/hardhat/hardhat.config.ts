@@ -44,10 +44,13 @@ const config: HardhatUserConfig = {
     // View the networks that are pre-configured.
     // If the network you are looking for is not here you can add new network settings
     hardhat: {
+      allowBlocksWithSameTimestamp: true,
       forking: {
         url: forkingURL,
+        blockNumber: 267523722,
         enabled: process.env.MAINNET_FORKING_ENABLED === "true",
       },
+      chainId: 42161,
     },
     mainnet: {
       url: `https://cloudflare-eth.com`,
