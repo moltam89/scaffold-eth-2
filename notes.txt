@@ -1,0 +1,39 @@
+// Tenderly simulation:
+https://dashboard.tenderly.co/moltam89/project/simulator/55639c6b-175e-40b4-b0dc-4c855fe66e0a
+
+// Parsed order
+{
+   "chainId":42161,
+   "permit2Address":"0x000000000022D473030F116dDEE9F6B43aC78BA3",
+   "reactor":"0x1bd1aAdc9E230626C44a139d7E70d842749351eb",
+   "swapper":"0x01f1642cCD7D9B6d350a40E58EB20efA8F536269",
+   "nonce":"89870122964449767953678845079086458213376210543041501666239387981061358157312",
+   "deadline":1729863871,
+   "additionalValidationContract":"0x0000000000000000000000000000000000000000",
+   "additionalValidationData":"0x",
+   "input":{
+      "token":"0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+      "startAmount":"1001376542",
+      "endAmount":"1001376542"
+   },
+   "outputs":[
+      {
+         "token":"0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+         "startAmount":"1002194155",
+         "endAmount":"997176267",
+         "recipient":"0x01f1642cCD7D9B6d350a40E58EB20efA8F536269"
+      }
+   ],
+   "cosigner":"0x4449Cd34d1eb1FEDCF02A1Be3834FfDe8E6A6180",
+   "cosignerData":{
+      "decayStartTime":1729863804,
+      "decayEndTime":1729863820,
+      "exclusiveFiller":"0x0000000000000000000000000000000000000000",
+      "exclusivityOverrideBps":100,
+      "inputOverride":"0",
+      "outputOverrides":[
+         "1002194155"
+      ]
+   },
+   "cosignature":"0x586b516924b46b7322e2ea74ccfa6c685a0fdc4bacc04081aec6fc4701445662281df99f65e0691533caf7226f33503ae1d1ed34532265256427a66a6202d3fa1c"
+}

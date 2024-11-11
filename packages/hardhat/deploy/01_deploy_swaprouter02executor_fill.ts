@@ -1,3 +1,5 @@
+import { ethers, network } from "hardhat";
+
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 
@@ -18,14 +20,17 @@ const deployUniswapX_Fill: DeployFunction = async function (hre: HardhatRuntimeE
     with a random private key in the .env file (then used on hardhat.config.ts)
     You can run the `yarn account` command to check your balance in every network.
   */
-  const { deployer } = await hre.getNamedAccounts();
+
   const { deploy } = hre.deployments;
 
+  const [deployer] = await ethers.getSigners();
+
+  await network.provider.send("evm_setNextBlockTimestamp", [1729863806]);
+
   await deploy("SwapRouter02Executor", {
-    from: deployer,
+    from: deployer.address,
     // Contract constructor arguments
     args: [
-      "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
       "0x1bd1aAdc9E230626C44a139d7E70d842749351eb",
       "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
       "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
@@ -33,8 +38,15 @@ const deployUniswapX_Fill: DeployFunction = async function (hre: HardhatRuntimeE
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
-    autoMine: true,
+    autoMine: false,
   });
+
+  await deployer.sendTransaction({
+    to: "0x1D47202c87939f3263A5469C9679169F6E2b7F57", // Replace with frontend address
+    value: ethers.parseEther("10"),
+  });
+
+  await network.provider.send("evm_setNextBlockTimestamp", [1729863806]);
 };
 
 export default deployUniswapX_Fill;

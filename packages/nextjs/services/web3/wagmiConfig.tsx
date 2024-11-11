@@ -1,6 +1,6 @@
 import { wagmiConnectors } from "./wagmiConnectors";
 import { Chain, createClient, fallback, http } from "viem";
-import { hardhat, mainnet } from "viem/chains";
+import { arbitrum, hardhat, mainnet } from "viem/chains";
 import { createConfig } from "wagmi";
 import scaffoldConfig from "~~/scaffold.config";
 import { getAlchemyHttpUrl } from "~~/utils/scaffold-eth";
@@ -17,7 +17,7 @@ export const wagmiConfig = createConfig({
   connectors: wagmiConnectors,
   ssr: true,
   client({ chain }) {
-    const alchemyHttpUrl = getAlchemyHttpUrl(chain.id);
+    const alchemyHttpUrl = chain.id == arbitrum.id ? "http://127.0.0.1:8545" : getAlchemyHttpUrl(chain.id);
     const rpcFallbacks = alchemyHttpUrl ? [http(), http(alchemyHttpUrl)] : [http()];
 
     return createClient({
