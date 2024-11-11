@@ -288,6 +288,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@banr1/uniswapx-sdk@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@banr1/uniswapx-sdk@npm:2.1.0"
+  dependencies:
+    "@ethersproject/bytes": ^5.7.0
+    "@ethersproject/providers": ^5.7.0
+    "@uniswap/permit2-sdk": ^1.2.0
+    "@uniswap/sdk-core": ^4.0.3
+    ethers: ^5.7.0
+  checksum: a1d46e649ffa561f5190d880a8cab98af924031181fabf92b3d9dfe1cc1a8abfbac2faf2829e1372394aafd89389dcdc9312b0de23800a7b81df11cc129398a0
+  languageName: node
+  linkType: hard
+
 "@coinbase/wallet-sdk@npm:4.1.0":
   version: 4.1.0
   resolution: "@coinbase/wallet-sdk@npm:4.1.0"
@@ -687,7 +700,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/providers@npm:5.7.2, @ethersproject/providers@npm:^5.7.2":
+"@ethersproject/providers@npm:5.7.2, @ethersproject/providers@npm:^5.7.0, @ethersproject/providers@npm:^5.7.2":
   version: 5.7.2
   resolution: "@ethersproject/providers@npm:5.7.2"
   dependencies:
@@ -2262,6 +2275,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@se-2/hardhat@workspace:packages/hardhat"
   dependencies:
+    "@banr1/uniswapx-sdk": ^2.1.0
     "@ethersproject/abi": ^5.7.0
     "@ethersproject/providers": ^5.7.2
     "@nomicfoundation/hardhat-chai-matchers": ^2.0.7
@@ -2285,6 +2299,7 @@ __metadata:
     eslint-config-prettier: ^8.10.0
     eslint-plugin-prettier: ^5.2.1
     ethers: ^6.13.2
+    ethers5: "npm:ethers@^5"
     hardhat: ^2.22.10
     hardhat-deploy: ^0.12.4
     hardhat-deploy-ethers: ^0.4.2
@@ -2292,6 +2307,7 @@ __metadata:
     prettier: ^3.3.3
     qrcode: ^1.5.4
     solidity-coverage: ^0.8.13
+    solmate: ^6.2.0
     ts-node: ^10.9.1
     typechain: ^8.3.2
     typescript: <5.6.0
@@ -3095,6 +3111,30 @@ __metadata:
   version: 1.2.0
   resolution: "@ungap/structured-clone@npm:1.2.0"
   checksum: 4f656b7b4672f2ce6e272f2427d8b0824ed11546a601d8d5412b9d7704e83db38a8d9f402ecdf2b9063fc164af842ad0ec4a55819f621ed7e7ea4d1efcc74524
+  languageName: node
+  linkType: hard
+
+"@uniswap/permit2-sdk@npm:^1.2.0":
+  version: 1.3.0
+  resolution: "@uniswap/permit2-sdk@npm:1.3.0"
+  dependencies:
+    ethers: ^5.7.0
+    tiny-invariant: ^1.1.0
+  checksum: 828a63c52673a5b4eefa769c0ecc2da667fe5573a3c447d0fea3809b46e7a71376a48917d959f253abba01e9faa442a503dd65649687a6bf7b385ee9f6d41afd
+  languageName: node
+  linkType: hard
+
+"@uniswap/sdk-core@npm:^4.0.3":
+  version: 4.2.1
+  resolution: "@uniswap/sdk-core@npm:4.2.1"
+  dependencies:
+    "@ethersproject/address": ^5.0.2
+    big.js: ^5.2.2
+    decimal.js-light: ^2.5.0
+    jsbi: ^3.1.4
+    tiny-invariant: ^1.1.0
+    toformat: ^2.0.0
+  checksum: a72b85e7fafe787a0cb2215cab5f7981fb18c1f63b58a3257accbefe0cc8fd64b7ad99d6ae9d0fc12f4383ac90d3991bae49a6af1fc5c89b72e1a9132af2c8e5
   languageName: node
   linkType: hard
 
@@ -6857,7 +6897,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.7.0, ethers@npm:~5.7.0":
+"ethers5@npm:ethers@^5, ethers@npm:^5.7.0, ethers@npm:~5.7.0":
   version: 5.7.2
   resolution: "ethers@npm:5.7.2"
   dependencies:
@@ -12271,6 +12311,13 @@ __metadata:
   bin:
     solidity-coverage: plugins/bin.js
   checksum: aa18bf332bae4256753e24c6e866beecc35adbc694a285dac3947433c708f488cb18f11026b4e00250af8eadb910b642b1532d21137444cf00666b44ac0f8366
+  languageName: node
+  linkType: hard
+
+"solmate@npm:^6.2.0":
+  version: 6.8.0
+  resolution: "solmate@npm:6.8.0"
+  checksum: 43d36bb2db67bf1345093c29e0dd6d6dedb8bdbb5b21db722f75457e63a22f2a8fd9c9d397e81e476b731823e9854cf8c3b9d922a680413932e6c5ce3c5a7d00
   languageName: node
   linkType: hard
 
