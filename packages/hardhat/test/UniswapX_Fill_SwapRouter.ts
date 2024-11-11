@@ -1,9 +1,9 @@
 import { ethers, network } from "hardhat";
 
 import { SwapRouter02Executor } from "../typechain-types";
-import { RawOpenDutchIntentV2 } from "./types/raw-dutch-intent-v2";
+
 import { CosignedV2DutchOrder, OrderType } from "@banr1/uniswapx-sdk";
-import { BigNumber } from "ethers5";
+import { BigNumber } from "@ethersproject/bignumber";
 import { defaultAbiCoder } from "@ethersproject/abi";
 
 import { SignedOrderStruct } from "../typechain-types/contracts/SwapRouter02Executor.sol/SwapRouter02Executor";
@@ -11,6 +11,7 @@ import { SignedOrderStruct } from "../typechain-types/contracts/SwapRouter02Exec
 import { Contract } from "ethers";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { expect } from "chai";
+import { RawOpenDutchIntentV2 } from "./types/banr1/raw-dutch-intent-v2";
 
 const PERMIT2_ADDRESS = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
 
@@ -43,10 +44,27 @@ describe("UniswapX_Fill_SwapRouter", function () {
     await network.provider.send("evm_setNextBlockTimestamp", [1729863806]);
   });
 
+  after(async () => {
+    await ethers.provider.send("hardhat_reset", [
+      {
+        forking: {
+          jsonRpcUrl: process.env.FORKING_URL,
+          blockNumber: 267523722,
+        },
+      },
+    ]);
+    await network.provider.send("evm_setNextBlockTimestamp", [1729863806]);
+
+    const tx = await deployer.sendTransaction({
+      to: "0x1D47202c87939f3263A5469C9679169F6E2b7F57",
+      value: ethers.parseEther("10"),
+    });
+  });
+
   beforeEach(async function () {
     const swapRouter02ExecutorFactory = await ethers.getContractFactory("SwapRouter02Executor");
     swapRouter02Executor = (await swapRouter02ExecutorFactory.deploy(
-      "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      //"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
       "0x1bd1aAdc9E230626C44a139d7E70d842749351eb",
       "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
       "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
@@ -63,7 +81,7 @@ describe("UniswapX_Fill_SwapRouter", function () {
 
       console.log("USDT Balance before:", ethers.formatUnits(usdtBalanceBefore, 6));
 
-      const rawIntent: RawOpenDutchIntentV2 = {
+      const parsedIntent: RawOpenDutchIntentV2 = {
         type: OrderType.Dutch_V2,
         orderStatus: "open",
         signature:
@@ -93,7 +111,7 @@ describe("UniswapX_Fill_SwapRouter", function () {
           exclusiveFiller: "0x0000000000000000000000000000000000000000",
           inputOverride: BigNumber.from("0"),
           outputOverrides: [BigNumber.from("1002194155")],
-          exclusivityOverrideBps: BigNumber.from("0"),
+          exclusivityOverrideBps: BigNumber.from("100"),
         },
         cosignature:
           "0x586b516924b46b7322e2ea74ccfa6c685a0fdc4bacc04081aec6fc4701445662281df99f65e0691533caf7226f33503ae1d1ed34532265256427a66a6202d3fa1c",
@@ -102,8 +120,8 @@ describe("UniswapX_Fill_SwapRouter", function () {
         createdAt: 1729863804,
       };
 
-      const intent = CosignedV2DutchOrder.parse(rawIntent.encodedOrder, CHAIN_ID, PERMIT2_ADDRESS);
-      const signature = rawIntent.signature;
+      const intent = CosignedV2DutchOrder.parse(parsedIntent.encodedOrder, CHAIN_ID, PERMIT2_ADDRESS);
+      const signature = parsedIntent.signature;
 
       const signedIntent: SignedOrderStruct = {
         order: intent.serialize() as any, // Cast to any to match the expected type

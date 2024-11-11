@@ -25,13 +25,29 @@ The [UniswapX_Fill_SwapRouter](https://github.com/moltam89/scaffold-eth-2/blob/e
 5. **Assert** that the USDT balance of `SwapRouter02Executor` has increased, indicating a profit from filling the intent.
 
 ## Quickstart
-
-In packages/hardhat/.env, add your forking URL as follows: `FORKING_URL=https://eth-mainnet.g.alchemy.com/v2/{your_api_key}`
+### Test
+In `packages/hardhat/.env` add your forking URL as follows: `FORKING_URL=https://eth-mainnet.g.alchemy.com/v2/{your_api_key}`
 
 ```
-yarn chain
+yarn fork
 ```
 
 ```
 yarn test
 ```
+### Frontent
+In `packages/nextjs/.env` add your forking URL as follows: `FORKING_URL=https://eth-mainnet.g.alchemy.com/v2/{your_api_key}`
+```
+yarn fork
+```
+```
+yarn start
+```
+Grab the frontend address and add it here:https://github.com/moltam89/scaffold-eth-2/blob/c133a16237987a6e02405e05dba380e74e517911/packages/hardhat/deploy/01_deploy_swaprouter02executor_fill.ts#L45
+```
+yarn deploy
+```
+
+Open the UniswapX page, and use the Fill Intent button
+![Screenshot 2024-11-12 at 16 49 41](https://github.com/user-attachments/assets/3686fd3e-3634-4d43-a53a-08f0e0b61af4)
+
