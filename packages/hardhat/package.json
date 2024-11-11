@@ -49,11 +49,11 @@
   },
   "dependencies": {
     "@banr1/uniswapx-sdk": "^2.1.0",
+    "@ethersproject/bignumber": "^5.7.0",
     "@openzeppelin/contracts": "^5.0.2",
     "@typechain/ethers-v6": "^0.5.1",
     "dotenv": "^16.4.5",
     "envfile": "^7.1.0",
-    "ethers5": "npm:ethers@^5",
     "qrcode": "^1.5.4",
     "solmate": "^6.2.0"
   }
