@@ -1,3 +1,6 @@
+// Source: Uniswap, same as SwapRouter02Executor.sol, but instead of imports, interfaces and structs are copied, whitelistedCaller removed
+// https://github.com/Uniswap/UniswapX/blob/9ba6ffd048e3d8c561d639af64846471d13ae659/src/sample-executors/SwapRouter02Executor.sol
+
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity ^0.8.0;
 
@@ -72,22 +75,22 @@ contract SwapRouter02Executor is IReactorCallback, Owned {
 	using SafeTransferLib for ERC20;
 	//using CurrencyLibrary for address;
 
-	/// @notice thrown if reactorCallback is called with a non-whitelisted filler
-	error CallerNotWhitelisted();
+	// /// @notice thrown if reactorCallback is called with a non-whitelisted filler
+	// error CallerNotWhitelisted();
 	/// @notice thrown if reactorCallback is called by an address other than the reactor
 	error MsgSenderNotReactor();
 
 	ISwapRouter02 private immutable swapRouter02;
-	address private immutable whitelistedCaller;
+	//address private immutable whitelistedCaller;
 	IReactor private immutable reactor;
 	WETH private immutable weth;
 
-	modifier onlyWhitelistedCaller() {
-		if (msg.sender != whitelistedCaller) {
-			revert CallerNotWhitelisted();
-		}
-		_;
-	}
+	// modifier onlyWhitelistedCaller() {
+	// 	if (msg.sender != whitelistedCaller) {
+	// 		revert CallerNotWhitelisted();
+	// 	}
+	// 	_;
+	// }
 
 	modifier onlyReactor() {
 		if (msg.sender != address(reactor)) {
@@ -97,12 +100,12 @@ contract SwapRouter02Executor is IReactorCallback, Owned {
 	}
 
 	constructor(
-		address _whitelistedCaller,
+		//address _whitelistedCaller,
 		IReactor _reactor,
 		address _owner,
 		ISwapRouter02 _swapRouter02
 	) Owned(_owner) {
-		whitelistedCaller = _whitelistedCaller;
+		//whitelistedCaller = _whitelistedCaller;
 		reactor = _reactor;
 		swapRouter02 = _swapRouter02;
 		weth = WETH(payable(_swapRouter02.WETH9()));
@@ -112,7 +115,8 @@ contract SwapRouter02Executor is IReactorCallback, Owned {
 	function execute(
 		SignedOrder calldata order,
 		bytes calldata callbackData
-	) external onlyWhitelistedCaller {
+	//) external onlyWhitelistedCaller {
+	) external {
 		reactor.executeWithCallback(order, callbackData);
 	}
 
@@ -120,7 +124,8 @@ contract SwapRouter02Executor is IReactorCallback, Owned {
 	function executeBatch(
 		SignedOrder[] calldata orders,
 		bytes calldata callbackData
-	) external onlyWhitelistedCaller {
+	//) external onlyWhitelistedCaller {
+	) external {
 		reactor.executeBatchWithCallback(orders, callbackData);
 	}
 
