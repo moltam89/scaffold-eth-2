@@ -2,6 +2,7 @@ import { ethers, network } from "hardhat";
 
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
+import { STRART_BLOCK_TIMESTAMP } from "../constants/constants";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -25,7 +26,7 @@ const deployUniswapX_Fill: DeployFunction = async function (hre: HardhatRuntimeE
 
   const [deployer] = await ethers.getSigners();
 
-  await network.provider.send("evm_setNextBlockTimestamp", [1729863806]);
+  await network.provider.send("evm_setNextBlockTimestamp", [STRART_BLOCK_TIMESTAMP]);
 
   await deploy("SwapRouter02Executor", {
     from: deployer.address,
@@ -41,16 +42,11 @@ const deployUniswapX_Fill: DeployFunction = async function (hre: HardhatRuntimeE
     autoMine: false,
   });
 
-  await deployer.sendTransaction({
-    to: "0x1D47202c87939f3263A5469C9679169F6E2b7F57", // Replace with frontend address
-    value: ethers.parseEther("10"),
-  });
-
-  await network.provider.send("evm_setNextBlockTimestamp", [1729863806]);
+  //await network.provider.send("evm_setNextBlockTimestamp", [STRART_BLOCK_TIMESTAMP]);
 };
 
 export default deployUniswapX_Fill;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags YourContract
-deployUniswapX_Fill.tags = ["Y"];
+deployUniswapX_Fill.tags = ["SwapRouter02Executor"];

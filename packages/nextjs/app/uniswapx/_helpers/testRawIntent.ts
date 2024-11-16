@@ -2,7 +2,7 @@ import { OrderType } from "@banr1/uniswapx-sdk";
 import { BigNumber } from "@ethersproject/bignumber";
 import { RawOpenDutchIntentV2 } from "~~/types/banr1/raw-dutch-intent-v2";
 
-export const parsedIntent: RawOpenDutchIntentV2 = {
+export const rawIntent: RawOpenDutchIntentV2 = {
   type: OrderType.Dutch_V2,
   orderStatus: "open",
   signature:

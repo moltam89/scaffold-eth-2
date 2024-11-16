@@ -1,43 +1,70 @@
-import React from 'react';
+import React, { useState } from "react";
+import { PERMIT2_ADDRESS, TOKENS } from "../_helpers/constants";
+import { formatTokenAmount, getRequiredAmounts } from "../_helpers/helpers";
+import { Info } from "./Info";
+import { RequiredAmountsDisplay } from "./RequiredAmounts";
+import TimeDisplay from "./TimeDisplay";
+import { TokenDisplay } from "./TokenDisplay";
+import { CosignedV2DutchOrder } from "@banr1/uniswapx-sdk";
+import { arbitrum } from "viem/chains";
 import { RawOpenDutchIntentV2 } from "~~/types/banr1/raw-dutch-intent-v2";
+import { IntentTimestampAmount } from "~~/types/types";
 
-interface IntentProps {
-  intent: RawOpenDutchIntentV2;
+interface RawIntentProps {
+  currentTime: number;
+  setCurrentTime: (time: number) => void;
+  rawIntent: RawOpenDutchIntentV2;
+  requiredAmounts: IntentTimestampAmount[];
 }
 
-export const Intent = ({ intent }: IntentProps) => {
+export const Intent = ({ currentTime, setCurrentTime, rawIntent, requiredAmounts }: RawIntentProps) => {
+  const [, startAmount] = requiredAmounts[0];
+  const [, endAmount] = requiredAmounts[requiredAmounts.length - 1];
+
   return (
-    <div className="p-6 bg-base-200 rounded-lg shadow-md">
-      <h2 className="text-lg font-bold mb-4">Dutch Intent Details</h2>
-      
-      {/* Display Input */}
-      <div className="mb-4">
-        <h3 className="text-md font-semibold">Input</h3>
-        <p className="p-2 bg-base-100 rounded-lg">Token: {intent.input.token}</p>
-        <p>Start Amount: {intent.input.startAmount.toString()}</p>
-        <p>End Amount: {intent.input.endAmount.toString()}</p>
+    <>
+      <div className="flex justify-center items-center mb-4">
+        <TimeDisplay setCurrentTime={setCurrentTime} requiredAmounts={requiredAmounts} />
       </div>
 
-      {/* Display Outputs */}
-      <div className="mb-4">
-        <h3 className="text-md font-semibold">Outputs</h3>
-        <ul className="space-y-2">
-          {intent.outputs.map((output, index) => (
-            <li key={index} className="p-2 bg-base-100 rounded-lg">
-              <p>Token: {output.token}</p>
-              <p>Start Amount: {output.startAmount.toString()}</p>
-              <p>End Amount: {output.endAmount.toString()}</p>
-              <p>Recipient: {output.recipient}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <div className="p-6 bg-base-200 rounded-lg shadow-md">
+        <Info
+          dataTip={
+            "Swap 1001.38 USDC to USDT. Starting price is 1002.19 USDT, decreasing over 16 seconds. Locally, you can skip time to maximize profit, but live orders fill quickly. Check the original transaction for timing."
+          }
+        />
 
-      {/* Display Created At */}
-      <div>
-        <h3 className="text-md font-semibold">Created At</h3>
-        <p className="p-2 bg-base-100 rounded-lg">{intent.createdAt}</p>
+        <div className="text-center mb-4">
+          <a
+            href={"https://arbiscan.io/tx/0xe54b1a83b816bc2eb0fec9f3c7c1794030dcd5e57778f019b74d6d3133441b75"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link link-accent"
+          >
+            UniswapX intent fill tx
+          </a>
+        </div>
+
+        <div className="mb-4 flex items-center justify-center">
+          <div className="flex items-center space-x-4 text-2xl">
+            <TokenDisplay token={TOKENS[rawIntent.input.token]} />
+            <span className="text-sm font-extrabold">{formatTokenAmount(rawIntent.input.startAmount)}</span>
+          </div>
+        </div>
+
+        <div className="mb-4 flex items-center justify-center">
+          <div className="flex items-center space-x-4 text-2xl">
+            <TokenDisplay token={TOKENS[rawIntent.outputs[0].token]} />
+            <span className="text-sm font-extrabold">
+              {formatTokenAmount(startAmount)} - {formatTokenAmount(endAmount)}
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <RequiredAmountsDisplay currentTime={currentTime} requiredAmounts={requiredAmounts} />
+        </div>
       </div>
-    </div>
+    </>
   );
 };

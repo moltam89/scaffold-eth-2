@@ -12,6 +12,7 @@ import { Contract } from "ethers";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { expect } from "chai";
 import { RawOpenDutchIntentV2 } from "./types/banr1/raw-dutch-intent-v2";
+import { FIRST_FILL_BLOCK_TIMESTAMP, STRART_BLOCK_NUMBER, STRART_BLOCK_TIMESTAMP } from "../constants/constants";
 
 const PERMIT2_ADDRESS = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
 
@@ -37,11 +38,11 @@ describe("UniswapX_Fill_SwapRouter", function () {
       {
         forking: {
           jsonRpcUrl: process.env.FORKING_URL,
-          blockNumber: 267523722,
+          blockNumber: STRART_BLOCK_NUMBER,
         },
       },
     ]);
-    await network.provider.send("evm_setNextBlockTimestamp", [1729863806]);
+    await network.provider.send("evm_setNextBlockTimestamp", [FIRST_FILL_BLOCK_TIMESTAMP]);
   });
 
   after(async () => {
@@ -49,22 +50,16 @@ describe("UniswapX_Fill_SwapRouter", function () {
       {
         forking: {
           jsonRpcUrl: process.env.FORKING_URL,
-          blockNumber: 267523722,
+          blockNumber: STRART_BLOCK_NUMBER,
         },
       },
     ]);
-    await network.provider.send("evm_setNextBlockTimestamp", [1729863806]);
-
-    const tx = await deployer.sendTransaction({
-      to: "0x1D47202c87939f3263A5469C9679169F6E2b7F57",
-      value: ethers.parseEther("10"),
-    });
+    await network.provider.send("evm_setNextBlockTimestamp", [STRART_BLOCK_TIMESTAMP]);
   });
 
   beforeEach(async function () {
     const swapRouter02ExecutorFactory = await ethers.getContractFactory("SwapRouter02Executor");
     swapRouter02Executor = (await swapRouter02ExecutorFactory.deploy(
-      //"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
       "0x1bd1aAdc9E230626C44a139d7E70d842749351eb",
       "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
       "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",

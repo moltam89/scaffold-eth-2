@@ -9,6 +9,7 @@ import "solidity-coverage";
 import "@nomicfoundation/hardhat-verify";
 import "hardhat-deploy";
 import "hardhat-deploy-ethers";
+import { STRART_BLOCK_NUMBER } from "./constants/constants";
 
 // If not set, it uses the hardhat account 0 private key.
 const deployerPrivateKey =
@@ -47,7 +48,7 @@ const config: HardhatUserConfig = {
       allowBlocksWithSameTimestamp: true,
       forking: {
         url: forkingURL,
-        blockNumber: 267523722,
+        blockNumber: STRART_BLOCK_NUMBER,
         enabled: process.env.MAINNET_FORKING_ENABLED === "true",
       },
       chainId: 42161,

@@ -41,13 +41,19 @@ In `packages/nextjs/.env` add your forking URL as follows: `FORKING_URL=https://
 yarn fork
 ```
 ```
-yarn start
-```
-Grab the frontend address and add it here:https://github.com/moltam89/scaffold-eth-2/blob/c133a16237987a6e02405e05dba380e74e517911/packages/hardhat/deploy/01_deploy_swaprouter02executor_fill.ts#L45
-```
 yarn deploy
 ```
+```
+yarn start
+```
+Open the UniswapX page:
 
-Open the UniswapX page, and use the Fill Intent button
-![Screenshot 2024-11-12 at 16 49 41](https://github.com/user-attachments/assets/3686fd3e-3634-4d43-a53a-08f0e0b61af4)
+
+https://github.com/user-attachments/assets/04727ebe-230c-42d8-b731-a45e29f8b0bf
+
+
+
+
+
+
 
