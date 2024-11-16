@@ -1,3 +1,6 @@
+// Source:
+// https://github.com/titania-research-labs/uniswapx-filler-template
+
 // types/raw-dutch-intent-v2.ts
 import { ChainId } from "./chain-id";
 import { Address, IntentHash } from "./hash";

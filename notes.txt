@@ -37,3 +37,5 @@ https://dashboard.tenderly.co/moltam89/project/simulator/55639c6b-175e-40b4-b0dc
    },
    "cosignature":"0x586b516924b46b7322e2ea74ccfa6c685a0fdc4bacc04081aec6fc4701445662281df99f65e0691533caf7226f33503ae1d1ed34532265256427a66a6202d3fa1c"
 }
+
+rm -rf packages/hardhat/deployments

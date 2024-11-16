@@ -1,4 +1,5 @@
 import * as chains from "viem/chains";
+import { localForkArbitrum } from "./app/uniswapx/_helpers/constants";
 
 export type ScaffoldConfig = {
   targetNetworks: readonly chains.Chain[];
@@ -8,15 +9,10 @@ export type ScaffoldConfig = {
   onlyLocalBurnerWallet: boolean;
 };
 
-const customArbitrum = {
-  ...chains.arbitrum,
-  rpcUrls: { default: { http: ['http://127.0.0.1:8545'] } },
-}
-
 const scaffoldConfig = {
   // The networks on which your DApp is live
   //targetNetworks: [chains.hardhat],
-  targetNetworks: [customArbitrum],
+  targetNetworks: [localForkArbitrum],
 
   // The interval at which your front-end polls the RPC servers for new data
   // it has no effect if you only target the local network (default is 4000)
