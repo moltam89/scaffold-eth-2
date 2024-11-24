@@ -1,24 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { createWalletClient, http, parseEther } from "viem";
+// import { createWalletClient, http, parseEther } from "viem";
 import { arbitrum } from "viem/chains";
 import { useAccount, useBlock } from "wagmi";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
+import { ethersSendETH, logBlockNumberAndTimestamp, setNextBlockTimestamp } from "~~/app/uniswapx/_helpers/helpers";
 import { useTransactor } from "~~/hooks/scaffold-eth";
 import { useWatchBalance } from "~~/hooks/scaffold-eth/useWatchBalance";
-import { localForkArbitrum } from "~~/app/uniswapx/_helpers/constants";
-import { setNextBlockTimestamp } from "~~/app/uniswapx/_helpers/helpers";
 
 // Number of ETH faucet sends to an address
-const NUM_OF_ETH = "1";
-//const FAUCET_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"; 
-const FAUCET_ADDRESS = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"; // Use different address, so SwapRouter02Executor will be deployed to the same address
+// const NUM_OF_ETH = "1";
+//const FAUCET_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+// const FAUCET_ADDRESS = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"; // Use different address, so SwapRouter02Executor will be deployed to the same address
 
-const localWalletClient = createWalletClient({
-  chain: localForkArbitrum,
-  transport: http(),
-});
+// This messes with block timestamps, replace with ethersSendETH
+// const localWalletClient = createWalletClient({
+//   // chain: localForkArbitrum,
+//   chain: localForkArbitrum,
+//   transport: http(),
+// });
 
 /**
  * FaucetButton button which lets you grab eth.
@@ -30,7 +31,7 @@ export const FaucetButton = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const faucetTxn = useTransactor(localWalletClient);
+  const faucetTxn = useTransactor();
 
   // Preserve the current block timestamp when using the faucet
   const block = useBlock();
@@ -40,16 +41,16 @@ export const FaucetButton = () => {
     if (!address) return;
     try {
       setLoading(true);
-      console.log("⚡️ ~ file: FaucetButton.tsx:sendETH ~ address", address);
       setNextBlockTimestamp(currentBLockTimestamp);
-      await faucetTxn({
-        account: FAUCET_ADDRESS,
-        to: address,
-        value: parseEther(NUM_OF_ETH),
-      });
+      // await faucetTxn({
+      //   account: FAUCET_ADDRESS,
+      //   to: address,
+      //   value: parseEther(NUM_OF_ETH),
+      // });
+
+      faucetTxn(await ethersSendETH(address));
       setLoading(false);
     } catch (error) {
-
       console.error("⚡️ ~ file: FaucetButton.tsx:sendETH ~ error", error);
       setLoading(false);
     }

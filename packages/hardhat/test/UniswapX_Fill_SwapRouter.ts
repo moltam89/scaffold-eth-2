@@ -12,18 +12,15 @@ import { Contract } from "ethers";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { expect } from "chai";
 import { RawOpenDutchIntentV2 } from "./types/banr1/raw-dutch-intent-v2";
-import { FIRST_FILL_BLOCK_TIMESTAMP, STRART_BLOCK_NUMBER, STRART_BLOCK_TIMESTAMP } from "../constants/constants";
+import { CHAIN_ID_ARBITRUM, FIRST_FILL_BLOCK_TIMESTAMP, STRART_BLOCK_NUMBER, STRART_BLOCK_TIMESTAMP, SWAP_ROUTER_02_EXECUTOR_ADDRESS_HARDHAT, USDC_ADDRESS, USDT_ADDRESS } from "../constants/constants";
+
+const providerApiKey = process.env.ALCHEMY_API_KEY || "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
 
 const PERMIT2_ADDRESS = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
 
-const SWAP_ROUTER_02_EXECUTOR_ADDRESS_HARDHAT_TEST = "0xCf027C4b03DC18A60422AB981b1Ea1A27EC2E06F";
-
-const CHAIN_ID = 42161;
-
 const ERC20_ABI =
   '[ { "constant": true, "inputs": [], "name": "name", "outputs": [ { "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "_spender", "type": "address" }, { "name": "_value", "type": "uint256" } ], "name": "approve", "outputs": [ { "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "totalSupply", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "_from", "type": "address" }, { "name": "_to", "type": "address" }, { "name": "_value", "type": "uint256" } ], "name": "transferFrom", "outputs": [ { "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "decimals", "outputs": [ { "name": "", "type": "uint8" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "_owner", "type": "address" } ], "name": "balanceOf", "outputs": [ { "name": "balance", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "symbol", "outputs": [ { "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "_to", "type": "address" }, { "name": "_value", "type": "uint256" } ], "name": "transfer", "outputs": [ { "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "name": "_owner", "type": "address" }, { "name": "_spender", "type": "address" } ], "name": "allowance", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "payable": true, "stateMutability": "payable", "type": "fallback" }, { "anonymous": false, "inputs": [ { "indexed": true, "name": "owner", "type": "address" }, { "indexed": true, "name": "spender", "type": "address" }, { "indexed": false, "name": "value", "type": "uint256" } ], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "name": "from", "type": "address" }, { "indexed": true, "name": "to", "type": "address" }, { "indexed": false, "name": "value", "type": "uint256" } ], "name": "Transfer", "type": "event" } ]';
-const USDC_ADDRESS = "0xaf88d065e77c8cc2239327c5edb3a432268e5831";
-const USDT_ADDRESS = "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9";
+
 
 describe("UniswapX_Fill_SwapRouter", function () {
   let swapRouter02Executor: SwapRouter02Executor;
@@ -37,7 +34,7 @@ describe("UniswapX_Fill_SwapRouter", function () {
     await ethers.provider.send("hardhat_reset", [
       {
         forking: {
-          jsonRpcUrl: process.env.FORKING_URL,
+          jsonRpcUrl: `https://arb-mainnet.alchemyapi.io/v2/${providerApiKey}`,
           blockNumber: STRART_BLOCK_NUMBER,
         },
       },
@@ -49,7 +46,7 @@ describe("UniswapX_Fill_SwapRouter", function () {
     await ethers.provider.send("hardhat_reset", [
       {
         forking: {
-          jsonRpcUrl: process.env.FORKING_URL,
+          jsonRpcUrl: `https://arb-mainnet.alchemyapi.io/v2/${providerApiKey}`,
           blockNumber: STRART_BLOCK_NUMBER,
         },
       },
@@ -71,7 +68,7 @@ describe("UniswapX_Fill_SwapRouter", function () {
     it("Should work", async function () {
       console.log("swapRouter02Executor address:", await swapRouter02Executor.getAddress());
 
-      const usdtBalanceBefore = await usdt.balanceOf(SWAP_ROUTER_02_EXECUTOR_ADDRESS_HARDHAT_TEST);
+      const usdtBalanceBefore = await usdt.balanceOf(SWAP_ROUTER_02_EXECUTOR_ADDRESS_HARDHAT);
       expect(usdtBalanceBefore).to.equal(0);
 
       console.log("USDT Balance before:", ethers.formatUnits(usdtBalanceBefore, 6));
@@ -115,7 +112,7 @@ describe("UniswapX_Fill_SwapRouter", function () {
         createdAt: 1729863804,
       };
 
-      const intent = CosignedV2DutchOrder.parse(parsedIntent.encodedOrder, CHAIN_ID, PERMIT2_ADDRESS);
+      const intent = CosignedV2DutchOrder.parse(parsedIntent.encodedOrder, CHAIN_ID_ARBITRUM, PERMIT2_ADDRESS);
       const signature = parsedIntent.signature;
 
       const signedIntent: SignedOrderStruct = {
@@ -140,7 +137,7 @@ describe("UniswapX_Fill_SwapRouter", function () {
       const result = await swapRouter02Executor.execute(signedIntent, callBackData);
       console.log("result", result);
 
-      const usdtBalanceAfter = await usdt.balanceOf(SWAP_ROUTER_02_EXECUTOR_ADDRESS_HARDHAT_TEST);
+      const usdtBalanceAfter = await usdt.balanceOf(SWAP_ROUTER_02_EXECUTOR_ADDRESS_HARDHAT);
       expect(usdtBalanceAfter).to.greaterThan(0);
 
       console.log("USDT Balance after:", ethers.formatUnits(usdtBalanceAfter, 6));

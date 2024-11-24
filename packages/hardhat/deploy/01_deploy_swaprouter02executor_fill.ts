@@ -2,7 +2,7 @@ import { ethers, network } from "hardhat";
 
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { STRART_BLOCK_TIMESTAMP } from "../constants/constants";
+import { STRART_BLOCK_TIMESTAMP, SWAP_ROUTER_02_ADDRESS, V2_DUCTH_ORDER_REACTOR_ADDRESS } from "../constants/constants";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -32,9 +32,9 @@ const deployUniswapX_Fill: DeployFunction = async function (hre: HardhatRuntimeE
     from: deployer.address,
     // Contract constructor arguments
     args: [
-      "0x1bd1aAdc9E230626C44a139d7E70d842749351eb",
-      "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-      "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
+      V2_DUCTH_ORDER_REACTOR_ADDRESS,
+      "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", // Default hardhat account
+      SWAP_ROUTER_02_ADDRESS,
     ],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by

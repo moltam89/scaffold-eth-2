@@ -1,28 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Intent } from "./_components/Intent";
 import { SwapRouter02Executor } from "./_components/SwapRouter02Executor";
 import { UniswapV3_USDC_USDT_Pool } from "./_components/UniswapV3_USDC_USDT_Pool";
-import { rawIntent } from "./_helpers/testRawIntent";
-import { NextPage } from "next";
-import { useBlock } from "wagmi";
-import { CosignedV2DutchOrder } from "@banr1/uniswapx-sdk";
-import { arbitrum } from "viem/chains";
-import { PERMIT2_ADDRESS } from "./_helpers/constants";
+import { PERMIT2_ADDRESS, SWAP_ROUTER_02_EXECUTOR_ADDRESS_HARDHAT, USDT_ADDRESS } from "./_helpers/constants";
 import { getRequiredAmounts } from "./_helpers/helpers";
+import { rawIntent } from "./_helpers/testRawIntent";
+import { CosignedV2DutchOrder } from "@banr1/uniswapx-sdk";
+import { NextPage } from "next";
+import { erc20Abi } from "viem";
+import { arbitrum } from "viem/chains";
+import { useBlock, useReadContract } from "wagmi";
 
 const UniswapX: NextPage = () => {
-  const [currentTime, setCurrentTime] = useState(0);
-
   const intent = CosignedV2DutchOrder.parse(rawIntent.encodedOrder, arbitrum.id, PERMIT2_ADDRESS);
-
   const requiredAmounts = getRequiredAmounts(intent);
 
-  const block = useBlock();
-  if (block?.data) {
-    console.log("block", block.data.number, block.data.timestamp);
-  }
+  const [currentTime, setCurrentTime] = useState(requiredAmounts[0][0]);
+  const [fillTime, setFillTime] = useState(0);
+
+  const { data: contractBalanceUSDT = 0n, refetch: refetchContractBalanceUSDT } = useReadContract({
+    abi: erc20Abi,
+    address: USDT_ADDRESS,
+    args: [SWAP_ROUTER_02_EXECUTOR_ADDRESS_HARDHAT],
+    functionName: "balanceOf",
+  });
+
+  const { data: block, refetch: refetchBlock } = useBlock();
+  // Refetch block when contractBalanceUSDT changes (after filling intent)
+  useEffect(() => {
+    if (contractBalanceUSDT) {
+      refetchBlock();
+    }
+  }, [contractBalanceUSDT, refetchBlock]);
+
+  useEffect(() => {
+    if (block && contractBalanceUSDT) {
+      setCurrentTime(Number(block.timestamp));
+      setFillTime(Number(block.timestamp));
+    } else {
+      setFillTime(0);
+    }
+  }, [block, contractBalanceUSDT]);
 
   return (
     <>
@@ -53,11 +73,23 @@ const UniswapX: NextPage = () => {
             </div>
 
             <div>
-              <Intent currentTime={currentTime} setCurrentTime={setCurrentTime} rawIntent={rawIntent} requiredAmounts={requiredAmounts}></Intent>
+              <Intent
+                currentTime={currentTime}
+                setCurrentTime={setCurrentTime}
+                fillTime={fillTime}
+                rawIntent={rawIntent}
+                requiredAmounts={requiredAmounts}
+              ></Intent>
             </div>
 
             <div>
-              <SwapRouter02Executor currentTime={currentTime} requiredAmounts={requiredAmounts} />
+              <SwapRouter02Executor
+                currentTime={currentTime}
+                setCurrentTime={setCurrentTime}
+                requiredAmounts={requiredAmounts}
+                contractBalanceUSDT={contractBalanceUSDT}
+                refetchContractBalanceUSDT={refetchContractBalanceUSDT}
+              />
             </div>
           </div>
         </div>

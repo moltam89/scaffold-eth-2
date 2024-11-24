@@ -1,30 +1,44 @@
-import React, { useState } from "react";
-import { PERMIT2_ADDRESS, TOKENS } from "../_helpers/constants";
-import { formatTokenAmount, getRequiredAmounts } from "../_helpers/helpers";
+"use client";
+
+import React from "react";
+import { TOKENS } from "../_helpers/constants";
+import { formatTokenAmount } from "../_helpers/helpers";
 import { Info } from "./Info";
 import { RequiredAmountsDisplay } from "./RequiredAmounts";
 import TimeDisplay from "./TimeDisplay";
 import { TokenDisplay } from "./TokenDisplay";
-import { CosignedV2DutchOrder } from "@banr1/uniswapx-sdk";
-import { arbitrum } from "viem/chains";
+import { LockClosedIcon } from "@heroicons/react/24/outline";
+import { LockOpenIcon } from "@heroicons/react/24/outline";
 import { RawOpenDutchIntentV2 } from "~~/types/banr1/raw-dutch-intent-v2";
 import { IntentTimestampAmount } from "~~/types/types";
 
 interface RawIntentProps {
   currentTime: number;
   setCurrentTime: (time: number) => void;
+  fillTime: number;
   rawIntent: RawOpenDutchIntentV2;
   requiredAmounts: IntentTimestampAmount[];
 }
 
-export const Intent = ({ currentTime, setCurrentTime, rawIntent, requiredAmounts }: RawIntentProps) => {
+export const Intent = ({ currentTime, setCurrentTime, fillTime, rawIntent, requiredAmounts }: RawIntentProps) => {
   const [, startAmount] = requiredAmounts[0];
   const [, endAmount] = requiredAmounts[requiredAmounts.length - 1];
+
+  const fillIntentTimestampAmount = requiredAmounts.find(([key]) => {
+    return key === fillTime;
+  });
+  const fillAmount = fillIntentTimestampAmount ? fillIntentTimestampAmount[1] : 0n;
+  const isFilled = fillAmount !== 0n;
 
   return (
     <>
       <div className="flex justify-center items-center mb-4">
-        <TimeDisplay setCurrentTime={setCurrentTime} requiredAmounts={requiredAmounts} />
+        <TimeDisplay
+          currentTime={currentTime}
+          setCurrentTime={setCurrentTime}
+          fillTime={fillTime}
+          requiredAmounts={requiredAmounts}
+        />
       </div>
 
       <div className="p-6 bg-base-200 rounded-lg shadow-md">
@@ -56,7 +70,24 @@ export const Intent = ({ currentTime, setCurrentTime, rawIntent, requiredAmounts
           <div className="flex items-center space-x-4 text-2xl">
             <TokenDisplay token={TOKENS[rawIntent.outputs[0].token]} />
             <span className="text-sm font-extrabold">
-              {formatTokenAmount(startAmount)} - {formatTokenAmount(endAmount)}
+              {isFilled
+                ? formatTokenAmount(fillAmount)
+                : `${formatTokenAmount(startAmount)} - ${formatTokenAmount(endAmount)}`}
+            </span>
+          </div>
+        </div>
+
+        <div
+          className={`flex items-center justify-center p-4 rounded-lg ${fillAmount !== 0n ? "bg-gray-200" : "bg-green-200"}`}
+        >
+          <div className="flex items-center space-x-2">
+            {fillAmount !== 0n ? (
+              <LockClosedIcon className="h-6 w-6 text-gray-600" />
+            ) : (
+              <LockOpenIcon className="h-6 w-6 text-green-600" />
+            )}
+            <span className={`font-bold ${fillAmount !== 0n ? "text-gray-600" : "text-green-600"}`}>
+              {fillAmount !== 0n ? "Filled" : "Open"}
             </span>
           </div>
         </div>

@@ -9,7 +9,7 @@ import "solidity-coverage";
 import "@nomicfoundation/hardhat-verify";
 import "hardhat-deploy";
 import "hardhat-deploy-ethers";
-import { STRART_BLOCK_NUMBER } from "./constants/constants";
+import { CHAIN_ID_ARBITRUM, STRART_BLOCK_NUMBER } from "./constants/constants";
 
 // If not set, it uses the hardhat account 0 private key.
 const deployerPrivateKey =
@@ -49,11 +49,14 @@ const config: HardhatUserConfig = {
     hardhat: {
       allowBlocksWithSameTimestamp: true,
       forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
+        url: `https://arb-mainnet.alchemyapi.io/v2/${providerApiKey}`,
         blockNumber: STRART_BLOCK_NUMBER,
         enabled: process.env.MAINNET_FORKING_ENABLED === "true",
       },
-      chainId: 42161,
+      chainId: CHAIN_ID_ARBITRUM,
+      mining: {
+        auto: true, // Automatically mines transactions
+      },
     },
     mainnet: {
       url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
