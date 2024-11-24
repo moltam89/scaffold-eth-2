@@ -59,15 +59,18 @@ export const mineBlock = async (): Promise<void> => {
   }
 };
 
-export const getSnapshotId = async (): Promise<string> => {
+export const SNAPSHOT_ID_KEY = "snapshotId";
+export const storeSnapshotId = async (setSnapshotId: (snapshotId: string) => void): Promise<string> => {
   const snapshotId = await provider.send("evm_snapshot", []);
+  setSnapshotId(snapshotId);
+  localStorage.setItem(SNAPSHOT_ID_KEY, snapshotId);
   console.log("Snapshot ID:", snapshotId);
   return snapshotId;
 };
-
-export const revertToSnapshot = async (snapshotId: string="0x3"): Promise<void> => {
+export const revertToSnapshot = async (snapshotId: string): Promise<void> => {
   try {
     await provider.send("evm_revert", [snapshotId]);
+    localStorage.removeItem(SNAPSHOT_ID_KEY);
     console.log("Reverted to snapshot:", snapshotId);
   } catch (error) {
     console.error("Error reverting to snapshot:", error);

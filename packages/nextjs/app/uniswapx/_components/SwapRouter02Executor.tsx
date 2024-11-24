@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   TOKENS,
   UNISWAP_V3_USDT_OUTPUT_AMOUNT,
@@ -6,7 +7,15 @@ import {
   callbackData,
   signedIntent,
 } from "../_helpers/constants";
-import { formatTokenAmount, getSnapshotId, mineBlock, resetFork, revertToSnapshot, setNextBlockTimestamp } from "../_helpers/helpers";
+import {
+  SNAPSHOT_ID_KEY,
+  formatTokenAmount,
+  mineBlock,
+  resetFork,
+  revertToSnapshot,
+  setNextBlockTimestamp,
+  storeSnapshotId,
+} from "../_helpers/helpers";
 import { Info } from "./Info";
 import { TokenDisplay } from "./TokenDisplay";
 import { erc20Abi } from "viem";
@@ -64,6 +73,8 @@ export const SwapRouter02Executor = ({ currentTime, requiredAmounts }: SwapRoute
 
   const { writeContractAsync: writeSwapRouter02ExecutorAsync } = useScaffoldWriteContract("SwapRouter02Executor");
 
+  const [snapshotId, setSnapshotId] = useState(localStorage.getItem(SNAPSHOT_ID_KEY));
+
   return (
     <div className="p-6 bg-base-200 rounded-lg shadow-md">
       <Info dataTip="This contract is a slightly modified version of the SwapRouter02Executor from the UniswapX repo. It interacts with the V2DutchOrderReactor contract to transfer the input amount (1001.38 USDC) and then calls the UniswapV3 pool to execute the swap. If the UniswapV3 pool provides more USDT than the actual required amount, the surplus remains in this contract as profit." />
@@ -83,63 +94,69 @@ export const SwapRouter02Executor = ({ currentTime, requiredAmounts }: SwapRoute
         </a>
       </div>
 
-      {/* {owner && ( */}
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex flex-col items-center gap-4 text-2xl">
-            <div className="flex items-center justify-between w-full">
-              <TokenDisplay token={TOKENS[USDC_ADDRESS]} />
-              <span className="text-xl pl-4">{formatTokenAmount(contractBalanceUSDC)}</span>
-            </div>
-            <div className="flex items-center justify-between w-full">
-              <TokenDisplay token={TOKENS[USDT_ADDRESS]} />
-              <span className="text-xl pl-4">{formatTokenAmount(contractBalanceUSDT)}</span>
-            </div>
-
-            <div className={`profit ${profit < 0 ? "text-red-500" : "text-green-500"}`}>Profit: {profit}</div>
-
-            <div
-              className={!balanceIsNotZero ? "tooltip tooltip-info tooltip-top" : ""}
-              data-tip={"Grab funds from faucet"}
-            >
-              <button
-                className="btn btn-primary text-lg px-12 mt-2"
-                disabled={!balanceIsNotZero}
-                onClick={async () => {
-                  getSnapshotId();
-                  await setNextBlockTimestamp(currentTime);
-                  await mineBlock();
-                  const result = await writeSwapRouter02ExecutorAsync({
-                    functionName: "execute",
-                    args: [signedIntent, callbackData],
-                  });
-                  console.log("result", result);
-                  refetchContractBalanceUSDC();
-                  refetchContractBalanceUSDT();
-                }}
-              >
-                Fill Intent
-              </button>
-            </div>
-
-            {/* {contractBalanceUSDT > 0n && ( */}
-              <div>
-                <button
-                  className="btn btn-primary text-lg px-12 mt-2"
-                  onClick={async () => {
-                    console.log("resetting fork");
-                    // await resetFork();
-                    await revertToSnapshot();
-                    refetchContractBalanceUSDC();
-                    refetchContractBalanceUSDT();
-                  }}
-                >
-                  Reset
-                </button>
-              </div>
-            {/* )} */}
+      {owner && (
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-4 text-2xl">
+          <div className="flex items-center justify-between w-full">
+            <TokenDisplay token={TOKENS[USDC_ADDRESS]} />
+            <span className="text-xl pl-4">{formatTokenAmount(contractBalanceUSDC)}</span>
           </div>
+          <div className="flex items-center justify-between w-full">
+            <TokenDisplay token={TOKENS[USDT_ADDRESS]} />
+            <span className="text-xl pl-4">{formatTokenAmount(contractBalanceUSDT)}</span>
+          </div>
+
+          <div className={`profit ${profit < 0 ? "text-red-500" : "text-green-500"}`}>Profit: {profit}</div>
+
+          <div
+            className={!balanceIsNotZero ? "tooltip tooltip-info tooltip-top" : ""}
+            data-tip={"Grab funds from faucet"}
+          >
+            <button
+              className="btn btn-primary text-lg px-12 mt-2"
+              disabled={!balanceIsNotZero}
+              onClick={async () => {
+                storeSnapshotId(setSnapshotId);
+                await setNextBlockTimestamp(currentTime);
+                await mineBlock();
+                const result = await writeSwapRouter02ExecutorAsync({
+                  functionName: "execute",
+                  args: [signedIntent, callbackData],
+                });
+                console.log("result", result);
+                refetchContractBalanceUSDC();
+                refetchContractBalanceUSDT();
+              }}
+            >
+              Fill Intent
+            </button>
+          </div>
+
+          {contractBalanceUSDT > 0n && (
+          <div>
+            <button
+              className="btn btn-primary text-lg px-12 mt-2"
+              onClick={async () => {
+                console.log("resetting fork");
+                // await resetFork();
+                if (snapshotId) {
+                  await revertToSnapshot(snapshotId);
+                }
+                else {
+                  console.error("No snapshotId to revert to");
+                }
+                
+                refetchContractBalanceUSDC();
+                refetchContractBalanceUSDT();
+              }}
+            >
+              Reset
+            </button>
+          </div>
+          )}
         </div>
-      {/* )} */}
+      </div>
+      )}
 
       {!owner && <div className="text-center mt-4">Contract missing, run 'yarn deploy'</div>}
     </div>
