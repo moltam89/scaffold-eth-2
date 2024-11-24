@@ -37,7 +37,7 @@ describe("UniswapX_Fill_SwapRouter", function () {
     await ethers.provider.send("hardhat_reset", [
       {
         forking: {
-          jsonRpcUrl: process.env.FORKING_URL,
+          jsonRpcUrl: "https://arb-mainnet.alchemyapi.io/v2/oKxs-03sij-U_N0iOlrSsZFr29-IqbuF",
           blockNumber: STRART_BLOCK_NUMBER,
         },
       },
@@ -49,7 +49,7 @@ describe("UniswapX_Fill_SwapRouter", function () {
     await ethers.provider.send("hardhat_reset", [
       {
         forking: {
-          jsonRpcUrl: process.env.FORKING_URL,
+          jsonRpcUrl: "https://arb-mainnet.alchemyapi.io/v2/oKxs-03sij-U_N0iOlrSsZFr29-IqbuF",
           blockNumber: STRART_BLOCK_NUMBER,
         },
       },

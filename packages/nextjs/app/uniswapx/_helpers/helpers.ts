@@ -64,7 +64,7 @@ export const resetFork = async (): Promise<void> => {
     await provider.send("hardhat_reset", [
       {
         forking: {
-          jsonRpcUrl: `https://arb-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`,
+          jsonRpcUrl: "https://arb-mainnet.g.alchemy.com/v2/oKxs-03sij-U_N0iOlrSsZFr29-IqbuF",
           blockNumber: STRART_BLOCK_NUMBER + 2, // +2 to not reset contract deployment and the tx to grab eth from the faucet
         },
       },

@@ -49,7 +49,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       allowBlocksWithSameTimestamp: true,
       forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
+        url: `https://arb-mainnet.alchemyapi.io/v2/${providerApiKey}`,
         blockNumber: STRART_BLOCK_NUMBER,
         enabled: process.env.MAINNET_FORKING_ENABLED === "true",
       },
