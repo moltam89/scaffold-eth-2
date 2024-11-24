@@ -40,6 +40,20 @@ export function formatTokenAmount(amount: BigNumber | bigint, decimals: number =
 
 const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
+export const ethersSendETH = async (address: string, value: bigint = ethers.parseEther("1")): Promise<void> => {
+  try {
+    const wallet = new ethers.Wallet("0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d", provider);
+    await wallet.sendTransaction({ to: address, value });
+  } catch (error) {
+    console.error("Error sending ETH:", error);
+  }
+};
+
+export const logBlockNumberAndTimestamp = async (): Promise<void> => {
+  const block = await provider.getBlock("latest");
+  console.log("Current block timestamp xxx:", block?.number, block?.timestamp);
+};
+
 export const setNextBlockTimestamp = async (timestamp: number): Promise<void> => {
   try {
     await provider.send("evm_setNextBlockTimestamp", [timestamp]);

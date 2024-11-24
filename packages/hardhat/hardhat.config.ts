@@ -54,6 +54,9 @@ const config: HardhatUserConfig = {
         enabled: process.env.MAINNET_FORKING_ENABLED === "true",
       },
       chainId: 42161,
+      mining: {
+        auto: true, // Automatically mines transactions
+      },
     },
     mainnet: {
       url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,

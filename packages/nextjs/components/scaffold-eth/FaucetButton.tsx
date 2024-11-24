@@ -8,7 +8,7 @@ import { BanknotesIcon } from "@heroicons/react/24/outline";
 import { useTransactor } from "~~/hooks/scaffold-eth";
 import { useWatchBalance } from "~~/hooks/scaffold-eth/useWatchBalance";
 import { localForkArbitrum } from "~~/app/uniswapx/_helpers/constants";
-import { setNextBlockTimestamp } from "~~/app/uniswapx/_helpers/helpers";
+import { ethersSendETH, logBlockNumberAndTimestamp, setNextBlockTimestamp } from "~~/app/uniswapx/_helpers/helpers";
 
 // Number of ETH faucet sends to an address
 const NUM_OF_ETH = "1";
@@ -37,18 +37,24 @@ export const FaucetButton = () => {
   // Preserve the current block timestamp when using the faucet
   const block = useBlock();
   const currentBLockTimestamp = Number(block?.data?.timestamp);
+  console.log("⚡️ ~ file: FaucetButton.tsx:sendETH ~ block xxx", block, currentBLockTimestamp);
+
+  logBlockNumberAndTimestamp()
 
   const sendETH = async () => {
     if (!address) return;
     try {
       setLoading(true);
       console.log("⚡️ ~ file: FaucetButton.tsx:sendETH ~ address", address);
+      console.log("⚡️ ~ file: FaucetButton.tsx:sendETH ~ block xxx2", block, currentBLockTimestamp);
+      logBlockNumberAndTimestamp()
       setNextBlockTimestamp(currentBLockTimestamp);
-      await faucetTxn({
-        account: FAUCET_ADDRESS,
-        to: address,
-        value: parseEther(NUM_OF_ETH),
-      });
+      // await faucetTxn({
+      //   account: FAUCET_ADDRESS,
+      //   to: address,
+      //   value: parseEther(NUM_OF_ETH),
+      // });
+      ethersSendETH(address);
       setLoading(false);
     } catch (error) {
 
