@@ -6,7 +6,7 @@ import {
   callbackData,
   signedIntent,
 } from "../_helpers/constants";
-import { formatTokenAmount, mineBlock, resetFork, setNextBlockTimestamp } from "../_helpers/helpers";
+import { formatTokenAmount, getSnapshotId, mineBlock, resetFork, revertToSnapshot, setNextBlockTimestamp } from "../_helpers/helpers";
 import { Info } from "./Info";
 import { TokenDisplay } from "./TokenDisplay";
 import { erc20Abi } from "viem";
@@ -83,7 +83,7 @@ export const SwapRouter02Executor = ({ currentTime, requiredAmounts }: SwapRoute
         </a>
       </div>
 
-      {owner && (
+      {/* {owner && ( */}
         <div className="flex flex-col items-center gap-4">
           <div className="flex flex-col items-center gap-4 text-2xl">
             <div className="flex items-center justify-between w-full">
@@ -105,6 +105,7 @@ export const SwapRouter02Executor = ({ currentTime, requiredAmounts }: SwapRoute
                 className="btn btn-primary text-lg px-12 mt-2"
                 disabled={!balanceIsNotZero}
                 onClick={async () => {
+                  getSnapshotId();
                   await setNextBlockTimestamp(currentTime);
                   await mineBlock();
                   const result = await writeSwapRouter02ExecutorAsync({
@@ -120,13 +121,14 @@ export const SwapRouter02Executor = ({ currentTime, requiredAmounts }: SwapRoute
               </button>
             </div>
 
-            {contractBalanceUSDT > 0n && (
+            {/* {contractBalanceUSDT > 0n && ( */}
               <div>
                 <button
                   className="btn btn-primary text-lg px-12 mt-2"
                   onClick={async () => {
                     console.log("resetting fork");
-                    await resetFork();
+                    // await resetFork();
+                    await revertToSnapshot();
                     refetchContractBalanceUSDC();
                     refetchContractBalanceUSDT();
                   }}
@@ -134,10 +136,10 @@ export const SwapRouter02Executor = ({ currentTime, requiredAmounts }: SwapRoute
                   Reset
                 </button>
               </div>
-            )}
+            {/* )} */}
           </div>
         </div>
-      )}
+      {/* )} */}
 
       {!owner && <div className="text-center mt-4">Contract missing, run 'yarn deploy'</div>}
     </div>

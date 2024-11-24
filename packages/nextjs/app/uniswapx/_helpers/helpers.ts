@@ -59,12 +59,28 @@ export const mineBlock = async (): Promise<void> => {
   }
 };
 
+export const getSnapshotId = async (): Promise<string> => {
+  const snapshotId = await provider.send("evm_snapshot", []);
+  console.log("Snapshot ID:", snapshotId);
+  return snapshotId;
+};
+
+export const revertToSnapshot = async (snapshotId: string="0x3"): Promise<void> => {
+  try {
+    await provider.send("evm_revert", [snapshotId]);
+    console.log("Reverted to snapshot:", snapshotId);
+  } catch (error) {
+    console.error("Error reverting to snapshot:", error);
+  }
+};
+
 export const resetFork = async (): Promise<void> => {
   try {
     await provider.send("hardhat_reset", [
       {
         forking: {
-          jsonRpcUrl: "https://arb-mainnet.g.alchemy.com/v2/oKxs-03sij-U_N0iOlrSsZFr29-IqbuF",
+          //jsonRpcUrl: "https://arb-mainnet.g.alchemy.com/v2/oKxs-03sij-U_N0iOlrSsZFr29-IqbuF",
+          jsonRpcUrl: "http://127.0.0.1:8545",
           blockNumber: STRART_BLOCK_NUMBER + 2, // +2 to not reset contract deployment and the tx to grab eth from the faucet
         },
       },
