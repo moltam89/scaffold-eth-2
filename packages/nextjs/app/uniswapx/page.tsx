@@ -6,7 +6,7 @@ import { SwapRouter02Executor } from "./_components/SwapRouter02Executor";
 import { UniswapV3_USDC_USDT_Pool } from "./_components/UniswapV3_USDC_USDT_Pool";
 import { rawIntent } from "./_helpers/testRawIntent";
 import { NextPage } from "next";
-import { useBlock } from "wagmi";
+import { useBlock, useBlockNumber } from "wagmi";
 import { CosignedV2DutchOrder } from "@banr1/uniswapx-sdk";
 import { arbitrum } from "viem/chains";
 import { PERMIT2_ADDRESS } from "./_helpers/constants";
@@ -23,6 +23,10 @@ const UniswapX: NextPage = () => {
   if (block?.data) {
     console.log("block", block.data.number, block.data.timestamp);
   }
+
+  // const { data: blockNumber } = useBlockNumber({ watch: true});
+  // console.log("useblockNumber", blockNumber);
+  
 
   return (
     <>

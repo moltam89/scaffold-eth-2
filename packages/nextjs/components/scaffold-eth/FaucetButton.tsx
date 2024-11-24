@@ -16,6 +16,7 @@ const NUM_OF_ETH = "1";
 const FAUCET_ADDRESS = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"; // Use different address, so SwapRouter02Executor will be deployed to the same address
 
 const localWalletClient = createWalletClient({
+  // chain: localForkArbitrum,
   chain: localForkArbitrum,
   transport: http(),
 });
@@ -27,6 +28,7 @@ export const FaucetButton = () => {
   const { address, chain: ConnectedChain } = useAccount();
 
   const { data: balance } = useWatchBalance({ address });
+  console.log("⚡️ ~ file: FaucetButton.tsx ~ balance", balance);
 
   const [loading, setLoading] = useState(false);
 

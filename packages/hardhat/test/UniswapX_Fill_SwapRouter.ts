@@ -14,6 +14,8 @@ import { expect } from "chai";
 import { RawOpenDutchIntentV2 } from "./types/banr1/raw-dutch-intent-v2";
 import { FIRST_FILL_BLOCK_TIMESTAMP, STRART_BLOCK_NUMBER, STRART_BLOCK_TIMESTAMP } from "../constants/constants";
 
+const providerApiKey = process.env.ALCHEMY_API_KEY || "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
+
 const PERMIT2_ADDRESS = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
 
 const SWAP_ROUTER_02_EXECUTOR_ADDRESS_HARDHAT_TEST = "0xCf027C4b03DC18A60422AB981b1Ea1A27EC2E06F";
@@ -37,7 +39,7 @@ describe("UniswapX_Fill_SwapRouter", function () {
     await ethers.provider.send("hardhat_reset", [
       {
         forking: {
-          jsonRpcUrl: "https://arb-mainnet.alchemyapi.io/v2/oKxs-03sij-U_N0iOlrSsZFr29-IqbuF",
+          jsonRpcUrl: `https://arb-mainnet.alchemyapi.io/v2/${providerApiKey}`,
           blockNumber: STRART_BLOCK_NUMBER,
         },
       },
@@ -49,7 +51,7 @@ describe("UniswapX_Fill_SwapRouter", function () {
     await ethers.provider.send("hardhat_reset", [
       {
         forking: {
-          jsonRpcUrl: "https://arb-mainnet.alchemyapi.io/v2/oKxs-03sij-U_N0iOlrSsZFr29-IqbuF",
+          jsonRpcUrl: `https://arb-mainnet.alchemyapi.io/v2/${providerApiKey}`,
           blockNumber: STRART_BLOCK_NUMBER,
         },
       },

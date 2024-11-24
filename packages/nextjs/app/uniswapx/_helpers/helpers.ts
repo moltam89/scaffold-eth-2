@@ -76,21 +76,3 @@ export const revertToSnapshot = async (snapshotId: string): Promise<void> => {
     console.error("Error reverting to snapshot:", error);
   }
 };
-
-export const resetFork = async (): Promise<void> => {
-  try {
-    await provider.send("hardhat_reset", [
-      {
-        forking: {
-          //jsonRpcUrl: "https://arb-mainnet.g.alchemy.com/v2/oKxs-03sij-U_N0iOlrSsZFr29-IqbuF",
-          jsonRpcUrl: "http://127.0.0.1:8545",
-          blockNumber: STRART_BLOCK_NUMBER + 2, // +2 to not reset contract deployment and the tx to grab eth from the faucet
-        },
-      },
-    ]);
-    console.log("Fork reset");
-    setNextBlockTimestamp(STRART_BLOCK_TIMESTAMP);
-  } catch (error) {
-    console.error("Error resetting fork:", error);
-  }
-};
