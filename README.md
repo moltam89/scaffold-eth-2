@@ -1,88 +1,67 @@
-# 🏗 Scaffold-ETH 2
+# UniswapX Fill
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
-
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
-
-⚙️ Built using NextJS, RainbowKit, Foundry/Hardhat, Wagmi, Viem, and Typescript.
-
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
-
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
-
-## Requirements
-
-Before you begin, you need to install the following tools:
-
-- [Node (>= v18.18)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
+This branch of [scaffold-eth-2](https://scaffoldeth.io/) demonstrates how to fill [UniswapX](https://docs.uniswap.org/contracts/uniswapx/overview) intents.
+<br></br>
+Resources: **Titania Research**: [How to become a filler ](https://titaniaresear.ch/how-to-become-a-filler)
 
 ## Quickstart
-
-To get started with Scaffold-ETH 2, follow the steps below:
-
-1. Install the latest version of Scaffold-ETH 2
-
 ```
-npx create-eth@latest
+git clone https://github.com/moltam89/scaffold-eth-2.git
 ```
-
-This command will install all the necessary packages and dependencies, so it might take a while.
-
-> [!NOTE]
-> You can also initialize your project with one of our extensions to add specific features or starter-kits. Learn more in our [extensions documentation](https://docs.scaffoldeth.io/extensions/).
-
-2. Run a local network in the first terminal:
-
 ```
-yarn chain
+cd scaffold-eth-2
 ```
-
-This command starts a local Ethereum network that runs on your local machine and can be used for testing and development. Learn how to [customize your network configuration](https://docs.scaffoldeth.io/quick-start/environment#1-initialize-a-local-blockchain).
-
-3. On a second terminal, deploy the test contract:
-
+```
+git checkout UniswapX
+```
+```
+yarn install
+```
+```
+yarn fork
+```
 ```
 yarn deploy
 ```
-
-This command deploys a test smart contract to the local network. You can find more information about how to customize your contract and deployment script in our [documentation](https://docs.scaffoldeth.io/quick-start/environment#2-deploy-your-smart-contract).
-
-4. On a third terminal, start your NextJS app:
-
 ```
 yarn start
 ```
+Open http://localhost:3000/uniswapx
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+https://github.com/user-attachments/assets/261a96ea-30ac-4888-bf57-8ca614547a2e
 
-**What's next**:
+## Overview
 
-Visit the [What's next section of our docs](https://docs.scaffoldeth.io/quick-start/environment#whats-next) to learn how to:
+Filling UniswapX intents is a highly competitive area, as fillers compete for profit. Because professional fillers execute transactions quickly using real-time data, live data isn't feasible for a demo project like this. Instead, we use a past fill intent to simulate the process.
 
-- Edit your smart contracts
-- Edit your deployment scripts
-- Customize your frontend
-- Edit the app config
-- Writing and running tests
-- [Setting up external services and API keys](https://docs.scaffoldeth.io/deploying/deploy-smart-contracts#configuration-of-third-party-services-for-production-grade-apps)
+We fork the Arbitrum chain at block number 267523713, where an old intent was created and later filled.
+ - Original Transaction: [Arbiscan](https://arbiscan.io/tx/0xe54b1a83b816bc2eb0fec9f3c7c1794030dcd5e57778f019b74d6d3133441b75)
+- MEV Analysis: [Eigenphi Transaction](https://eigenphi.io/mev/eigentx/0xe54b1a83b816bc2eb0fec9f3c7c1794030dcd5e57778f019b74d6d3133441b75)
 
-## Documentation
+In this example, someone used a UniswapV3 pool to fill the intent and earned a small profit.
 
-Visit our [docs](https://docs.scaffoldeth.io) to learn all the technical details and guides of Scaffold-ETH 2.
+## Test Details
 
-To know more about its features, check out our [website](https://scaffoldeth.io).
+The [UniswapX_Fill_SwapRouter](https://github.com/moltam89/scaffold-eth-2/blob/e887f28a02f87da67d25ecf2183ef3bb20d6e1fa/packages/hardhat/test/UniswapX_Fill_SwapRouter.ts) test simulates this trancaction.
 
-## Contributing to Scaffold-ETH 2
+1. **Reset the chain** to block number **267523722**.
+2. **Deploy** the `SwapRouter02Executor` contract, a sample from the UniswapX [repository](https://github.com/Uniswap/UniswapX/blob/main/src/sample-executors/SwapRouter02Executor.sol).
+3. **Verify** that the `SwapRouter02Executor` contract has no USDT.
+4. **Fill the intent**.
+5. **Assert** that the USDT balance of `SwapRouter02Executor` has increased, indicating a profit from filling the intent.
 
-We welcome contributions to Scaffold-ETH 2!
 
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+### Test
+In `packages/hardhat/.env` add your forking URL as follows: `FORKING_URL=https://eth-mainnet.g.alchemy.com/v2/{your_api_key}`
+
+```
+yarn fork
+```
+
+```
+yarn test
+```
+
+#### Notes:
+Calldata for [SwapRouter02](https://docs.uniswap.org/contracts/v3/reference/deployments/arbitrum-deployments) can be generated here:
+https://github.com/Uniswap/swap-router-contracts/
