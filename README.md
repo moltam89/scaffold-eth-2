@@ -1,14 +1,40 @@
 # UniswapX Fill
 
-This branch of `scaffold-eth-2` demonstrates how to fill [UniswapX](https://docs.uniswap.org/contracts/uniswapx/overview) intents.
+This branch of [scaffold-eth-2](https://scaffoldeth.io/) demonstrates how to fill [UniswapX](https://docs.uniswap.org/contracts/uniswapx/overview) intents.
 <br></br>
 Resources: **Titania Research**: [How to become a filler ](https://titaniaresear.ch/how-to-become-a-filler)
+
+## Quickstart
+```
+git clone https://github.com/moltam89/scaffold-eth-2.git
+```
+```
+cd scaffold-eth-2
+```
+```
+git checkout UniswapX
+```
+```
+yarn install
+```
+```
+yarn fork
+```
+```
+yarn deploy
+```
+```
+yarn start
+```
+Open http://localhost:3000/uniswapx
+
+https://github.com/user-attachments/assets/261a96ea-30ac-4888-bf57-8ca614547a2e
 
 ## Overview
 
 Filling UniswapX intents is a highly competitive area, as fillers compete for profit. Because professional fillers execute transactions quickly using real-time data, live data isn't feasible for a demo project like this. Instead, we use a past fill intent to simulate the process.
 
-We fork the Arbitrum chain at block number 267523722 and use an old intent that was already filled.
+We fork the Arbitrum chain at block number 267523713, where an old intent was created and later filled.
  - Original Transaction: [Arbiscan](https://arbiscan.io/tx/0xe54b1a83b816bc2eb0fec9f3c7c1794030dcd5e57778f019b74d6d3133441b75)
 - MEV Analysis: [Eigenphi Transaction](https://eigenphi.io/mev/eigentx/0xe54b1a83b816bc2eb0fec9f3c7c1794030dcd5e57778f019b74d6d3133441b75)
 
@@ -24,7 +50,7 @@ The [UniswapX_Fill_SwapRouter](https://github.com/moltam89/scaffold-eth-2/blob/e
 4. **Fill the intent**.
 5. **Assert** that the USDT balance of `SwapRouter02Executor` has increased, indicating a profit from filling the intent.
 
-## Quickstart
+
 ### Test
 In `packages/hardhat/.env` add your forking URL as follows: `FORKING_URL=https://eth-mainnet.g.alchemy.com/v2/{your_api_key}`
 
@@ -35,22 +61,10 @@ yarn fork
 ```
 yarn test
 ```
-### Frontent
-In `packages/nextjs/.env` add your forking URL as follows: `FORKING_URL=https://eth-mainnet.g.alchemy.com/v2/{your_api_key}`
-```
-yarn fork
-```
-```
-yarn deploy
-```
-```
-yarn start
-```
-Open the UniswapX page:
 
-
-https://github.com/user-attachments/assets/04727ebe-230c-42d8-b731-a45e29f8b0bf
-
+#### Notes:
+Calldata for [SwapRouter02](https://docs.uniswap.org/contracts/v3/reference/deployments/arbitrum-deployments) can be generated here:
+https://github.com/Uniswap/swap-router-contracts/
 
 
 
