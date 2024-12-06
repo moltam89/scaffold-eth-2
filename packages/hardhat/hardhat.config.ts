@@ -54,9 +54,6 @@ const config: HardhatUserConfig = {
         enabled: process.env.MAINNET_FORKING_ENABLED === "true",
       },
       chainId: CHAIN_ID_ARBITRUM,
-      mining: {
-        auto: true, // Automatically mines transactions
-      },
     },
     mainnet: {
       url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
