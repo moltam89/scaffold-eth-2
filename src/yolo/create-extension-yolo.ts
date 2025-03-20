@@ -21,16 +21,6 @@ const prettyLog = {
 
 const ncpPromise = promisify(ncp);
 
-const getProjectPathAndCommitHash = (rawArgs: string[]) => {
-  const args = arg({}, { argv: rawArgs.slice(2) });
-  const projectPath = args._[0];
-  const commitHash = args._[1];
-  if (!projectPath || !commitHash) {
-    throw new Error("Project path and commit hash are required");
-  }
-  return { projectPath, commitHash };
-};
-
 const getDeletedAndRenamedFilesSinceCommit = async (projectPath: string, commitHash: string): Promise<string[]> => {
   const { stdout: gitOutput } = await execa(
     "git",
@@ -122,18 +112,90 @@ const clearProjectFolderIfExists = async (projectName: string) => {
   }
 };
 
+const getMergeBaseCommitHash = async (projectPath: string): Promise<string> => {
+  try {
+    // Add the scaffold-eth-2 remote if not already added
+    await execa("git", ["remote", "add", "scaffold-eth-2", "https://github.com/scaffold-eth/scaffold-eth-2"], {
+      cwd: projectPath,
+      reject: false, // Ignore errors if remote already exists
+    });
+
+    // Fetch the branches without tags
+    await execa("git", ["fetch", "scaffold-eth-2", "main", "--no-tags"], { cwd: projectPath });
+    await execa("git", ["fetch", "scaffold-eth-2", "foundry", "--no-tags"], { cwd: projectPath });
+
+    // Get the merge bases
+    const { stdout: mainMergeBase } = await execa("git", ["merge-base", "HEAD", "scaffold-eth-2/main"], {
+      cwd: projectPath,
+    });
+
+    const { stdout: foundryMergeBase } = await execa("git", ["merge-base", "HEAD", "scaffold-eth-2/foundry"], {
+      cwd: projectPath,
+    });
+
+    if (!mainMergeBase && !foundryMergeBase) {
+      throw new Error("No  merge base with scaffold-eth-2");
+    }
+
+    if (mainMergeBase === foundryMergeBase) {
+      return mainMergeBase;
+    }
+
+    return foundryMergeBase;
+  } catch (err: any) {
+    throw new Error(`Failed to get merge base: ${err.message}`);
+  }
+};
+
+function parseArguments(rawArgs: Args): {
+  projectPath: string;
+  fromScaffoldEth: boolean;
+  scaffoldEthSource: string | null;
+} {
+  const args = arg(
+    {
+      "--from-scaffold-eth": String,
+      "-f": "--from-scaffold-eth",
+    },
+    {
+      argv: rawArgs.slice(2),
+    },
+  );
+
+  const project = args._[0] ?? null;
+  const fromScaffoldEth = "--from-scaffold-eth" in args;
+  const scaffoldEthSource = args["--from-scaffold-eth"] ?? null;
+
+  if (!project) {
+    throw new Error("Project path is required");
+  }
+
+  return {
+    projectPath: project,
+    fromScaffoldEth,
+    scaffoldEthSource,
+  };
+}
+
 const main = async (rawArgs: Args) => {
   try {
-    const { projectPath, commitHash } = getProjectPathAndCommitHash(rawArgs);
+    const { projectPath, fromScaffoldEth, scaffoldEthSource } = parseArguments(rawArgs);
+    console.log("projectPath", projectPath);
+    console.log("fromScaffoldEth", fromScaffoldEth);
+    console.log("scaffoldEthSource", scaffoldEthSource);
+
     const projectName = path.basename(projectPath);
 
     prettyLog.info(`Extension name: ${projectName}\n`);
 
+    const mergeBaseCommitHash = await getMergeBaseCommitHash(projectPath);
+    console.log("mergeBase", mergeBaseCommitHash);
+
     await clearProjectFolderIfExists(projectName);
 
     prettyLog.info("Getting list of changed files...", 1);
-    const changedFiles = await getChangedFilesSinceCommit(projectPath, commitHash);
-    const deletedAndRenamedFiles = await getDeletedAndRenamedFilesSinceCommit(projectPath, commitHash);
+    const changedFiles = await getChangedFilesSinceCommit(projectPath, mergeBaseCommitHash);
+    const deletedAndRenamedFiles = await getDeletedAndRenamedFilesSinceCommit(projectPath, mergeBaseCommitHash);
 
     if (!changedFiles.length && !deletedAndRenamedFiles.length) {
       prettyLog.warning("No files to process.");
@@ -148,7 +210,7 @@ const main = async (rawArgs: Args) => {
       await logDeletedFiles(deletedAndRenamedFiles, projectPath);
     }
 
-    await logCommitHash(commitHash, projectName);
+    await logCommitHash(mergeBaseCommitHash, projectName);
 
     prettyLog.info(`Files processed successfully, updated ${EXTERNAL_EXTENSIONS_DIR}/${projectName} directory.`);
   } catch (err: any) {
