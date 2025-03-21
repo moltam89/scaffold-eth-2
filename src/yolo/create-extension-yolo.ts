@@ -170,7 +170,7 @@ function parseArguments(rawArgs: Args): {
 
   // Find the value manually
   let scaffoldEthSource: string | null = null;
-  const fromScaffoldEth = args["--from-scaffold-eth"] === true;
+  const fromScaffoldEth = args["--from-scaffold-eth"] ?? false;
 
   const fromIndex = rawArgs.findIndex(arg => arg === "--from-scaffold-eth" || arg === "-f");
 
