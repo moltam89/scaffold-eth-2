@@ -1,11 +1,9 @@
-import arg from "arg";
 import path from "path";
 import fs from "fs";
 import { promisify } from "util";
 import { execa } from "execa";
 import ncp from "ncp";
 import chalk from "chalk";
-import { Args } from "../types";
 
 const EXTERNAL_EXTENSIONS_DIR = "externalExtensions";
 const TARGET_EXTENSION_DIR = "extension";
@@ -147,49 +145,14 @@ const getMergeBaseCommitHash = async (projectPath: string): Promise<string> => {
   }
 };
 
-function parseArguments(rawArgs: Args): {
-  projectPath: string;
-  fromScaffoldEth: boolean;
-  scaffoldEthSource: string | null;
-} {
-  const args = arg(
-    {
-      "--from-scaffold-eth": Boolean,
-      "-f": "--from-scaffold-eth",
-    },
-    {
-      argv: rawArgs.slice(2),
-      permissive: true,
-    },
-  );
-
-  const project = args._[0] ?? null;
-  if (!project) {
-    throw new Error("Project path is required");
-  }
-
-  // Find the value manually
-  let scaffoldEthSource: string | null = null;
-  const fromScaffoldEth = args["--from-scaffold-eth"] ?? false;
-
-  const fromIndex = rawArgs.findIndex(arg => arg === "--from-scaffold-eth" || arg === "-f");
-
-  if (fromIndex !== -1 && rawArgs[fromIndex + 1] && !rawArgs[fromIndex + 1].startsWith("-")) {
-    scaffoldEthSource = rawArgs[fromIndex + 1];
-  }
-
-  return {
-    projectPath: project,
-    fromScaffoldEth,
-    scaffoldEthSource,
-  };
-}
-
 // Todo: check yarn.lock file
 
-const main = async (rawArgs: Args) => {
+export const createExtensionFromScaffoldEth = async (
+  projectPath: string,
+  fromScaffoldEth: boolean,
+  scaffoldEthSource: string | null,
+) => {
   try {
-    const { projectPath, fromScaffoldEth, scaffoldEthSource } = parseArguments(rawArgs);
     console.log("projectPath", projectPath);
     console.log("fromScaffoldEth", fromScaffoldEth);
     console.log("scaffoldEthSource", scaffoldEthSource);
@@ -227,5 +190,3 @@ const main = async (rawArgs: Args) => {
     prettyLog.error(`Error: ${err.message}`);
   }
 };
-
-main(process.argv).catch(() => process.exit(1));

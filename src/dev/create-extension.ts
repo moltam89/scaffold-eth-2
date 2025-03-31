@@ -7,6 +7,8 @@ import ncp from "ncp";
 import { fileURLToPath } from "url";
 import { BASE_DIR, SOLIDITY_FRAMEWORKS, SOLIDITY_FRAMEWORKS_DIR } from "../utils/consts";
 import chalk from "chalk";
+import { Args } from "../types";
+import { createExtensionFromScaffoldEth } from "./from-scaffold-eth";
 
 const EXTERNAL_EXTENSIONS_DIR = "externalExtensions";
 const TARGET_EXTENSION_DIR = "extension";
@@ -28,13 +30,52 @@ const ncpPromise = promisify(ncp);
 const currentFileUrl = import.meta.url;
 const templateDirectory = path.resolve(decodeURI(fileURLToPath(currentFileUrl)), "../../../templates");
 
-const getProjectPath = (rawArgs: string[]) => {
-  const args = arg({}, { argv: rawArgs.slice(2) });
-  const projectPath = args._[0];
-  if (!projectPath) {
+// const getProjectPath = (rawArgs: string[]) => {
+//   const args = arg({}, { argv: rawArgs.slice(2) });
+//   const projectPath = args._[0];
+//   if (!projectPath) {
+//     throw new Error("Project path is required");
+//   }
+//   return { projectPath };
+// };
+
+const parseArguments = (
+  rawArgs: Args,
+): {
+  projectPath: string;
+  fromScaffoldEth: boolean;
+  scaffoldEthSource: string | null;
+} => {
+  const args = arg(
+    {
+      "--from-scaffold-eth": Boolean,
+      "-f": "--from-scaffold-eth",
+    },
+    {
+      argv: rawArgs.slice(2),
+    },
+  );
+
+  const project = args._[0] ?? null;
+  if (!project) {
     throw new Error("Project path is required");
   }
-  return { projectPath };
+
+  const fromScaffoldEth = args["--from-scaffold-eth"] ?? false;
+
+  let scaffoldEthSource: string | null = null;
+
+  const fromIndex = rawArgs.findIndex(arg => arg === "--from-scaffold-eth" || arg === "-f");
+
+  if (fromIndex !== -1 && rawArgs[fromIndex + 1] && !rawArgs[fromIndex + 1].startsWith("-")) {
+    scaffoldEthSource = rawArgs[fromIndex + 1];
+  }
+
+  return {
+    projectPath: project,
+    fromScaffoldEth,
+    scaffoldEthSource,
+  };
 };
 
 const getDeletedFiles = async (projectPath: string): Promise<string[]> => {
@@ -192,15 +233,22 @@ const copyChanges = async (
   }
 };
 
-const main = async (rawArgs: string[]) => {
+const main = async (rawArgs: Args) => {
   try {
-    const { projectPath } = getProjectPath(rawArgs);
+    const { projectPath, fromScaffoldEth, scaffoldEthSource } = parseArguments(rawArgs);
+
     const projectName = path.basename(projectPath);
-    const templates = new Set<string>();
-    await findTemplateFiles(templateDirectory, templates);
 
     console.log("\n");
     prettyLog.info(`Extension name: ${projectName}\n`);
+
+    if (fromScaffoldEth) {
+      await createExtensionFromScaffoldEth(projectPath, fromScaffoldEth, scaffoldEthSource);
+      return;
+    }
+
+    const templates = new Set<string>();
+    await findTemplateFiles(templateDirectory, templates);
 
     prettyLog.info("Getting list of changed files...", 1);
     const changedFiles = await getChangedFilesSinceFirstCommit(projectPath);
