@@ -83,33 +83,6 @@ const logDeletedFiles = async (deletedFiles: string[], projectPath: string) => {
   prettyLog.success(`Deleted files logged to ${logPath}\n`, 1);
 };
 
-// const clearDirectoryContents = async (dirPath: string) => {
-//   const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
-
-//   for (const entry of entries) {
-//     const fullPath = path.join(dirPath, entry.name);
-
-//     // Skip Git-related files/folders
-//     if (entry.name === ".git" || entry.name.startsWith(".git")) {
-//       continue;
-//     }
-
-//     if (entry.isDirectory()) {
-//       await fs.promises.rm(fullPath, { recursive: true, force: true });
-//     } else {
-//       await fs.promises.unlink(fullPath);
-//     }
-//   }
-// };
-
-// const clearProjectFolderIfExists = async (projectName: string) => {
-//   const projectDir = path.join(EXTERNAL_EXTENSIONS_DIR, projectName);
-//   if (fs.existsSync(projectDir)) {
-//     await clearDirectoryContents(projectDir);
-//     prettyLog.success(`Cleared contents of directory: ${projectDir}\n`, 1);
-//   }
-// };
-
 const getMergeBaseCommitHash = async (projectPath: string): Promise<string> => {
   try {
     // Add the scaffold-eth-2 remote if not already added
@@ -163,8 +136,6 @@ export const createExtensionFromScaffoldEth = async (
 
     const mergeBaseCommitHash = await getMergeBaseCommitHash(projectPath);
     console.log("mergeBase", mergeBaseCommitHash);
-
-    //await clearProjectFolderIfExists(projectName);
 
     prettyLog.info("Getting list of changed files...", 1);
     const changedFiles = await getChangedFilesSinceCommit(projectPath, mergeBaseCommitHash);
