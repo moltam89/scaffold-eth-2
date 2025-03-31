@@ -118,6 +118,15 @@ const getMergeBaseCommitHash = async (projectPath: string): Promise<string> => {
   }
 };
 
+const initGitRepo = async (targetPath: string) => {
+  try {
+    await execa("git", ["init"], { cwd: targetPath });
+    prettyLog.success(`Initialized git repository in ${targetPath}`, 1);
+  } catch (error: any) {
+    prettyLog.error(`Failed to initialize git repository: ${error.message}`);
+  }
+};
+
 // Todo: check yarn.lock file
 
 export const createExtensionFromScaffoldEth = async (
@@ -155,6 +164,8 @@ export const createExtensionFromScaffoldEth = async (
     }
 
     await logCommitHash(mergeBaseCommitHash, projectName);
+
+    await initGitRepo(path.join(EXTERNAL_EXTENSIONS_DIR, projectName));
 
     prettyLog.info(`Files processed successfully, updated ${EXTERNAL_EXTENSIONS_DIR}/${projectName} directory.`);
   } catch (err: any) {
