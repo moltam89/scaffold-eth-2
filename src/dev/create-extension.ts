@@ -30,15 +30,6 @@ const ncpPromise = promisify(ncp);
 const currentFileUrl = import.meta.url;
 const templateDirectory = path.resolve(decodeURI(fileURLToPath(currentFileUrl)), "../../../templates");
 
-// const getProjectPath = (rawArgs: string[]) => {
-//   const args = arg({}, { argv: rawArgs.slice(2) });
-//   const projectPath = args._[0];
-//   if (!projectPath) {
-//     throw new Error("Project path is required");
-//   }
-//   return { projectPath };
-// };
-
 const parseArguments = (
   rawArgs: Args,
 ): {
