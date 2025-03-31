@@ -10,22 +10,22 @@ import chalk from "chalk";
 import { Args } from "../types";
 import { createExtensionFromScaffoldEth } from "./from-scaffold-eth";
 
-const EXTERNAL_EXTENSIONS_DIR = "externalExtensions";
-const TARGET_EXTENSION_DIR = "extension";
+export const EXTERNAL_EXTENSIONS_DIR = "externalExtensions";
+export const TARGET_EXTENSION_DIR = "extension";
 const TEMPLATE_FILE_SUFFIX = ".template.mjs";
 const DEPLOYED_CONTRACTS_FILE = "deployedContracts.ts";
 const YARN_LOCK_FILE = "yarn.lock";
 const PACKAGE_JSON_FILE = "package.json";
 const NEXTJS_DIR = "nextjs";
 
-const prettyLog = {
+export const prettyLog = {
   info: (message: string, indent = 0) => console.log(chalk.cyan(`${"  ".repeat(indent)}${message}`)),
   success: (message: string, indent = 0) => console.log(chalk.green(`${"  ".repeat(indent)}✔︎ ${message}`)),
   warning: (message: string, indent = 0) => console.log(chalk.yellow(`${"  ".repeat(indent)}⚠ ${message}`)),
   error: (message: string, indent = 0) => console.log(chalk.red(`${"  ".repeat(indent)}✖ ${message}`)),
 };
 
-const ncpPromise = promisify(ncp);
+export const ncpPromise = promisify(ncp);
 
 const currentFileUrl = import.meta.url;
 const templateDirectory = path.resolve(decodeURI(fileURLToPath(currentFileUrl)), "../../../templates");

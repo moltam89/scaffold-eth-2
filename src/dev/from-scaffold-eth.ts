@@ -1,23 +1,10 @@
 import path from "path";
 import fs from "fs";
-import { promisify } from "util";
 import { execa } from "execa";
-import ncp from "ncp";
-import chalk from "chalk";
+import { EXTERNAL_EXTENSIONS_DIR, ncpPromise, prettyLog, TARGET_EXTENSION_DIR } from "./create-extension";
 
-const EXTERNAL_EXTENSIONS_DIR = "externalExtensions";
-const TARGET_EXTENSION_DIR = "extension";
 const DELETED_FILES_LOG = "deletedFiles.log";
 const COMMIT_HASH_LOG = "commitHash.log";
-
-const prettyLog = {
-  info: (message: string, indent = 0) => console.log(chalk.cyan(`${"  ".repeat(indent)}${message}`)),
-  success: (message: string, indent = 0) => console.log(chalk.green(`${"  ".repeat(indent)}✔︎ ${message}`)),
-  warning: (message: string, indent = 0) => console.log(chalk.yellow(`${"  ".repeat(indent)}⚠ ${message}`)),
-  error: (message: string, indent = 0) => console.log(chalk.red(`${"  ".repeat(indent)}✖ ${message}`)),
-};
-
-const ncpPromise = promisify(ncp);
 
 const getDeletedAndRenamedFilesSinceCommit = async (projectPath: string, commitHash: string): Promise<string[]> => {
   const { stdout: gitOutput } = await execa(
