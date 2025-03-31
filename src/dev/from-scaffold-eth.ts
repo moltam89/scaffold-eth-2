@@ -120,8 +120,16 @@ const getMergeBaseCommitHash = async (projectPath: string): Promise<string> => {
 
 const initGitRepo = async (targetPath: string) => {
   try {
+    const gitDir = path.join(targetPath, ".git");
+    if (fs.existsSync(gitDir)) {
+      return; // Git repository already exists
+    }
+
     await execa("git", ["init"], { cwd: targetPath });
-    prettyLog.success(`Initialized git repository in ${targetPath}`, 1);
+    await execa("git", ["add", "."], { cwd: targetPath });
+    await execa("git", ["commit", "-m", "Initial commit"], { cwd: targetPath });
+
+    prettyLog.success(`Initialized git repository and made initial commit in ${targetPath}`, 1);
   } catch (error: any) {
     prettyLog.error(`Failed to initialize git repository: ${error.message}`);
   }
