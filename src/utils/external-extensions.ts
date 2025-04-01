@@ -86,8 +86,6 @@ export const validateExternalExtension = async (
 
 // Gets the data from the argument passed to the `--extension` option.
 export const getDataFromExternalExtensionArgument = (externalExtension: string) => {
-  console.log("yoooo", externalExtension);
-
   if (CURATED_EXTENSIONS[externalExtension]) {
     externalExtension = getArgumentFromExternalExtensionOption(CURATED_EXTENSIONS[externalExtension]);
   }
