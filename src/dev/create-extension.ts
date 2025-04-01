@@ -1,31 +1,18 @@
 import arg from "arg";
 import path from "path";
 import fs from "fs";
-import { promisify } from "util";
 import { execa } from "execa";
-import ncp from "ncp";
+import { EXTERNAL_EXTENSIONS_DIR, ncpPromise, prettyLog, TARGET_EXTENSION_DIR } from "./common";
 import { fileURLToPath } from "url";
 import { BASE_DIR, SOLIDITY_FRAMEWORKS, SOLIDITY_FRAMEWORKS_DIR } from "../utils/consts";
-import chalk from "chalk";
 import { Args } from "../types";
 import { createExtensionFromScaffoldEth } from "./from-scaffold-eth";
 
-export const EXTERNAL_EXTENSIONS_DIR = "externalExtensions";
-export const TARGET_EXTENSION_DIR = "extension";
 const TEMPLATE_FILE_SUFFIX = ".template.mjs";
 const DEPLOYED_CONTRACTS_FILE = "deployedContracts.ts";
 const YARN_LOCK_FILE = "yarn.lock";
 const PACKAGE_JSON_FILE = "package.json";
 const NEXTJS_DIR = "nextjs";
-
-export const prettyLog = {
-  info: (message: string, indent = 0) => console.log(chalk.cyan(`${"  ".repeat(indent)}${message}`)),
-  success: (message: string, indent = 0) => console.log(chalk.green(`${"  ".repeat(indent)}✔︎ ${message}`)),
-  warning: (message: string, indent = 0) => console.log(chalk.yellow(`${"  ".repeat(indent)}⚠ ${message}`)),
-  error: (message: string, indent = 0) => console.log(chalk.red(`${"  ".repeat(indent)}✖ ${message}`)),
-};
-
-export const ncpPromise = promisify(ncp);
 
 const currentFileUrl = import.meta.url;
 const templateDirectory = path.resolve(decodeURI(fileURLToPath(currentFileUrl)), "../../../templates");

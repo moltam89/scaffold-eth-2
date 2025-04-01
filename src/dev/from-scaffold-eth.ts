@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { execa } from "execa";
-import { EXTERNAL_EXTENSIONS_DIR, ncpPromise, prettyLog, TARGET_EXTENSION_DIR } from "./create-extension";
+import { EXTERNAL_EXTENSIONS_DIR, ncpPromise, prettyLog, TARGET_EXTENSION_DIR } from "./common";
 
 const DELETED_FILES_LOG = "deletedFiles.log";
 const COMMIT_HASH_LOG = "commitHash.log";
