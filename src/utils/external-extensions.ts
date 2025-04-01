@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import { ExternalExtension, RawOptions, SolidityFramework } from "../types";
 import curatedExtension from "../extensions.json";
 import { SOLIDITY_FRAMEWORKS } from "./consts";
+import { deconstructGithubUrl, parseExtensionString } from "./common";
 
 type ExtensionJSON = {
   extensionFlagValue: string;
@@ -33,15 +34,6 @@ const CURATED_EXTENSIONS = extensions.reduce<Record<string, ExternalExtension>>(
   };
   return acc;
 }, {});
-
-function deconstructGithubUrl(url: string) {
-  const urlParts = url.split("/");
-  const ownerName = urlParts[3];
-  const repoName = urlParts[4];
-  const branch = urlParts[5] === "tree" ? urlParts[6] : undefined;
-
-  return { ownerName, repoName, branch };
-}
 
 export const validateExternalExtension = async (
   extensionName: string,
@@ -90,43 +82,7 @@ export const getDataFromExternalExtensionArgument = (externalExtension: string) 
     externalExtension = getArgumentFromExternalExtensionOption(CURATED_EXTENSIONS[externalExtension]);
   }
 
-  const isGithubUrl = externalExtension.startsWith("https://github.com/");
-
-  // Check format: owner/project:branch (branch is optional)
-  const regex = /^[^/]+\/[^/]+(:[^/]+)?$/;
-  if (!regex.test(externalExtension) && !isGithubUrl) {
-    throw new Error(`Invalid extension format. Use "owner/project", "owner/project:branch" or github url.`);
-  }
-
-  let owner;
-  let project;
-  let branch;
-
-  if (isGithubUrl) {
-    const { ownerName, repoName, branch: urlBranch } = deconstructGithubUrl(externalExtension);
-    owner = ownerName;
-    project = repoName;
-    branch = urlBranch;
-  } else {
-    // Extract owner, project and branch if format passed is owner/project:branch
-    owner = externalExtension.split("/")[0];
-    project = externalExtension.split(":")[0].split("/")[1];
-    branch = externalExtension.split(":")[1];
-  }
-
-  const githubUrl = `https://github.com/${owner}/${project}`;
-  let githubBranchUrl;
-  if (branch) {
-    githubBranchUrl = `https://github.com/${owner}/${project}/tree/${branch}`;
-  }
-
-  return {
-    githubBranchUrl: githubBranchUrl ?? githubUrl,
-    githubUrl,
-    branch,
-    owner,
-    project,
-  };
+  return parseExtensionString(externalExtension);
 };
 
 // Parse the externalExtensionOption object into a argument string.
