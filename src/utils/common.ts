@@ -1,3 +1,5 @@
+import https from "https";
+
 export const parseExtensionString = (extension: string) => {
   const isGithubUrl = extension.startsWith("https://github.com/");
   const regex = /^[^/]+\/[^/]+(:[^/]+)?$/;
@@ -38,4 +40,20 @@ export function deconstructGithubUrl(url: string) {
   const branch = urlParts[5] === "tree" ? urlParts[6] : undefined;
 
   return { ownerName, repoName, branch };
+}
+
+export async function assertRepoExists(githubBranchUrl: string, githubUrl: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    https
+      .get(githubBranchUrl, res => {
+        if (res.statusCode !== 200) {
+          reject(new Error(`Extension not found: ${githubUrl}`));
+        } else {
+          resolve();
+        }
+      })
+      .on("error", err => {
+        reject(err);
+      });
+  });
 }

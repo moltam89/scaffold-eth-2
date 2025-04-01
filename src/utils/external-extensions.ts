@@ -1,11 +1,10 @@
 import fs from "fs";
 import path from "path";
-import * as https from "https";
 import { fileURLToPath } from "url";
 import { ExternalExtension, RawOptions, SolidityFramework } from "../types";
 import curatedExtension from "../extensions.json";
 import { SOLIDITY_FRAMEWORKS } from "./consts";
-import { deconstructGithubUrl, parseExtensionString } from "./common";
+import { assertRepoExists, deconstructGithubUrl, parseExtensionString } from "./common";
 
 type ExtensionJSON = {
   extensionFlagValue: string;
@@ -58,20 +57,7 @@ export const validateExternalExtension = async (
   const { githubUrl, githubBranchUrl, branch, owner } = getDataFromExternalExtensionArgument(extensionName);
   const isTrusted = TRUSTED_GITHUB_ORGANIZATIONS.includes(owner.toLowerCase()) || !!CURATED_EXTENSIONS[extensionName];
 
-  // Check if repository exists
-  await new Promise((resolve, reject) => {
-    https
-      .get(githubBranchUrl, res => {
-        if (res.statusCode !== 200) {
-          reject(new Error(`Extension not found: ${githubUrl}`));
-        } else {
-          resolve(null);
-        }
-      })
-      .on("error", err => {
-        reject(err);
-      });
-  });
+  await assertRepoExists(githubBranchUrl, githubUrl);
 
   return { repository: githubUrl, branch, isTrusted };
 };
