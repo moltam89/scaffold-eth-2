@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import { execa } from "execa";
 import { EXTERNAL_EXTENSIONS_DIR, ncpPromise, prettyLog, TARGET_EXTENSION_DIR } from "./common";
-import { assertRepoExists, parseExtensionString } from "../utils/common";
+import { assertRepoExists, parseExtensionString, setUpExternalExtensionFiles } from "../utils/common";
 
 const DELETED_FILES_LOG = "deletedFiles.log";
 const COMMIT_HASH_LOG = "commitHash.log";
@@ -144,6 +144,8 @@ export const createExtensionFromScaffoldEth = async (
       console.log("owner", owner);
 
       await assertRepoExists(githubBranchUrl, githubUrl);
+
+      await setUpExternalExtensionFiles({ repository: githubUrl, branch }, "testFolder");
     }
 
     const projectName = path.basename(projectPath);

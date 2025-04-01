@@ -1,4 +1,7 @@
+import { execa } from "execa";
+import fs from "fs";
 import https from "https";
+import { ExternalExtension } from "../types";
 
 export const parseExtensionString = (extension: string) => {
   const isGithubUrl = extension.startsWith("https://github.com/");
@@ -57,3 +60,19 @@ export async function assertRepoExists(githubBranchUrl: string, githubUrl: strin
       });
   });
 }
+
+export const setUpExternalExtensionFiles = async (externalExtension: ExternalExtension, tmpDir: string) => {
+  // 1. Create tmp directory to clone external extension
+  await fs.promises.mkdir(tmpDir);
+
+  const { repository, branch } = externalExtension;
+
+  // 2. Clone external extension
+  if (branch) {
+    await execa("git", ["clone", "--branch", branch, repository, tmpDir], {
+      cwd: tmpDir,
+    });
+  } else {
+    await execa("git", ["clone", repository, tmpDir], { cwd: tmpDir });
+  }
+};

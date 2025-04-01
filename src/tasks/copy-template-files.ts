@@ -10,6 +10,7 @@ import { promisify } from "util";
 import link from "../utils/link";
 import { getArgumentFromExternalExtensionOption } from "../utils/external-extensions";
 import { BASE_DIR, SOLIDITY_FRAMEWORKS, SOLIDITY_FRAMEWORKS_DIR, EXAMPLE_CONTRACTS_DIR } from "../utils/consts";
+import { setUpExternalExtensionFiles } from "../utils/common";
 
 const EXTERNAL_EXTENSION_TMP_DIR = "tmp-external-extension";
 
@@ -314,22 +315,6 @@ ${
   );
 };
 
-const setUpExternalExtensionFiles = async (options: Options, tmpDir: string) => {
-  // 1. Create tmp directory to clone external extension
-  await fs.promises.mkdir(tmpDir);
-
-  const { repository, branch } = options.externalExtension as ExternalExtension;
-
-  // 2. Clone external extension
-  if (branch) {
-    await execa("git", ["clone", "--branch", branch, repository, tmpDir], {
-      cwd: tmpDir,
-    });
-  } else {
-    await execa("git", ["clone", repository, tmpDir], { cwd: tmpDir });
-  }
-};
-
 export async function copyTemplateFiles(options: Options, templateDir: string, targetDir: string) {
   copyOrLink = options.dev ? link : copy;
   const basePath = path.join(templateDir, BASE_DIR);
@@ -359,7 +344,7 @@ export async function copyTemplateFiles(options: Options, templateDir: string, t
         "extension",
       );
     } else {
-      await setUpExternalExtensionFiles(options, tmpDir);
+      await setUpExternalExtensionFiles(options.externalExtension as ExternalExtension, tmpDir);
     }
 
     if (options.solidityFramework) {
