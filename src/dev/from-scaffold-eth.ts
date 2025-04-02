@@ -135,6 +135,8 @@ export const createExtensionFromScaffoldEth = async (
     console.log("fromScaffoldEth", fromScaffoldEth);
     console.log("scaffoldEthSource", scaffoldEthSource);
 
+    const projectName = path.basename(projectPath);
+
     if (scaffoldEthSource) {
       const { githubUrl, githubBranchUrl, branch, owner } = parseExtensionString(scaffoldEthSource);
 
@@ -145,10 +147,8 @@ export const createExtensionFromScaffoldEth = async (
 
       await assertRepoExists(githubBranchUrl, githubUrl);
 
-      await setUpExternalExtensionFiles({ repository: githubUrl, branch }, "testFolder");
+      await setUpExternalExtensionFiles({ repository: githubUrl, branch }, projectName);
     }
-
-    const projectName = path.basename(projectPath);
 
     prettyLog.info(`Extension name: ${projectName}\n`);
 
