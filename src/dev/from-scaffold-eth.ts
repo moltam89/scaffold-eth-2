@@ -135,10 +135,12 @@ export const createExtensionFromScaffoldEth = async (
     console.log("fromScaffoldEth", fromScaffoldEth);
     console.log("scaffoldEthSource", scaffoldEthSource);
 
-    const projectName = path.basename(projectPath);
+    let projectName = path.basename(projectPath);
 
     if (scaffoldEthSource) {
       const { githubUrl, githubBranchUrl, branch, owner } = parseExtensionString(scaffoldEthSource);
+
+      projectName = owner;
 
       console.log("githubUrl", githubUrl);
       console.log("githubBranchUrl", githubBranchUrl);
