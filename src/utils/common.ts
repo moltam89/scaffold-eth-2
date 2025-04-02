@@ -61,7 +61,7 @@ export async function assertRepoExists(githubBranchUrl: string, githubUrl: strin
   });
 }
 
-export const setUpExternalExtensionFiles = async (externalExtension: ExternalExtension, tmpDir: string) => {
+export const setUpRepository = async (externalExtension: ExternalExtension, tmpDir: string) => {
   // 1. Create tmp directory to clone external extension
   await fs.promises.mkdir(tmpDir);
 
