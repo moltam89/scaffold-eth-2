@@ -41,6 +41,10 @@ const parseArguments = (
     throw new Error("Project path is required");
   }
 
+  if (project && fromScaffoldEth) {
+    throw new Error("Please provide either a local folder or a GitHub repo URL, not both");
+  }
+
   let scaffoldEthSource: string | null = null;
 
   const fromIndex = rawArgs.findIndex(arg => arg === "--from-scaffold-eth" || arg === "-f");
