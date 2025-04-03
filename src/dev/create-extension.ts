@@ -36,8 +36,6 @@ const parseArguments = (
 
   const projectPath = args._[0] ?? null;
 
-  console.log("projectPath", projectPath);
-
   if (!projectPath) {
     throw new Error("Project path is required");
   }
@@ -55,6 +53,11 @@ const parseArguments = (
   // if scaffoldEthRepo && folder exists at projectPath, throw error
   if (scaffoldEthRepo && fs.existsSync(projectPath)) {
     throw new Error(`Cannot use scaffold-eth repo: directory already exists at ${projectPath}`);
+  }
+
+  console.log("projectPath", projectPath);
+  if (projectPath === scaffoldEthRepo) {
+    throw new Error("Project name is required");
   }
 
   return {
