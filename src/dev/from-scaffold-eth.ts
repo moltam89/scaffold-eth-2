@@ -149,8 +149,7 @@ export const createExtensionFromScaffoldEth = async (
       await setUpRepository({ repository: githubUrl, branch }, projectName, true);
     }
 
-    prettyLog.info(`Extension name: ${projectName}\n`);
-
+    console.log("mergeBase0");
     const mergeBaseCommitHash = await getMergeBaseCommitHash(projectName);
     console.log("mergeBase", mergeBaseCommitHash);
 
