@@ -65,7 +65,7 @@ const logDeletedFiles = async (deletedFiles: string[], projectName: string) => {
   const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, DELETED_FILES_LOG);
   const logContent = deletedFiles.join("\n");
   await fs.promises.writeFile(logPath, logContent, "utf8");
-  prettyLog.success(`Deleted files logged to ${logPath}\n`, 1);
+  prettyLog.success(`Deleted files logged to ${logPath}`, 1);
 };
 
 const getMergeBaseCommitHash = async (projectName: string): Promise<string> => {
@@ -132,17 +132,17 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
 
       await assertRepoExists(githubBranchUrl, githubUrl);
 
-      prettyLog.info(`Creating ${projectName} and cloning ${githubBranchUrl}...`, 1);
+      prettyLog.info(`Creating ${projectName} folder and cloning ${githubBranchUrl}...`, 1);
 
       await setUpRepository({ repository: githubUrl, branch }, projectName, true);
       cleanUpProjectNameFolder = true;
 
-      prettyLog.success(`Cloned ${githubBranchUrl} into ${projectName}`, 1);
+      prettyLog.success(`Cloned ${githubBranchUrl} into ${projectName}\n`, 1);
     }
 
     prettyLog.info("Finding merge base commit hash...", 1);
     const mergeBaseCommitHash = await getMergeBaseCommitHash(projectName);
-    prettyLog.success(`Merge base commit hash: ${mergeBaseCommitHash}`, 1);
+    prettyLog.success(`Merge base commit hash: ${mergeBaseCommitHash}\n`, 1);
 
     prettyLog.info("Getting list of changed files...", 1);
     const changedFiles = await getChangedFilesSinceCommit(projectName, mergeBaseCommitHash);
@@ -170,7 +170,7 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
     if (cleanUpProjectNameFolder) {
       const projectPath = path.join(process.cwd(), projectName);
       await fs.promises.rm(projectPath, { recursive: true, force: true });
-      prettyLog.info(`Cleaned up temporary folder: ${projectPath}`, 1);
+      prettyLog.info(`Cleaned up temporary folder: ${projectPath}\n`, 1);
     }
 
     prettyLog.info(`Files processed successfully, updated ${EXTERNAL_EXTENSIONS_DIR}/${projectName} directory.`);

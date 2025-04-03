@@ -62,7 +62,6 @@ const parseArguments = (
     throw new Error(`Cannot use scaffold-eth repository: directory already exists at ${projectPath}`);
   }
 
-  console.log("projectPath", projectPath);
   if (projectPath === scaffoldEthRepo) {
     throw new Error("Project name is required");
   }
@@ -235,7 +234,6 @@ const main = async (rawArgs: Args) => {
 
     const projectName = path.basename(projectPath);
 
-    console.log("\n");
     prettyLog.info(`Extension name: ${projectName}\n`);
 
     if (fromScaffoldEth) {
