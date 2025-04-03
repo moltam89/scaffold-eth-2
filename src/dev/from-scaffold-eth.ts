@@ -155,12 +155,12 @@ export const createExtensionFromScaffoldEth = async (
 
     prettyLog.info(`Extension name: ${projectName}\n`);
 
-    const mergeBaseCommitHash = await getMergeBaseCommitHash(projectPath);
+    const mergeBaseCommitHash = await getMergeBaseCommitHash(projectName);
     console.log("mergeBase", mergeBaseCommitHash);
 
     prettyLog.info("Getting list of changed files...", 1);
-    const changedFiles = await getChangedFilesSinceCommit(projectPath, mergeBaseCommitHash);
-    const deletedAndRenamedFiles = await getDeletedAndRenamedFilesSinceCommit(projectPath, mergeBaseCommitHash);
+    const changedFiles = await getChangedFilesSinceCommit(projectName, mergeBaseCommitHash);
+    const deletedAndRenamedFiles = await getDeletedAndRenamedFilesSinceCommit(projectName, mergeBaseCommitHash);
 
     if (!changedFiles.length && !deletedAndRenamedFiles.length) {
       prettyLog.warning("No files to process.");
@@ -168,11 +168,11 @@ export const createExtensionFromScaffoldEth = async (
     }
 
     if (changedFiles.length) {
-      await copyChangedFiles(changedFiles, projectName, projectPath);
+      await copyChangedFiles(changedFiles, projectName, projectName);
     }
 
     if (deletedAndRenamedFiles.length) {
-      await logDeletedFiles(deletedAndRenamedFiles, projectPath);
+      await logDeletedFiles(deletedAndRenamedFiles, projectName);
     }
 
     await logCommitHash(mergeBaseCommitHash, projectName);

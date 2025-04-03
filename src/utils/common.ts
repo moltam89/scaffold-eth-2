@@ -68,9 +68,10 @@ export const setUpRepository = async (
 ) => {
   const { repository, branch } = externalExtension;
 
+  await fs.promises.mkdir(tmpDir);
+
   if (!cloneDirectly) {
-    // Original behavior: create new folder and clone into it
-    await fs.promises.mkdir(tmpDir);
+    // Original behavior: clone into a new folder
     if (branch) {
       await execa("git", ["clone", "--branch", branch, repository, tmpDir], {
         cwd: tmpDir,
@@ -79,7 +80,7 @@ export const setUpRepository = async (
       await execa("git", ["clone", repository, tmpDir], { cwd: tmpDir });
     }
   } else {
-    // New behavior: clone directly into existing tmpDir
+    // New behavior: clone into current folder
     if (branch) {
       await execa("git", ["clone", "--branch", branch, repository, "."], {
         cwd: tmpDir,
