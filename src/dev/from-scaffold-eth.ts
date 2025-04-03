@@ -128,15 +128,15 @@ const initGitRepo = async (targetPath: string) => {
 export const createExtensionFromScaffoldEth = async (
   projectName: string,
   fromScaffoldEth: boolean,
-  scaffoldEthSource: string | null,
+  scaffoldEthRepo: string | null,
 ) => {
   try {
     console.log("projectName", projectName);
     console.log("fromScaffoldEth", fromScaffoldEth);
-    console.log("scaffoldEthSource", scaffoldEthSource);
+    console.log("scaffoldEthSource", scaffoldEthRepo);
 
-    if (scaffoldEthSource) {
-      const { githubUrl, githubBranchUrl, branch, owner } = parseExtensionString(scaffoldEthSource);
+    if (scaffoldEthRepo) {
+      const { githubUrl, githubBranchUrl, branch, owner } = parseExtensionString(scaffoldEthRepo);
 
       console.log("githubUrl", githubUrl);
       console.log("githubBranchUrl", githubBranchUrl);

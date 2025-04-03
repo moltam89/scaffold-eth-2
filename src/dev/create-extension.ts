@@ -22,7 +22,7 @@ const parseArguments = (
 ): {
   projectPath: string;
   fromScaffoldEth: boolean;
-  scaffoldEthSource: string | null;
+  scaffoldEthRepo: string | null;
 } => {
   const args = arg(
     {
@@ -35,6 +35,8 @@ const parseArguments = (
   );
 
   const projectPath = args._[0] ?? null;
+
+  console.log("projectPath", projectPath);
 
   if (!projectPath) {
     throw new Error("Project path is required");
@@ -58,7 +60,7 @@ const parseArguments = (
   return {
     projectPath,
     fromScaffoldEth,
-    scaffoldEthSource: scaffoldEthRepo,
+    scaffoldEthRepo: scaffoldEthRepo,
   };
 };
 
@@ -219,7 +221,7 @@ const copyChanges = async (
 
 const main = async (rawArgs: Args) => {
   try {
-    const { projectPath, fromScaffoldEth, scaffoldEthSource } = parseArguments(rawArgs);
+    const { projectPath, fromScaffoldEth, scaffoldEthRepo } = parseArguments(rawArgs);
 
     const projectName = path.basename(projectPath);
 
@@ -227,7 +229,7 @@ const main = async (rawArgs: Args) => {
     prettyLog.info(`Extension name: ${projectName}\n`);
 
     if (fromScaffoldEth) {
-      await createExtensionFromScaffoldEth(projectName, fromScaffoldEth, scaffoldEthSource);
+      await createExtensionFromScaffoldEth(projectName, fromScaffoldEth, scaffoldEthRepo);
       return;
     }
 
