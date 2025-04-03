@@ -37,7 +37,7 @@ const parseArguments = (
   const projectPath = args._[0] ?? null;
 
   if (!projectPath) {
-    throw new Error("Project path is required");
+    throw new Error("Project name is required");
   }
 
   const fromScaffoldEth = args["--from-scaffold-eth"] ?? false;
