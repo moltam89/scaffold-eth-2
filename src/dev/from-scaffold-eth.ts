@@ -52,7 +52,6 @@ const copyChangedFiles = async (changedFiles: string[], projectName: string) => 
     if (!fs.existsSync(sourcePath)) continue;
     await createDirectories(file, projectName);
     await ncpPromise(sourcePath, destPath);
-    prettyLog.success(`Copied changed file: ${file}`, 2);
   }
 };
 
@@ -151,6 +150,7 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
 
     if (changedFiles.length) {
       await copyChangedFiles(changedFiles, projectName);
+      prettyLog.success(`Copied ${changedFiles.length} changed files`, 1);
     }
 
     if (deletedAndRenamedFiles.length) {
