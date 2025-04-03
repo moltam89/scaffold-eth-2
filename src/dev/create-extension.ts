@@ -35,28 +35,30 @@ const parseArguments = (
   );
 
   const projectPath = args._[0] ?? null;
-  const fromScaffoldEth = args["--from-scaffold-eth"] ?? false;
 
-  if (!projectPath && !fromScaffoldEth) {
+  if (!projectPath) {
     throw new Error("Project path is required");
   }
 
-  let scaffoldEthSource: string | null = null;
+  const fromScaffoldEth = args["--from-scaffold-eth"] ?? false;
+
+  let scaffoldEthRepo: string | null = null;
 
   const fromIndex = rawArgs.findIndex(arg => arg === "--from-scaffold-eth" || arg === "-f");
 
   if (fromIndex !== -1 && rawArgs[fromIndex + 1] && !rawArgs[fromIndex + 1].startsWith("-")) {
-    scaffoldEthSource = rawArgs[fromIndex + 1];
+    scaffoldEthRepo = rawArgs[fromIndex + 1];
   }
 
-  if (projectPath && scaffoldEthSource && projectPath !== scaffoldEthSource) {
-    throw new Error("Please provide either a local folder or a GitHub repo, not both");
+  // if scaffoldEthRepo && folder exists at projectPath, throw error
+  if (scaffoldEthRepo && fs.existsSync(projectPath)) {
+    throw new Error(`Cannot use scaffold-eth repo: directory already exists at ${projectPath}`);
   }
 
   return {
     projectPath,
     fromScaffoldEth,
-    scaffoldEthSource,
+    scaffoldEthSource: scaffoldEthRepo,
   };
 };
 
