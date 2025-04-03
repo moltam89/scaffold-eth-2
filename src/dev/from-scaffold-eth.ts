@@ -66,8 +66,6 @@ const logDeletedFiles = async (deletedFiles: string[], projectName: string) => {
   const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, DELETED_FILES_LOG);
   const logContent = deletedFiles.join("\n");
   await fs.promises.writeFile(logPath, logContent, "utf8");
-  console.log("");
-  console.log("Deleted files:", deletedFiles);
   prettyLog.success(`Deleted files logged to ${logPath}\n`, 1);
 };
 
@@ -126,23 +124,10 @@ const initGitRepo = async (targetPath: string) => {
 // Todo: check yarn.lock file
 // Todo: yarn create-extension scaffold-eth-2 -f -f moltam89/scaffold-eth-2:UniswapX
 
-export const createExtensionFromScaffoldEth = async (
-  projectName: string,
-  fromScaffoldEth: boolean,
-  scaffoldEthRepo: string | null,
-) => {
+export const createExtensionFromScaffoldEth = async (projectName: string, scaffoldEthRepo: string | null) => {
   try {
-    console.log("projectName", projectName);
-    console.log("fromScaffoldEth", fromScaffoldEth);
-    console.log("scaffoldEthSource", scaffoldEthRepo);
-
     if (scaffoldEthRepo) {
-      const { githubUrl, githubBranchUrl, branch, owner } = parseExtensionString(scaffoldEthRepo);
-
-      console.log("githubUrl", githubUrl);
-      console.log("githubBranchUrl", githubBranchUrl);
-      console.log("branch", branch);
-      console.log("owner", owner);
+      const { githubUrl, githubBranchUrl, branch } = parseExtensionString(scaffoldEthRepo);
 
       await assertRepoExists(githubBranchUrl, githubUrl);
 
