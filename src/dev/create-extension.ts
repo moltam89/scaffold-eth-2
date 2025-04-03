@@ -50,6 +50,13 @@ const parseArguments = (
     scaffoldEthRepo = rawArgs[fromIndex + 1];
   }
 
+  // if fromScaffoldEth && !scaffoldEthRepo && !folder exists at projectPath, throw error
+  if (fromScaffoldEth && !scaffoldEthRepo && !fs.existsSync(projectPath)) {
+    throw new Error(
+      "A local scaffold-eth directory or repository reference (URL, owner/repo, or owner/repo:branch) is required",
+    );
+  }
+
   // if scaffoldEthRepo && folder exists at projectPath, throw error
   if (scaffoldEthRepo && fs.existsSync(projectPath)) {
     throw new Error(`Cannot use scaffold-eth repo: directory already exists at ${projectPath}`);
