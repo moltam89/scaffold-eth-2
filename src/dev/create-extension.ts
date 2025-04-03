@@ -34,10 +34,10 @@ const parseArguments = (
     },
   );
 
-  const project = args._[0] ?? null;
+  const projectPath = args._[0] ?? null;
   const fromScaffoldEth = args["--from-scaffold-eth"] ?? false;
 
-  if (!project && !fromScaffoldEth) {
+  if (!projectPath && !fromScaffoldEth) {
     throw new Error("Project path is required");
   }
 
@@ -49,12 +49,12 @@ const parseArguments = (
     scaffoldEthSource = rawArgs[fromIndex + 1];
   }
 
-  if (project && scaffoldEthSource && project !== scaffoldEthSource) {
+  if (projectPath && scaffoldEthSource && projectPath !== scaffoldEthSource) {
     throw new Error("Please provide either a local folder or a GitHub repo, not both");
   }
 
   return {
-    projectPath: project,
+    projectPath,
     fromScaffoldEth,
     scaffoldEthSource,
   };
