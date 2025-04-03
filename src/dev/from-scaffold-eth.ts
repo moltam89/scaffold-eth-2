@@ -125,13 +125,18 @@ const initGitRepo = async (targetPath: string) => {
 
 export const createExtensionFromScaffoldEth = async (projectName: string, scaffoldEthRepo: string | null) => {
   try {
+    let cleanUpProjectNameFolder = false;
+
     if (scaffoldEthRepo) {
       const { githubUrl, githubBranchUrl, branch } = parseExtensionString(scaffoldEthRepo);
 
       await assertRepoExists(githubBranchUrl, githubUrl);
 
       prettyLog.info(`Cloning ${githubBranchUrl}...`, 1);
+
       await setUpRepository({ repository: githubUrl, branch }, projectName, true);
+      cleanUpProjectNameFolder = true;
+
       prettyLog.success(`Cloned ${githubBranchUrl} into ${projectName}`, 1);
     }
 
@@ -160,6 +165,13 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
     await logCommitHash(mergeBaseCommitHash, projectName);
 
     await initGitRepo(path.join(EXTERNAL_EXTENSIONS_DIR, projectName));
+
+    // Remove the project name folder if it was created
+    if (cleanUpProjectNameFolder) {
+      const projectPath = path.join(process.cwd(), projectName);
+      await fs.promises.rm(projectPath, { recursive: true, force: true });
+      prettyLog.info(`Cleaned up temporary folder: ${projectPath}`, 1);
+    }
 
     prettyLog.info(`Files processed successfully, updated ${EXTERNAL_EXTENSIONS_DIR}/${projectName} directory.`);
   } catch (err: any) {
