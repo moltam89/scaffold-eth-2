@@ -148,11 +148,12 @@ export const createExtensionFromScaffoldEth = async (
 
       prettyLog.info(`Cloning ${githubBranchUrl}...`, 1);
       await setUpRepository({ repository: githubUrl, branch }, projectName, true);
+      prettyLog.success(`Cloned ${githubBranchUrl} into ${projectName}`, 1);
     }
 
-    console.log("mergeBase0");
+    prettyLog.info("Finding merge base commit hash...", 1);
     const mergeBaseCommitHash = await getMergeBaseCommitHash(projectName);
-    console.log("mergeBase", mergeBaseCommitHash);
+    prettyLog.success(`Merge base commit hash: ${mergeBaseCommitHash}`, 1);
 
     prettyLog.info("Getting list of changed files...", 1);
     const changedFiles = await getChangedFilesSinceCommit(projectName, mergeBaseCommitHash);
