@@ -124,6 +124,7 @@ const initGitRepo = async (targetPath: string) => {
 };
 
 // Todo: check yarn.lock file
+// Todo: yarn create-extension scaffold-eth-2 -f -f moltam89/scaffold-eth-2:UniswapX
 
 export const createExtensionFromScaffoldEth = async (
   projectName: string,
