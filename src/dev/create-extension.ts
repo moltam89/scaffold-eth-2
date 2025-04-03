@@ -49,7 +49,11 @@ const parseArguments = (
     scaffoldEthSource = rawArgs[fromIndex + 1];
   }
 
-  if (project && scaffoldEthSource) {
+  console.log("project", project);
+  console.log("fromScaffoldEth", fromScaffoldEth);
+  console.log("scaffoldEthSource", scaffoldEthSource);
+
+  if (project && scaffoldEthSource && project !== scaffoldEthSource) {
     throw new Error("Please provide either a local folder or a GitHub repo URL, not both");
   }
 
