@@ -7,11 +7,11 @@ import { assertRepoExists, parseExtensionString, setUpRepository } from "../util
 const DELETED_FILES_LOG = "deletedFiles.log";
 const COMMIT_HASH_LOG = "commitHash.log";
 
-const getDeletedAndRenamedFilesSinceCommit = async (projectPath: string, commitHash: string): Promise<string[]> => {
+const getDeletedAndRenamedFilesSinceCommit = async (projectName: string, commitHash: string): Promise<string[]> => {
   const { stdout: gitOutput } = await execa(
     "git",
     ["diff", "--diff-filter=DR", "--name-status", `${commitHash}..HEAD`],
-    { cwd: projectPath },
+    { cwd: projectName },
   );
 
   // Process the output to extract deleted and renamed files
@@ -32,9 +32,9 @@ const getDeletedAndRenamedFilesSinceCommit = async (projectPath: string, commitH
   return deletedAndRenamedFiles as string[];
 };
 
-const getChangedFilesSinceCommit = async (projectPath: string, commitHash: string): Promise<string[]> => {
+const getChangedFilesSinceCommit = async (projectName: string, commitHash: string): Promise<string[]> => {
   const { stdout } = await execa("git", ["diff", "--diff-filter=d", "--name-only", `${commitHash}..HEAD`], {
-    cwd: projectPath,
+    cwd: projectName,
   });
 
   return stdout.split("\n").filter(Boolean);
@@ -45,9 +45,9 @@ const createDirectories = async (filePath: string, projectName: string) => {
   await fs.promises.mkdir(dirPath, { recursive: true });
 };
 
-const copyChangedFiles = async (changedFiles: string[], projectName: string, projectPath: string) => {
+const copyChangedFiles = async (changedFiles: string[], projectName: string) => {
   for (const file of changedFiles) {
-    const sourcePath = path.resolve(projectPath, file);
+    const sourcePath = path.resolve(projectName, file);
     const destPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, file);
     if (!fs.existsSync(sourcePath)) continue;
     await createDirectories(file, projectName);
@@ -56,14 +56,14 @@ const copyChangedFiles = async (changedFiles: string[], projectName: string, pro
   }
 };
 
-const logCommitHash = async (commitHash: string, projectPath: string) => {
-  const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectPath, TARGET_EXTENSION_DIR, COMMIT_HASH_LOG);
+const logCommitHash = async (commitHash: string, projectName: string) => {
+  const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, COMMIT_HASH_LOG);
   await fs.promises.writeFile(logPath, commitHash, "utf8");
   prettyLog.success(`Commit hash logged to ${logPath}\n`, 1);
 };
 
-const logDeletedFiles = async (deletedFiles: string[], projectPath: string) => {
-  const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectPath, TARGET_EXTENSION_DIR, DELETED_FILES_LOG);
+const logDeletedFiles = async (deletedFiles: string[], projectName: string) => {
+  const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, DELETED_FILES_LOG);
   const logContent = deletedFiles.join("\n");
   await fs.promises.writeFile(logPath, logContent, "utf8");
   console.log("");
@@ -71,25 +71,25 @@ const logDeletedFiles = async (deletedFiles: string[], projectPath: string) => {
   prettyLog.success(`Deleted files logged to ${logPath}\n`, 1);
 };
 
-const getMergeBaseCommitHash = async (projectPath: string): Promise<string> => {
+const getMergeBaseCommitHash = async (projectName: string): Promise<string> => {
   try {
     // Add the scaffold-eth-2 remote if not already added
     await execa("git", ["remote", "add", "scaffold-eth-2", "https://github.com/scaffold-eth/scaffold-eth-2"], {
-      cwd: projectPath,
+      cwd: projectName,
       reject: false, // Ignore errors if remote already exists
     });
 
     // Fetch the branches without tags
-    await execa("git", ["fetch", "scaffold-eth-2", "main", "--no-tags"], { cwd: projectPath });
-    await execa("git", ["fetch", "scaffold-eth-2", "foundry", "--no-tags"], { cwd: projectPath });
+    await execa("git", ["fetch", "scaffold-eth-2", "main", "--no-tags"], { cwd: projectName });
+    await execa("git", ["fetch", "scaffold-eth-2", "foundry", "--no-tags"], { cwd: projectName });
 
     // Get the merge bases
     const { stdout: mainMergeBase } = await execa("git", ["merge-base", "HEAD", "scaffold-eth-2/main"], {
-      cwd: projectPath,
+      cwd: projectName,
     });
 
     const { stdout: foundryMergeBase } = await execa("git", ["merge-base", "HEAD", "scaffold-eth-2/foundry"], {
-      cwd: projectPath,
+      cwd: projectName,
     });
 
     if (!mainMergeBase && !foundryMergeBase) {
@@ -126,21 +126,17 @@ const initGitRepo = async (targetPath: string) => {
 // Todo: check yarn.lock file
 
 export const createExtensionFromScaffoldEth = async (
-  projectPath: string,
+  projectName: string,
   fromScaffoldEth: boolean,
   scaffoldEthSource: string | null,
 ) => {
   try {
-    console.log("projectPath", projectPath);
+    console.log("projectName", projectName);
     console.log("fromScaffoldEth", fromScaffoldEth);
     console.log("scaffoldEthSource", scaffoldEthSource);
 
-    let projectName = path.basename(projectPath);
-
     if (scaffoldEthSource) {
       const { githubUrl, githubBranchUrl, branch, owner } = parseExtensionString(scaffoldEthSource);
-
-      projectName = owner;
 
       console.log("githubUrl", githubUrl);
       console.log("githubBranchUrl", githubBranchUrl);
@@ -168,7 +164,7 @@ export const createExtensionFromScaffoldEth = async (
     }
 
     if (changedFiles.length) {
-      await copyChangedFiles(changedFiles, projectName, projectName);
+      await copyChangedFiles(changedFiles, projectName);
     }
 
     if (deletedAndRenamedFiles.length) {

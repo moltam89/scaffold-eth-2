@@ -227,7 +227,7 @@ const main = async (rawArgs: Args) => {
     prettyLog.info(`Extension name: ${projectName}\n`);
 
     if (fromScaffoldEth) {
-      await createExtensionFromScaffoldEth(projectPath, fromScaffoldEth, scaffoldEthSource);
+      await createExtensionFromScaffoldEth(projectName, fromScaffoldEth, scaffoldEthSource);
       return;
     }
 
