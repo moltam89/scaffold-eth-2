@@ -130,7 +130,8 @@ export const isFromScaffoldEth = async (
         decodeURI(fileURLToPath(currentFileUrl)),
         "../../externalExtensions",
       );
-      await fs.promises.access(`${externalExtensionsDirectory}/${externalExtension}/${COMMIT_HASH_LOG}`);
+      console.log("pathhh", `${externalExtensionsDirectory}/${externalExtension}/extension/${COMMIT_HASH_LOG}`);
+      await fs.promises.access(`${externalExtensionsDirectory}/${externalExtension}/extension/${COMMIT_HASH_LOG}`);
       return true;
     } catch {
       return false;

@@ -52,10 +52,8 @@ export async function parseArgumentsIntoOptions(
   // ToDo. Allow multiple
   const extension = extensionName ? await validateExternalExtension(extensionName, dev) : null;
 
-  if (extension) {
-    const fromScaffoldEth = await isFromScaffoldEth(extension);
-    console.log("fromScaffoldEth", fromScaffoldEth);
-  }
+  const fromScaffoldEth = extension ? await isFromScaffoldEth(extension) : false;
+  console.log("fromScaffoldEth", fromScaffoldEth);
 
   // if dev mode, extension would be a string
   if (extension && typeof extension === "object" && !extension.isTrusted) {
