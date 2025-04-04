@@ -63,19 +63,6 @@ const logData = async (projectName: string, fileName: string, fileContent: strin
   prettyLog.success(`${fileName} logged to ${logPath}\n`, 1);
 };
 
-// const logCommitHash = async (commitHash: string, projectName: string) => {
-//   const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, COMMIT_HASH_LOG);
-//   await fs.promises.writeFile(logPath, commitHash, "utf8");
-//   prettyLog.success(`Commit hash logged to ${logPath}\n`, 1);
-// };
-
-// const logDeletedFiles = async (deletedFiles: string[], projectName: string) => {
-//   const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, DELETED_FILES_LOG);
-//   const logContent = deletedFiles.join("\n");
-//   await fs.promises.writeFile(logPath, logContent, "utf8");
-//   prettyLog.success(`Deleted files logged to ${logPath}`, 1);
-// };
-
 const getMergeBaseCommitHash = async (
   projectName: string,
 ): Promise<{ mergeBaseCommitHash: string; solidityFramework: string }> => {
