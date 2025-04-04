@@ -52,9 +52,6 @@ export async function parseArgumentsIntoOptions(
   // ToDo. Allow multiple
   const extension = extensionName ? await validateExternalExtension(extensionName, dev) : null;
 
-  const fromScaffoldEth = extension ? await isFromScaffoldEth(extension) : false;
-  console.log("fromScaffoldEth", fromScaffoldEth);
-
   // if dev mode, extension would be a string
   if (extension && typeof extension === "object" && !extension.isTrusted) {
     console.log(
@@ -77,6 +74,9 @@ export async function parseArgumentsIntoOptions(
       project = null;
     }
   }
+
+  const fromScaffoldEth = extension ? await isFromScaffoldEth(extension) : false;
+  console.log("fromScaffoldEth", fromScaffoldEth);
 
   let solidityFrameworkChoices = [
     SOLIDITY_FRAMEWORKS.HARDHAT,

@@ -3,9 +3,11 @@ import fs from "fs";
 import { execa } from "execa";
 import { EXTERNAL_EXTENSIONS_DIR, ncpPromise, prettyLog, TARGET_EXTENSION_DIR } from "./common";
 import { assertRepoExists, parseExtensionString, setUpRepository } from "../utils/common";
+import { SOLIDITY_FRAMEWORKS } from "../utils/consts";
 
-const DELETED_FILES_LOG = "deletedFiles.log";
+export const DELETED_FILES_LOG = "deletedFiles.log";
 export const COMMIT_HASH_LOG = "commitHash.log";
+export const SOLIDITY_FRAMEWORK_LOG = "solidityFramework.log";
 
 const getDeletedAndRenamedFilesSinceCommit = async (projectName: string, commitHash: string): Promise<string[]> => {
   const { stdout: gitOutput } = await execa(
@@ -55,20 +57,28 @@ const copyChangedFiles = async (changedFiles: string[], projectName: string) => 
   }
 };
 
-const logCommitHash = async (commitHash: string, projectName: string) => {
-  const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, COMMIT_HASH_LOG);
-  await fs.promises.writeFile(logPath, commitHash, "utf8");
-  prettyLog.success(`Commit hash logged to ${logPath}\n`, 1);
+const logData = async (projectName: string, fileName: string, fileContent: string) => {
+  const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, fileName);
+  await fs.promises.writeFile(logPath, fileContent, "utf8");
+  prettyLog.success(`${fileName} logged to ${logPath}\n`, 1);
 };
 
-const logDeletedFiles = async (deletedFiles: string[], projectName: string) => {
-  const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, DELETED_FILES_LOG);
-  const logContent = deletedFiles.join("\n");
-  await fs.promises.writeFile(logPath, logContent, "utf8");
-  prettyLog.success(`Deleted files logged to ${logPath}`, 1);
-};
+// const logCommitHash = async (commitHash: string, projectName: string) => {
+//   const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, COMMIT_HASH_LOG);
+//   await fs.promises.writeFile(logPath, commitHash, "utf8");
+//   prettyLog.success(`Commit hash logged to ${logPath}\n`, 1);
+// };
 
-const getMergeBaseCommitHash = async (projectName: string): Promise<string> => {
+// const logDeletedFiles = async (deletedFiles: string[], projectName: string) => {
+//   const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, DELETED_FILES_LOG);
+//   const logContent = deletedFiles.join("\n");
+//   await fs.promises.writeFile(logPath, logContent, "utf8");
+//   prettyLog.success(`Deleted files logged to ${logPath}`, 1);
+// };
+
+const getMergeBaseCommitHash = async (
+  projectName: string,
+): Promise<{ mergeBaseCommitHash: string; solidityFramework: string }> => {
   try {
     // Add the scaffold-eth-2 remote if not already added
     await execa("git", ["remote", "add", "scaffold-eth-2", "https://github.com/scaffold-eth/scaffold-eth-2"], {
@@ -94,10 +104,10 @@ const getMergeBaseCommitHash = async (projectName: string): Promise<string> => {
     }
 
     if (mainMergeBase === foundryMergeBase) {
-      return mainMergeBase;
+      return { mergeBaseCommitHash: mainMergeBase, solidityFramework: SOLIDITY_FRAMEWORKS.HARDHAT };
     }
 
-    return foundryMergeBase;
+    return { mergeBaseCommitHash: foundryMergeBase, solidityFramework: SOLIDITY_FRAMEWORKS.FOUNDRY };
   } catch (err: any) {
     throw new Error(`Failed to get merge base: ${err.message}`);
   }
@@ -141,7 +151,7 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
     }
 
     prettyLog.info("Finding merge base commit hash...", 1);
-    const mergeBaseCommitHash = await getMergeBaseCommitHash(projectName);
+    const { mergeBaseCommitHash, solidityFramework } = await getMergeBaseCommitHash(projectName);
     prettyLog.success(`Merge base commit hash: ${mergeBaseCommitHash}\n`, 1);
 
     prettyLog.info("Getting list of changed files...", 1);
@@ -155,14 +165,16 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
 
     if (changedFiles.length) {
       await copyChangedFiles(changedFiles, projectName);
-      prettyLog.success(`Copied ${changedFiles.length} changed files`, 1);
+      prettyLog.success(`Copied ${changedFiles.length} changed files\n`, 1);
     }
 
     if (deletedAndRenamedFiles.length) {
-      await logDeletedFiles(deletedAndRenamedFiles, projectName);
+      await logData(projectName, DELETED_FILES_LOG, deletedAndRenamedFiles.join("\n"));
     }
 
-    await logCommitHash(mergeBaseCommitHash, projectName);
+    await logData(projectName, COMMIT_HASH_LOG, mergeBaseCommitHash);
+
+    await logData(projectName, SOLIDITY_FRAMEWORK_LOG, solidityFramework);
 
     await initGitRepo(path.join(EXTERNAL_EXTENSIONS_DIR, projectName));
 
