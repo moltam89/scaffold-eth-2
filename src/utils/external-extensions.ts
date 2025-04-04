@@ -93,11 +93,7 @@ export const getSolidityFrameworkDirsFromExternalExtension = async (
   };
 
   if (typeof externalExtension === "string") {
-    const currentFileUrl = import.meta.url;
-    const externalExtensionsDirectory = path.resolve(
-      decodeURI(fileURLToPath(currentFileUrl)),
-      "../../externalExtensions",
-    );
+    const externalExtensionsDirectory = getExternalExtensionsDirectory();
 
     const externalExtensionSolidityFrameworkDirs = await fs.promises.readdir(
       `${externalExtensionsDirectory}/${externalExtension}/extension/packages`,
@@ -125,12 +121,8 @@ export const isFromScaffoldEth = async (
   // dev mode
   if (typeof externalExtension === "string") {
     try {
-      const currentFileUrl = import.meta.url;
-      const externalExtensionsDirectory = path.resolve(
-        decodeURI(fileURLToPath(currentFileUrl)),
-        "../../externalExtensions",
-      );
-      console.log("pathhh", `${externalExtensionsDirectory}/${externalExtension}/extension/${COMMIT_HASH_LOG}`);
+      const externalExtensionsDirectory = getExternalExtensionsDirectory();
+
       await fs.promises.access(`${externalExtensionsDirectory}/${externalExtension}/extension/${COMMIT_HASH_LOG}`);
       return true;
     } catch {
@@ -158,4 +150,9 @@ export const isFromScaffoldEth = async (
     console.error(`Error checking commitHash.log: ${error}`);
     return false; // Return false on network errors or other failures
   }
+};
+
+const getExternalExtensionsDirectory = (): string => {
+  const currentFileUrl = import.meta.url;
+  return path.resolve(decodeURI(fileURLToPath(currentFileUrl)), "../../externalExtensions");
 };
