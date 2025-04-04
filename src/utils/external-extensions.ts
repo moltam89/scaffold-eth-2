@@ -5,6 +5,7 @@ import { ExternalExtension, RawOptions, SolidityFramework } from "../types";
 import curatedExtension from "../extensions.json";
 import { SOLIDITY_FRAMEWORKS } from "./consts";
 import { assertRepoExists, deconstructGithubUrl, parseExtensionString } from "./common";
+import { COMMIT_HASH_LOG } from "../dev/from-scaffold-eth";
 
 type ExtensionJSON = {
   extensionFlagValue: string;
@@ -121,14 +122,25 @@ export const getSolidityFrameworkDirsFromExternalExtension = async (
 export const isFromScaffoldEth = async (
   externalExtension: NonNullable<RawOptions["externalExtension"]>,
 ): Promise<boolean> => {
+  // dev mode
   if (typeof externalExtension === "string") {
-    return true;
+    try {
+      const currentFileUrl = import.meta.url;
+      const externalExtensionsDirectory = path.resolve(
+        decodeURI(fileURLToPath(currentFileUrl)),
+        "../../externalExtensions",
+      );
+      await fs.promises.access(`${externalExtensionsDirectory}/${externalExtension}/${COMMIT_HASH_LOG}`);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   const { branch, repository } = externalExtension;
   const { ownerName, repoName } = deconstructGithubUrl(repository);
 
-  const githubApiUrl = `https://api.github.com/repos/${ownerName}/${repoName}/contents/extension/commitHash.log${branch ? `?ref=${branch}` : ""}`;
+  const githubApiUrl = `https://api.github.com/repos/${ownerName}/${repoName}/contents/extension/${COMMIT_HASH_LOG}${branch ? `?ref=${branch}` : ""}`;
   try {
     const res = await fetch(githubApiUrl);
     if (res.ok) {

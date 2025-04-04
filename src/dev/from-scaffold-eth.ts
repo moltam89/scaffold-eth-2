@@ -5,7 +5,7 @@ import { EXTERNAL_EXTENSIONS_DIR, ncpPromise, prettyLog, TARGET_EXTENSION_DIR } 
 import { assertRepoExists, parseExtensionString, setUpRepository } from "../utils/common";
 
 const DELETED_FILES_LOG = "deletedFiles.log";
-const COMMIT_HASH_LOG = "commitHash.log";
+export const COMMIT_HASH_LOG = "commitHash.log";
 
 const getDeletedAndRenamedFilesSinceCommit = async (projectName: string, commitHash: string): Promise<string[]> => {
   const { stdout: gitOutput } = await execa(
