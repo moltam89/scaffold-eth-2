@@ -1,6 +1,10 @@
 import type { Args, SolidityFramework, RawOptions, SolidityFrameworkChoices } from "../types";
 import arg from "arg";
-import { getSolidityFrameworkDirsFromExternalExtension, validateExternalExtension } from "./external-extensions";
+import {
+  getSolidityFrameworkDirsFromExternalExtension,
+  isFromScaffoldEth,
+  validateExternalExtension,
+} from "./external-extensions";
 import chalk from "chalk";
 import { SOLIDITY_FRAMEWORKS } from "./consts";
 import { validateFoundryUp } from "./system-validation";
@@ -47,6 +51,11 @@ export async function parseArgumentsIntoOptions(
   const extensionName = args["--extension"];
   // ToDo. Allow multiple
   const extension = extensionName ? await validateExternalExtension(extensionName, dev) : null;
+
+  if (extension) {
+    const fromScaffoldEth = await isFromScaffoldEth(extension);
+    console.log("fromScaffoldEth", fromScaffoldEth);
+  }
 
   // if dev mode, extension would be a string
   if (extension && typeof extension === "object" && !extension.isTrusted) {

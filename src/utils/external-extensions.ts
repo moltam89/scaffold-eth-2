@@ -117,3 +117,32 @@ export const getSolidityFrameworkDirsFromExternalExtension = async (
 
   return filterSolidityFrameworkDirs(directories);
 };
+
+export const isFromScaffoldEth = async (
+  externalExtension: NonNullable<RawOptions["externalExtension"]>,
+): Promise<boolean> => {
+  if (typeof externalExtension === "string") {
+    return true;
+  }
+
+  const { branch, repository } = externalExtension;
+  const { ownerName, repoName } = deconstructGithubUrl(repository);
+
+  const githubApiUrl = `https://api.github.com/repos/${ownerName}/${repoName}/contents/extension/commitHash.log${branch ? `?ref=${branch}` : ""}`;
+  try {
+    const res = await fetch(githubApiUrl);
+    if (res.ok) {
+      // If the response is OK (status 200), the file exists
+      return true;
+    } else if (res.status === 404) {
+      // If the response is 404 (Not Found), the file does not exist
+      return false;
+    } else {
+      // Handle other potential errors (e.g., rate limits, authentication issues)
+      throw new Error(`Failed to fetch ${githubApiUrl}: ${res.statusText}`);
+    }
+  } catch (error: any) {
+    console.error(`Error checking commitHash.log: ${error}`);
+    return false; // Return false on network errors or other failures
+  }
+};
