@@ -111,7 +111,7 @@ const initGitRepo = async (targetPath: string) => {
     await execa("git", ["add", "."], { cwd: targetPath });
     await execa("git", ["commit", "-m", "Initial commit"], { cwd: targetPath });
 
-    prettyLog.success(`Initialized git repository and made initial commit in ${targetPath}`, 1);
+    prettyLog.success(`Initialized git repository and made initial commit in ${targetPath}\n`, 1);
   } catch (error: any) {
     prettyLog.error(`Failed to initialize git repository: ${error.message}`);
   }
