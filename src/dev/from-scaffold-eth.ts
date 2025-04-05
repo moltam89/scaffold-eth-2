@@ -90,6 +90,9 @@ const getMergeBaseCommitHash = async (
       throw new Error("No  merge base with scaffold-eth-2");
     }
 
+    console.log("mainMergeBase", mainMergeBase);
+    console.log("foundryMergeBase", foundryMergeBase);
+
     if (mainMergeBase === foundryMergeBase) {
       return { mergeBaseCommitHash: mainMergeBase, solidityFramework: SOLIDITY_FRAMEWORKS.HARDHAT };
     }
