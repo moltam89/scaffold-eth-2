@@ -5,7 +5,7 @@ import { ExternalExtension, RawOptions, SolidityFramework } from "../types";
 import curatedExtension from "../extensions.json";
 import { SOLIDITY_FRAMEWORKS } from "./consts";
 import { assertRepoExists, deconstructGithubUrl, parseExtensionString } from "./common";
-import { COMMIT_HASH_LOG } from "../dev/from-scaffold-eth";
+import { SOLIDITY_FRAMEWORK_LOG } from "../dev/from-scaffold-eth";
 
 type ExtensionJSON = {
   extensionFlagValue: string;
@@ -117,38 +117,43 @@ export const getSolidityFrameworkDirsFromExternalExtension = async (
 
 export const isFromScaffoldEth = async (
   externalExtension: NonNullable<RawOptions["externalExtension"]>,
-): Promise<boolean> => {
+): Promise<{ fromScaffoldEth: boolean; fromScaffoldEthSolidityFramework: SolidityFramework | null }> => {
   // dev mode
   if (typeof externalExtension === "string") {
     try {
       const externalExtensionsDirectory = getExternalExtensionsDirectory();
 
-      await fs.promises.access(`${externalExtensionsDirectory}/${externalExtension}/extension/${COMMIT_HASH_LOG}`);
-      return true;
+      const logPath = `${externalExtensionsDirectory}/${externalExtension}/extension/${SOLIDITY_FRAMEWORK_LOG}`;
+
+      const solidityFramework = (await fs.promises.readFile(logPath, "utf8")).trim();
+      if (solidityFramework) {
+        return { fromScaffoldEth: true, fromScaffoldEthSolidityFramework: solidityFramework as SolidityFramework };
+      }
+      return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
     } catch {
-      return false;
+      return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
     }
   }
 
   const { branch, repository } = externalExtension;
   const { ownerName, repoName } = deconstructGithubUrl(repository);
 
-  const githubApiUrl = `https://api.github.com/repos/${ownerName}/${repoName}/contents/extension/${COMMIT_HASH_LOG}${branch ? `?ref=${branch}` : ""}`;
+  const githubApiUrl = `https://api.github.com/repos/${ownerName}/${repoName}/contents/extension/${SOLIDITY_FRAMEWORK_LOG}${branch ? `?ref=${branch}` : ""}`;
   try {
     const res = await fetch(githubApiUrl);
     if (res.ok) {
       // If the response is OK (status 200), the file exists
-      return true;
+      return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
     } else if (res.status === 404) {
       // If the response is 404 (Not Found), the file does not exist
-      return false;
+      return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
     } else {
       // Handle other potential errors (e.g., rate limits, authentication issues)
       throw new Error(`Failed to fetch ${githubApiUrl}: ${res.statusText}`);
     }
   } catch (error: any) {
-    console.error(`Error checking commitHash.log: ${error}`);
-    return false; // Return false on network errors or other failures
+    console.error(`Error checking ${SOLIDITY_FRAMEWORK_LOG}: ${error}`);
+    return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null }; // Return false on network errors or other failures
   }
 };
 

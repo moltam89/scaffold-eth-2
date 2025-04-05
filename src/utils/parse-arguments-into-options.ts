@@ -71,8 +71,11 @@ export async function parseArgumentsIntoOptions(
     }
   }
 
-  const fromScaffoldEth = extension ? await isFromScaffoldEth(extension) : false;
+  const { fromScaffoldEth, fromScaffoldEthSolidityFramework } = extension
+    ? await isFromScaffoldEth(extension)
+    : { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
   console.log("fromScaffoldEth", fromScaffoldEth);
+  console.log("fromScaffoldEthSolidityFramework", fromScaffoldEthSolidityFramework);
 
   let solidityFrameworkChoices = [
     SOLIDITY_FRAMEWORKS.HARDHAT,
