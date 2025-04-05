@@ -9,9 +9,8 @@ import { getArgumentFromExternalExtensionOption } from "./utils/external-extensi
 import fs from "fs";
 import { promisify } from "util";
 import ncp from "ncp";
+import { COMMIT_HASH_LOG, DELETED_FILES_LOG } from "./dev/from-scaffold-eth";
 
-const DELETED_FILES_LOG = "deletedFiles.log";
-const COMMIT_HASH_LOG = "commitHash.log";
 const EXTERNAL_EXTENSION_TMP_DIR = "tmp-external-extension";
 
 const copy = promisify(ncp);
