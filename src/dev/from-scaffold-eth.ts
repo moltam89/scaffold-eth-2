@@ -93,12 +93,10 @@ const getMergeBaseCommitHash = async (
 
     // Get the current HEAD commit hash of scaffold-eth-2/main
     const { stdout: mainHead } = await execa("git", ["rev-parse", "scaffold-eth-2/main"], { cwd: projectName });
-    console.log("mainHead", mainHead);
     // Get the current HEAD commit hash of scaffold-eth-2/foundry
     const { stdout: foundryHead } = await execa("git", ["rev-parse", "scaffold-eth-2/foundry"], {
       cwd: projectName,
     });
-    console.log("foundryHead", foundryHead);
 
     // If the merge base with main equals main’s HEAD (and foundry’s doesn’t), assume main is the origin
     if (mainMergeBase === mainHead && foundryMergeBase !== foundryHead) {
