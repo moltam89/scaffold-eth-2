@@ -23,7 +23,7 @@ export async function cli(args: Args) {
       await validateFoundryUp();
     }
 
-    if (options.yolo) {
+    if (options.dev) {
       await createProjectYolo(options);
     } else {
       await createProject(options);

@@ -13,7 +13,6 @@ type BaseOptions = {
   dev: boolean;
   externalExtension: ExternalExtension | ExternalExtensionNameDev | null;
   solidityFramework: SolidityFramework | "none" | null;
-  yolo: boolean;
 };
 
 export type RawOptions = BaseOptions & {
