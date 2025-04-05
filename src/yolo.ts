@@ -9,7 +9,7 @@ import { getArgumentFromExternalExtensionOption } from "./utils/external-extensi
 import fs from "fs";
 import { promisify } from "util";
 import ncp from "ncp";
-import { COMMIT_HASH_LOG, DELETED_FILES_LOG } from "./dev/from-scaffold-eth";
+import { COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG } from "./dev/from-scaffold-eth";
 
 const EXTERNAL_EXTENSION_TMP_DIR = "tmp-external-extension";
 
@@ -119,7 +119,7 @@ const createExtension = async (options: Options, targetDir: string) => {
   await copy(externalExtensionPath, targetDir, {
     filter: file => {
       const relativePath = path.relative(externalExtensionPath, file);
-      return ![DELETED_FILES_LOG, COMMIT_HASH_LOG].includes(relativePath);
+      return ![COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG].includes(relativePath);
     },
   });
 
