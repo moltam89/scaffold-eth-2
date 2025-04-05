@@ -67,37 +67,70 @@ const getMergeBaseCommitHash = async (
   projectName: string,
 ): Promise<{ mergeBaseCommitHash: string; solidityFramework: string }> => {
   try {
-    // Add the scaffold-eth-2 remote if not already added
+    // Add the scaffold-eth-2 remote if it doesn’t already exist
     await execa("git", ["remote", "add", "scaffold-eth-2", "https://github.com/scaffold-eth/scaffold-eth-2"], {
       cwd: projectName,
-      reject: false, // Ignore errors if remote already exists
+      reject: false,
     });
 
-    // Fetch the branches without tags
+    // Fetch only the main and foundry branches from scaffold-eth-2
     await execa("git", ["fetch", "scaffold-eth-2", "main", "--no-tags"], { cwd: projectName });
     await execa("git", ["fetch", "scaffold-eth-2", "foundry", "--no-tags"], { cwd: projectName });
 
-    // Get the merge bases
+    // Get the merge base (common ancestor) between HEAD and scaffold-eth-2/main
     const { stdout: mainMergeBase } = await execa("git", ["merge-base", "HEAD", "scaffold-eth-2/main"], {
       cwd: projectName,
     });
-
+    // Get the merge base between HEAD and scaffold-eth-2/foundry
     const { stdout: foundryMergeBase } = await execa("git", ["merge-base", "HEAD", "scaffold-eth-2/foundry"], {
       cwd: projectName,
     });
 
+    // If no merge base exists with either branch, throw an error
     if (!mainMergeBase && !foundryMergeBase) {
-      throw new Error("No  merge base with scaffold-eth-2");
+      throw new Error("No merge base found with scaffold-eth-2/main or scaffold-eth-2/foundry");
     }
 
-    console.log("mainMergeBase", mainMergeBase);
-    console.log("foundryMergeBase", foundryMergeBase);
+    // Get the current HEAD commit hash of scaffold-eth-2/main
+    const { stdout: mainHead } = await execa("git", ["rev-parse", "scaffold-eth-2/main"], { cwd: projectName });
+    console.log("mainHead", mainHead);
+    // Get the current HEAD commit hash of scaffold-eth-2/foundry
+    const { stdout: foundryHead } = await execa("git", ["rev-parse", "scaffold-eth-2/foundry"], {
+      cwd: projectName,
+    });
+    console.log("foundryHead", foundryHead);
 
-    if (mainMergeBase === foundryMergeBase) {
+    // If the merge base with main equals main’s HEAD (and foundry’s doesn’t), assume main is the origin
+    if (mainMergeBase === mainHead && foundryMergeBase !== foundryHead) {
       return { mergeBaseCommitHash: mainMergeBase, solidityFramework: SOLIDITY_FRAMEWORKS.HARDHAT };
     }
+    // If the merge base with foundry equals foundry’s HEAD (and main’s doesn’t), assume foundry is the origin
+    if (foundryMergeBase === foundryHead && mainMergeBase !== mainHead) {
+      return { mergeBaseCommitHash: foundryMergeBase, solidityFramework: SOLIDITY_FRAMEWORKS.FOUNDRY };
+    }
 
-    return { mergeBaseCommitHash: foundryMergeBase, solidityFramework: SOLIDITY_FRAMEWORKS.FOUNDRY };
+    // If neither merge base matches a HEAD exactly, compare timestamps to determine the more recent ancestor
+    // Get the timestamp (Unix epoch seconds) of the main merge base
+    const { stdout: mainMergeDate } = await execa("git", ["show", "-s", "--format=%ct", mainMergeBase], {
+      cwd: projectName,
+    });
+    // Get the timestamp of the foundry merge base
+    const { stdout: foundryMergeDate } = await execa("git", ["show", "-s", "--format=%ct", foundryMergeBase], {
+      cwd: projectName,
+    });
+
+    // Convert timestamps to integers for comparison
+    const mainTimestamp = parseInt(mainMergeDate, 10);
+    const foundryTimestamp = parseInt(foundryMergeDate, 10);
+
+    // Return the branch with the more recent merge base timestamp
+    if (mainTimestamp > foundryTimestamp) {
+      // Main’s merge base is more recent, so assume it’s the origin
+      return { mergeBaseCommitHash: mainMergeBase, solidityFramework: SOLIDITY_FRAMEWORKS.HARDHAT };
+    } else {
+      // Foundry’s merge base is more recent (or equal), so assume it’s the origin
+      return { mergeBaseCommitHash: foundryMergeBase, solidityFramework: SOLIDITY_FRAMEWORKS.FOUNDRY };
+    }
   } catch (err: any) {
     throw new Error(`Failed to get merge base: ${err.message}`);
   }
