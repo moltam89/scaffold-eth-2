@@ -128,9 +128,8 @@ const createExtension = async (options: Options, targetDir: string) => {
   await commitChanges(targetDir);
 };
 
-export async function createProjectYolo(options: Options) {
+export async function createProjectFromScaffoldEth(options: Options) {
   console.log(`\n`);
-  console.log("Yolo mode activated! 🚀");
 
   // const currentFileUrl = import.meta.url;
 

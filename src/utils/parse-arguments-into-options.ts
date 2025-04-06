@@ -13,7 +13,7 @@ import { validateNpmName } from "./validate-name";
 // TODO update smartContractFramework code with general extensions
 export async function parseArgumentsIntoOptions(
   rawArgs: Args,
-): Promise<{ rawOptions: RawOptions; solidityFrameworkChoices: SolidityFrameworkChoices }> {
+): Promise<{ rawOptions: RawOptions; solidityFrameworkChoices: SolidityFrameworkChoices; fromScaffoldEth: boolean }> {
   const args = arg(
     {
       "--skip-install": Boolean,
@@ -115,6 +115,7 @@ export async function parseArgumentsIntoOptions(
       solidityFramework: solidityFramework as RawOptions["solidityFramework"],
     },
     solidityFrameworkChoices,
+    fromScaffoldEth,
   };
 }
 

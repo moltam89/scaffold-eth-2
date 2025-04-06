@@ -7,12 +7,12 @@ import chalk from "chalk";
 import { SOLIDITY_FRAMEWORKS } from "./utils/consts";
 import { validateFoundryUp } from "./utils/system-validation";
 import { showHelpMessage } from "./utils/show-help-message";
-import { createProjectYolo } from "./yolo";
+import { createProjectFromScaffoldEth } from "./yolo";
 
 export async function cli(args: Args) {
   try {
     renderIntroMessage();
-    const { rawOptions, solidityFrameworkChoices } = await parseArgumentsIntoOptions(args);
+    const { rawOptions, solidityFrameworkChoices, fromScaffoldEth } = await parseArgumentsIntoOptions(args);
     if (rawOptions.help) {
       showHelpMessage();
       return;
@@ -23,8 +23,8 @@ export async function cli(args: Args) {
       await validateFoundryUp();
     }
 
-    if (options.dev) {
-      await createProjectYolo(options);
+    if (fromScaffoldEth) {
+      await createProjectFromScaffoldEth(options);
     } else {
       await createProject(options);
     }
