@@ -9,7 +9,7 @@ import { getArgumentFromExternalExtensionOption } from "./utils/external-extensi
 import fs from "fs";
 import { promisify } from "util";
 import ncp from "ncp";
-import { COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG } from "./dev/from-scaffold-eth";
+import { COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG } from "./dev/create-extension-from-scaffold-eth";
 
 const EXTERNAL_EXTENSION_TMP_DIR = "tmp-external-extension";
 

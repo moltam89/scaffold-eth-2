@@ -6,7 +6,7 @@ import { EXTERNAL_EXTENSIONS_DIR, ncpPromise, prettyLog, TARGET_EXTENSION_DIR } 
 import { fileURLToPath } from "url";
 import { BASE_DIR, SOLIDITY_FRAMEWORKS, SOLIDITY_FRAMEWORKS_DIR } from "../utils/consts";
 import { Args } from "../types";
-import { createExtensionFromScaffoldEth } from "./from-scaffold-eth";
+import { createExtensionFromScaffoldEth } from "./create-extension-from-scaffold-eth";
 
 const TEMPLATE_FILE_SUFFIX = ".template.mjs";
 const DEPLOYED_CONTRACTS_FILE = "deployedContracts.ts";

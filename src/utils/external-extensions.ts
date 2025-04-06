@@ -5,7 +5,7 @@ import { ExternalExtension, RawOptions, SolidityFramework } from "../types";
 import curatedExtension from "../extensions.json";
 import { SOLIDITY_FRAMEWORKS } from "./consts";
 import { assertRepoExists, deconstructGithubUrl, parseExtensionString } from "./common";
-import { SOLIDITY_FRAMEWORK_LOG } from "../dev/from-scaffold-eth";
+import { SOLIDITY_FRAMEWORK_LOG } from "../dev/create-extension-from-scaffold-eth";
 
 type ExtensionJSON = {
   extensionFlagValue: string;
