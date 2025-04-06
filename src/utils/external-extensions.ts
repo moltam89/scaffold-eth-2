@@ -115,7 +115,8 @@ export const getSolidityFrameworkDirsFromExternalExtension = async (
   return filterSolidityFrameworkDirs(directories);
 };
 
-export const isFromScaffoldEth = async (
+// If the extension was created from scaffold-eth, it will have a file called ${SOLIDITY_FRAMEWORK_LOG}
+export const detectFromScaffoldEth = async (
   externalExtension: NonNullable<RawOptions["externalExtension"]>,
 ): Promise<{ fromScaffoldEth: boolean; fromScaffoldEthSolidityFramework: SolidityFramework | null }> => {
   // dev mode
@@ -127,7 +128,10 @@ export const isFromScaffoldEth = async (
 
       const solidityFramework = (await fs.promises.readFile(logPath, "utf8")).trim();
       if (solidityFramework) {
-        return { fromScaffoldEth: true, fromScaffoldEthSolidityFramework: solidityFramework as SolidityFramework };
+        if (solidityFramework !== SOLIDITY_FRAMEWORKS.HARDHAT && solidityFramework !== SOLIDITY_FRAMEWORKS.FOUNDRY) {
+          throw new Error(`Invalid Solidity framework: ${solidityFramework}`);
+        }
+        return { fromScaffoldEth: true, fromScaffoldEthSolidityFramework: solidityFramework };
       }
       return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
     } catch {

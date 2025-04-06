@@ -2,7 +2,7 @@ import type { Args, SolidityFramework, RawOptions, SolidityFrameworkChoices } fr
 import arg from "arg";
 import {
   getSolidityFrameworkDirsFromExternalExtension,
-  isFromScaffoldEth,
+  detectFromScaffoldEth,
   validateExternalExtension,
 } from "./external-extensions";
 import chalk from "chalk";
@@ -72,8 +72,9 @@ export async function parseArgumentsIntoOptions(
   }
 
   const { fromScaffoldEth, fromScaffoldEthSolidityFramework } = extension
-    ? await isFromScaffoldEth(extension)
+    ? await detectFromScaffoldEth(extension)
     : { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
+
   console.log("fromScaffoldEth", fromScaffoldEth);
   console.log("fromScaffoldEthSolidityFramework", fromScaffoldEthSolidityFramework);
 
@@ -92,8 +93,13 @@ export async function parseArgumentsIntoOptions(
   }
 
   // if lengh is 1, we don't give user a choice and set it ourselves.
-  const solidityFramework =
+  let solidityFramework =
     solidityFrameworkChoices.length === 1 ? solidityFrameworkChoices[0] : (args["--solidity-framework"] ?? null);
+
+  // From scaffold-eth support hardhat or foundry, not both
+  if (fromScaffoldEth) {
+    solidityFramework = fromScaffoldEthSolidityFramework;
+  }
 
   if (solidityFramework === SOLIDITY_FRAMEWORKS.FOUNDRY) {
     await validateFoundryUp();
