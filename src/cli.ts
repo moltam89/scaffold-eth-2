@@ -7,7 +7,7 @@ import chalk from "chalk";
 import { SOLIDITY_FRAMEWORKS } from "./utils/consts";
 import { validateFoundryUp } from "./utils/system-validation";
 import { showHelpMessage } from "./utils/show-help-message";
-import { createProjectFromScaffoldEth } from "./yolo";
+import { createProjectFromScaffoldEth } from "./from-scaffold-eth";
 
 export async function cli(args: Args) {
   try {
