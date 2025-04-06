@@ -7,7 +7,6 @@ import chalk from "chalk";
 import { SOLIDITY_FRAMEWORKS } from "./utils/consts";
 import { validateFoundryUp } from "./utils/system-validation";
 import { showHelpMessage } from "./utils/show-help-message";
-import { createProjectFromScaffoldEth } from "./from-scaffold-eth";
 
 export async function cli(args: Args) {
   try {
@@ -18,16 +17,12 @@ export async function cli(args: Args) {
       return;
     }
 
-    const options = await promptForMissingOptions(rawOptions, solidityFrameworkChoices);
+    const options = await promptForMissingOptions(rawOptions, solidityFrameworkChoices, fromScaffoldEth);
     if (options.solidityFramework === SOLIDITY_FRAMEWORKS.FOUNDRY) {
       await validateFoundryUp();
     }
 
-    if (fromScaffoldEth) {
-      await createProjectFromScaffoldEth(options);
-    } else {
-      await createProject(options);
-    }
+    await createProject(options);
   } catch (error: any) {
     console.error(chalk.red.bold(error.message || "An unknown error occurred."));
     return;
