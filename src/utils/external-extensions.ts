@@ -119,51 +119,36 @@ export const getSolidityFrameworkDirsFromExternalExtension = async (
 export const detectFromScaffoldEth = async (
   externalExtension: NonNullable<RawOptions["externalExtension"]>,
 ): Promise<{ fromScaffoldEth: boolean; fromScaffoldEthSolidityFramework: SolidityFramework | null }> => {
-  // dev mode
-  if (typeof externalExtension === "string") {
-    try {
+  let solidityFramework = null;
+
+  try {
+    if (typeof externalExtension === "string") {
+      // dev mode
       const externalExtensionsDirectory = getExternalExtensionsDirectory();
       const logPath = `${externalExtensionsDirectory}/${externalExtension}/extension/${SOLIDITY_FRAMEWORK_LOG}`;
-      const solidityFramework = (await fs.promises.readFile(logPath, "utf8")).trim();
-      if (solidityFramework) {
-        if (solidityFramework !== SOLIDITY_FRAMEWORKS.HARDHAT && solidityFramework !== SOLIDITY_FRAMEWORKS.FOUNDRY) {
-          throw new Error(`Invalid Solidity framework: ${solidityFramework}`);
-        }
-        return { fromScaffoldEth: true, fromScaffoldEthSolidityFramework: solidityFramework };
-      }
-      return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
-    } catch {
-      return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
-    }
-  }
+      solidityFramework = (await fs.promises.readFile(logPath, "utf8")).trim();
+    } else {
+      const { branch, repository } = externalExtension;
+      const { ownerName, repoName } = deconstructGithubUrl(repository);
 
-  const { branch, repository } = externalExtension;
-  const { ownerName, repoName } = deconstructGithubUrl(repository);
-
-  const githubApiUrl = `https://api.github.com/repos/${ownerName}/${repoName}/contents/extension/${SOLIDITY_FRAMEWORK_LOG}${branch ? `?ref=${branch}` : ""}`;
-  try {
-    const res = await fetch(githubApiUrl);
-    if (res.ok) {
+      const githubApiUrl = `https://api.github.com/repos/${ownerName}/${repoName}/contents/extension/${SOLIDITY_FRAMEWORK_LOG}${branch ? `?ref=${branch}` : ""}`;
+      const res = await fetch(githubApiUrl);
       const data = await res.json();
       // Use Buffer to decode base64 content
       const content = Buffer.from(data.content, "base64").toString("utf8");
-      const solidityFramework = content.trim();
-      if (solidityFramework) {
-        if (solidityFramework !== SOLIDITY_FRAMEWORKS.HARDHAT && solidityFramework !== SOLIDITY_FRAMEWORKS.FOUNDRY) {
-          throw new Error(`Invalid Solidity framework: ${solidityFramework}`);
-        }
-        return { fromScaffoldEth: true, fromScaffoldEthSolidityFramework: solidityFramework };
-      }
-      return { fromScaffoldEth: true, fromScaffoldEthSolidityFramework: null };
-    } else if (res.status === 404) {
-      // If the response is 404 (Not Found), the file does not exist
-      return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
-    } else {
-      throw new Error(`Failed to fetch ${githubApiUrl}: ${res.statusText}`);
+      solidityFramework = content.trim();
     }
-  } catch (error: any) {
-    console.error(`Error checking ${SOLIDITY_FRAMEWORK_LOG}: ${error}`);
-    return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null }; // Return false on network errors or other failures
+
+    if (solidityFramework) {
+      if (solidityFramework !== SOLIDITY_FRAMEWORKS.HARDHAT && solidityFramework !== SOLIDITY_FRAMEWORKS.FOUNDRY) {
+        throw new Error(`Invalid Solidity framework: ${solidityFramework}`);
+      }
+      return { fromScaffoldEth: true, fromScaffoldEthSolidityFramework: solidityFramework };
+    }
+
+    return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
+  } catch {
+    return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
   }
 };
 
