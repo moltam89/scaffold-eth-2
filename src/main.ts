@@ -68,7 +68,12 @@ export async function createProject(options: Options) {
       {
         title: `📡 Initializing Git repository${options.solidityFramework === SOLIDITY_FRAMEWORKS.FOUNDRY ? " and submodules" : ""}`,
         task: () => createFirstGitCommit(targetDirectory, options),
-        skip: options.fromScaffoldEth,
+        skip: () => {
+          if (options.fromScaffoldEth) {
+            return "Extension code was applied and committed on top of the scaffold-eth-2 repository";
+          }
+          return false;
+        },
       },
     ],
     { rendererOptions: { collapseSkips: false, suffixSkips: true } },
