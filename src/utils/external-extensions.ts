@@ -146,13 +146,21 @@ export const detectFromScaffoldEth = async (
   try {
     const res = await fetch(githubApiUrl);
     if (res.ok) {
-      // If the response is OK (status 200), the file exists
-      return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
+      const data = await res.json();
+      // GitHub API returns content in base64, so we need to decode it
+      const content = atob(data.content); // Decode base64 to string
+      const solidityFramework = content.trim();
+      if (solidityFramework) {
+        if (solidityFramework !== SOLIDITY_FRAMEWORKS.HARDHAT && solidityFramework !== SOLIDITY_FRAMEWORKS.FOUNDRY) {
+          throw new Error(`Invalid Solidity framework: ${solidityFramework}`);
+        }
+        return { fromScaffoldEth: true, fromScaffoldEthSolidityFramework: solidityFramework };
+      }
+      return { fromScaffoldEth: true, fromScaffoldEthSolidityFramework: null };
     } else if (res.status === 404) {
       // If the response is 404 (Not Found), the file does not exist
       return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
     } else {
-      // Handle other potential errors (e.g., rate limits, authentication issues)
       throw new Error(`Failed to fetch ${githubApiUrl}: ${res.statusText}`);
     }
   } catch (error: any) {
