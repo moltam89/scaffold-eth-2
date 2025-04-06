@@ -123,9 +123,7 @@ export const detectFromScaffoldEth = async (
   if (typeof externalExtension === "string") {
     try {
       const externalExtensionsDirectory = getExternalExtensionsDirectory();
-
       const logPath = `${externalExtensionsDirectory}/${externalExtension}/extension/${SOLIDITY_FRAMEWORK_LOG}`;
-
       const solidityFramework = (await fs.promises.readFile(logPath, "utf8")).trim();
       if (solidityFramework) {
         if (solidityFramework !== SOLIDITY_FRAMEWORKS.HARDHAT && solidityFramework !== SOLIDITY_FRAMEWORKS.FOUNDRY) {
@@ -147,8 +145,8 @@ export const detectFromScaffoldEth = async (
     const res = await fetch(githubApiUrl);
     if (res.ok) {
       const data = await res.json();
-      // GitHub API returns content in base64, so we need to decode it
-      const content = atob(data.content); // Decode base64 to string
+      // Use Buffer to decode base64 content
+      const content = Buffer.from(data.content, "base64").toString("utf8");
       const solidityFramework = content.trim();
       if (solidityFramework) {
         if (solidityFramework !== SOLIDITY_FRAMEWORKS.HARDHAT && solidityFramework !== SOLIDITY_FRAMEWORKS.FOUNDRY) {
