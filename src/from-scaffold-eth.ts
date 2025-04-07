@@ -76,7 +76,7 @@ export const createProjectFromScaffoldEth = async (options: Options, targetDir: 
     branch = FOUNDRY_BRANCH;
   }
 
-  await setUpRepository({ repository: SCAFFOLD_ETH_2_REPOSITORY, branch }, targetDir);
+  await setUpRepository({ repository: SCAFFOLD_ETH_2_REPOSITORY, branch }, targetDir, true);
 
   const tmpDir = path.join(targetDir, EXTERNAL_EXTENSION_TMP_DIR);
 
