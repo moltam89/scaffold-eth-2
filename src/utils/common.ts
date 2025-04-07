@@ -63,30 +63,30 @@ export async function assertRepoExists(githubBranchUrl: string, githubUrl: strin
 
 export const setUpRepository = async (
   externalExtension: ExternalExtension,
-  tmpDir: string,
+  targetDir: string,
   cloneDirectly: boolean = false,
 ) => {
   const { repository, branch } = externalExtension;
 
-  await fs.promises.mkdir(tmpDir);
+  await fs.promises.mkdir(targetDir);
 
   if (!cloneDirectly) {
     // Original behavior: clone into a new folder
     if (branch) {
-      await execa("git", ["clone", "--branch", branch, repository, tmpDir], {
-        cwd: tmpDir,
+      await execa("git", ["clone", "--branch", branch, repository, targetDir], {
+        cwd: targetDir,
       });
     } else {
-      await execa("git", ["clone", repository, tmpDir], { cwd: tmpDir });
+      await execa("git", ["clone", repository, targetDir], { cwd: targetDir });
     }
   } else {
     // New behavior: clone into current folder
     if (branch) {
       await execa("git", ["clone", "--branch", branch, repository, "."], {
-        cwd: tmpDir,
+        cwd: targetDir,
       });
     } else {
-      await execa("git", ["clone", repository, "."], { cwd: tmpDir });
+      await execa("git", ["clone", repository, "."], { cwd: targetDir });
     }
   }
 };
