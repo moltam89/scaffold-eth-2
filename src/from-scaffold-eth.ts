@@ -6,25 +6,14 @@ import { promisify } from "util";
 import ncp from "ncp";
 import { COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG } from "./dev/create-extension-from-scaffold-eth";
 import { setUpRepository } from "./utils/common";
+import { SOLIDITY_FRAMEWORKS } from "./utils/consts";
+
+const SCAFFOLD_ETH_2_REPOSITORY = "https://github.com/scaffold-eth/scaffold-eth-2";
+const FOUNDRY_BRANCH = "foundry";
 
 const EXTERNAL_EXTENSION_TMP_DIR = "tmp-external-extension";
 
 const copy = promisify(ncp);
-
-const cloneGitRepo = async (repositoryUrl: string, targetDir: string): Promise<void> => {
-  try {
-    // 1. Create the target directory if it doesn't exist
-    await fs.promises.mkdir(targetDir, { recursive: true });
-
-    // 2. Clone the repository
-    await execa("git", ["clone", repositoryUrl, targetDir], { cwd: targetDir });
-
-    console.log(`Repository cloned to ${targetDir}`);
-  } catch (error: any) {
-    console.error(`Error cloning repository: ${error.message}`);
-    throw error;
-  }
-};
 
 const resetToCommitHash = async (externalExtensionPath: string, targetDir: string) => {
   const logPath = path.join(externalExtensionPath, COMMIT_HASH_LOG);
@@ -82,7 +71,12 @@ const commitChanges = async (targetDir: string) => {
 };
 
 export const createProjectFromScaffoldEth = async (options: Options, targetDir: string) => {
-  await cloneGitRepo("https://github.com/scaffold-eth/scaffold-eth-2", targetDir);
+  let branch = null;
+  if (options.solidityFramework === SOLIDITY_FRAMEWORKS.FOUNDRY) {
+    branch = FOUNDRY_BRANCH;
+  }
+
+  await setUpRepository({ repository: SCAFFOLD_ETH_2_REPOSITORY, branch }, targetDir);
 
   const tmpDir = path.join(targetDir, EXTERNAL_EXTENSION_TMP_DIR);
 
