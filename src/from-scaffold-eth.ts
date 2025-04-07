@@ -5,6 +5,7 @@ import fs from "fs";
 import { promisify } from "util";
 import ncp from "ncp";
 import { COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG } from "./dev/create-extension-from-scaffold-eth";
+import { setUpRepository } from "./utils/common";
 
 const EXTERNAL_EXTENSION_TMP_DIR = "tmp-external-extension";
 
@@ -80,22 +81,6 @@ const commitChanges = async (targetDir: string) => {
   }
 };
 
-const setUpExternalExtensionFiles = async (options: Options, tmpDir: string) => {
-  // 1. Create tmp directory to clone external extension
-  await fs.promises.mkdir(tmpDir);
-
-  const { repository, branch } = options.externalExtension as ExternalExtension;
-
-  // 2. Clone external extension
-  if (branch) {
-    await execa("git", ["clone", "--branch", branch, repository, tmpDir], {
-      cwd: tmpDir,
-    });
-  } else {
-    await execa("git", ["clone", repository, tmpDir], { cwd: tmpDir });
-  }
-};
-
 export const createProjectFromScaffoldEth = async (options: Options, targetDir: string) => {
   await cloneGitRepo("https://github.com/scaffold-eth/scaffold-eth-2", targetDir);
 
@@ -106,7 +91,7 @@ export const createProjectFromScaffoldEth = async (options: Options, targetDir: 
   if (options.dev) {
     externalExtensionPath = path.join("externalExtensions", options.externalExtension as string, "extension");
   } else {
-    await setUpExternalExtensionFiles(options, tmpDir);
+    await setUpRepository(options.externalExtension as ExternalExtension, tmpDir);
   }
 
   await resetToCommitHash(externalExtensionPath, targetDir);
