@@ -165,7 +165,7 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
 
       prettyLog.info(`Creating ${projectName} folder and cloning ${githubBranchUrl}...`, 1);
 
-      await setUpRepository({ repository: githubUrl, branch }, projectName, true);
+      await setUpRepository(githubUrl, projectName, branch);
       cleanUpProjectNameFolder = true;
 
       prettyLog.success(`Cloned ${githubBranchUrl} into ${projectName}\n`, 1);

@@ -1,7 +1,6 @@
 import { execa } from "execa";
 import fs from "fs";
 import https from "https";
-import { ExternalExtension } from "../types";
 
 export const parseExtensionString = (extension: string) => {
   const isGithubUrl = extension.startsWith("https://github.com/");
@@ -62,31 +61,15 @@ export async function assertRepoExists(githubBranchUrl: string, githubUrl: strin
 }
 
 export const setUpRepository = async (
-  externalExtension: ExternalExtension,
-  targetDir: string,
-  cloneDirectly: boolean = false,
+  repository: string,
+  targetDirectory: string,
+  branch?: string | null,
+  shouldCreateDir: boolean = true,
+  cloneToCurrentDir: boolean = false,
 ) => {
-  const { repository, branch } = externalExtension;
-
-  await fs.promises.mkdir(targetDir);
-
-  if (!cloneDirectly) {
-    // Original behavior: clone into a new folder
-    if (branch) {
-      await execa("git", ["clone", "--branch", branch, repository, targetDir], {
-        cwd: targetDir,
-      });
-    } else {
-      await execa("git", ["clone", repository, targetDir], { cwd: targetDir });
-    }
-  } else {
-    // New behavior: clone into current folder
-    if (branch) {
-      await execa("git", ["clone", "--branch", branch, repository, "."], {
-        cwd: targetDir,
-      });
-    } else {
-      await execa("git", ["clone", repository, "."], { cwd: targetDir });
-    }
-  }
+  if (shouldCreateDir) await fs.promises.mkdir(targetDirectory);
+  const gitArgs = ["clone"];
+  if (branch) gitArgs.push("--branch", branch);
+  gitArgs.push(repository, cloneToCurrentDir ? "." : targetDirectory);
+  await execa("git", gitArgs, { cwd: targetDirectory });
 };

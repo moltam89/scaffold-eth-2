@@ -344,7 +344,11 @@ export async function copyTemplateFiles(options: Options, templateDir: string, t
         "extension",
       );
     } else {
-      await setUpRepository(options.externalExtension as ExternalExtension, tmpDir);
+      await setUpRepository(
+        (options.externalExtension as ExternalExtension).repository,
+        tmpDir,
+        (options.externalExtension as ExternalExtension).branch,
+      );
     }
 
     if (options.solidityFramework) {
