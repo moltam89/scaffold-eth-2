@@ -62,6 +62,9 @@ export async function createProject(options: Options) {
           if (!options.install) {
             return "Can't use source prettier, since `yarn install` was skipped";
           }
+          if (options.fromScaffoldEth) {
+            return "Skipping prettier format to preserve the original scaffold-eth-2 repository code";
+          }
           return false;
         },
       },
