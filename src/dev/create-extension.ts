@@ -2,11 +2,15 @@ import arg from "arg";
 import path from "path";
 import fs from "fs";
 import { execa } from "execa";
-import { EXTERNAL_EXTENSIONS_DIR, ncpPromise, prettyLog, TARGET_EXTENSION_DIR } from "./common";
+import { EXTERNAL_EXTENSIONS_DIR, prettyLog, TARGET_EXTENSION_DIR } from "./common";
 import { fileURLToPath } from "url";
 import { BASE_DIR, SOLIDITY_FRAMEWORKS, SOLIDITY_FRAMEWORKS_DIR } from "../utils/consts";
 import { Args } from "../types";
 import { createExtensionFromScaffoldEth } from "./create-extension-from-scaffold-eth";
+import { promisify } from "util";
+import ncp from "ncp";
+
+const ncpPromise = promisify(ncp);
 
 const TEMPLATE_FILE_SUFFIX = ".template.mjs";
 const DEPLOYED_CONTRACTS_FILE = "deployedContracts.ts";

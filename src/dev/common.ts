@@ -1,6 +1,4 @@
 import chalk from "chalk";
-import { promisify } from "util";
-import ncp from "ncp";
 
 export const EXTERNAL_EXTENSIONS_DIR = "externalExtensions";
 export const TARGET_EXTENSION_DIR = "extension";
@@ -11,5 +9,3 @@ export const prettyLog = {
   warning: (message: string, indent = 0) => console.log(chalk.yellow(`${"  ".repeat(indent)}⚠ ${message}`)),
   error: (message: string, indent = 0) => console.log(chalk.red(`${"  ".repeat(indent)}✖ ${message}`)),
 };
-
-export const ncpPromise = promisify(ncp);
