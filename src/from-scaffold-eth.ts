@@ -101,7 +101,7 @@ export const createProjectFromScaffoldEth = async (options: Options, targetDirec
 
   await removeLoggedDeletedFiles(externalExtensionPath, targetDirectory);
 
-  await commitChanges(targetDirectory);
-
   await deleteTempDirectory(options, tmpDir);
+
+  await commitChanges(targetDirectory);
 };
