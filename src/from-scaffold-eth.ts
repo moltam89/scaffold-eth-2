@@ -8,7 +8,7 @@ import { COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG } from "./de
 import { deleteTempDirectory, EXTERNAL_EXTENSION_TMP_DIR, setUpRepository } from "./utils/common";
 import { SOLIDITY_FRAMEWORKS } from "./utils/consts";
 
-const SCAFFOLD_ETH_2_REPOSITORY = "https://github.com/scaffold-eth/scaffold-eth-2";
+const SCAFFOLD_ETH_2_REPOSITORY_URL = "https://github.com/scaffold-eth/scaffold-eth-2";
 const FOUNDRY_BRANCH = "foundry";
 
 const copy = promisify(ncp);
@@ -74,7 +74,7 @@ export const createProjectFromScaffoldEth = async (options: Options, targetDirec
     branch = FOUNDRY_BRANCH;
   }
 
-  await setUpRepository(SCAFFOLD_ETH_2_REPOSITORY, targetDirectory, branch, false);
+  await setUpRepository(SCAFFOLD_ETH_2_REPOSITORY_URL, targetDirectory, branch, false);
 
   const tmpDir = path.join(targetDirectory, EXTERNAL_EXTENSION_TMP_DIR);
 
