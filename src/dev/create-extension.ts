@@ -6,7 +6,7 @@ import { execa } from "execa";
 import ncp from "ncp";
 import { fileURLToPath } from "url";
 import { BASE_DIR, SOLIDITY_FRAMEWORKS, SOLIDITY_FRAMEWORKS_DIR } from "../utils/consts";
-import { prettyLog, EXTERNAL_EXTENSIONS_DIR, TARGET_EXTENSION_DIR } from "./common";
+import { prettyLog, EXTERNAL_EXTENSIONS_DIR, TARGET_EXTENSION_DIR } from "./create-extension-common";
 import { Args } from "../types";
 import { createExtensionFromScaffoldEth } from "./create-extension-from-scaffold-eth";
 
