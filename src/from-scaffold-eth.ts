@@ -5,13 +5,11 @@ import fs from "fs";
 import { promisify } from "util";
 import ncp from "ncp";
 import { COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG } from "./dev/create-extension-from-scaffold-eth";
-import { setUpRepository } from "./utils/common";
+import { EXTERNAL_EXTENSION_TMP_DIR, setUpRepository } from "./utils/common";
 import { SOLIDITY_FRAMEWORKS } from "./utils/consts";
 
 const SCAFFOLD_ETH_2_REPOSITORY = "https://github.com/scaffold-eth/scaffold-eth-2";
 const FOUNDRY_BRANCH = "foundry";
-
-const EXTERNAL_EXTENSION_TMP_DIR = "tmp-external-extension";
 
 const copy = promisify(ncp);
 

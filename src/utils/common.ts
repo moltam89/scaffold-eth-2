@@ -2,6 +2,8 @@ import { execa } from "execa";
 import fs from "fs";
 import https from "https";
 
+export const EXTERNAL_EXTENSION_TMP_DIR = "tmp-external-extension";
+
 export const parseExtensionString = (extension: string) => {
   const isGithubUrl = extension.startsWith("https://github.com/");
   const regex = /^[^/]+\/[^/]+(:[^/]+)?$/;
