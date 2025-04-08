@@ -65,11 +65,10 @@ export const setUpRepository = async (
   targetDirectory: string,
   branch?: string | null,
   shouldCreateDir: boolean = true,
-  cloneToCurrentDir: boolean = false,
 ) => {
   if (shouldCreateDir) await fs.promises.mkdir(targetDirectory);
   const gitArgs = ["clone"];
   if (branch) gitArgs.push("--branch", branch);
-  gitArgs.push(repository, cloneToCurrentDir ? "." : targetDirectory);
+  gitArgs.push(repository, shouldCreateDir ? targetDirectory : ".");
   await execa("git", gitArgs, { cwd: targetDirectory });
 };
