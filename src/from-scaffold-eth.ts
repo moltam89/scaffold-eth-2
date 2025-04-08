@@ -5,7 +5,7 @@ import fs from "fs";
 import { promisify } from "util";
 import ncp from "ncp";
 import { COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG } from "./dev/create-extension-from-scaffold-eth";
-import { EXTERNAL_EXTENSION_TMP_DIR, setUpRepository } from "./utils/common";
+import { deleteTempDirectory, EXTERNAL_EXTENSION_TMP_DIR, setUpRepository } from "./utils/common";
 import { SOLIDITY_FRAMEWORKS } from "./utils/consts";
 
 const SCAFFOLD_ETH_2_REPOSITORY = "https://github.com/scaffold-eth/scaffold-eth-2";
@@ -102,4 +102,6 @@ export const createProjectFromScaffoldEth = async (options: Options, targetDirec
   await removeLoggedDeletedFiles(externalExtensionPath, targetDirectory);
 
   await commitChanges(targetDirectory);
+
+  await deleteTempDirectory(options, tmpDir);
 };

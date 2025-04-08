@@ -10,7 +10,7 @@ import { promisify } from "util";
 import link from "../utils/link";
 import { getArgumentFromExternalExtensionOption } from "../utils/external-extensions";
 import { BASE_DIR, SOLIDITY_FRAMEWORKS, SOLIDITY_FRAMEWORKS_DIR, EXAMPLE_CONTRACTS_DIR } from "../utils/consts";
-import { EXTERNAL_EXTENSION_TMP_DIR, setUpRepository } from "../utils/common";
+import { deleteTempDirectory, EXTERNAL_EXTENSION_TMP_DIR, setUpRepository } from "../utils/common";
 
 const copy = promisify(ncp);
 let copyOrLink = copy;
@@ -380,9 +380,7 @@ export async function copyTemplateFiles(options: Options, templateDir: string, t
   );
 
   // 5. Delete tmp directory
-  if (options.externalExtension && !options.dev) {
-    await fs.promises.rm(tmpDir, { recursive: true });
-  }
+  await deleteTempDirectory(options, tmpDir);
 
   // 6. Initialize git repo to avoid husky error
   await execa("git", ["init"], { cwd: targetDir });

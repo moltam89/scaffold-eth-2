@@ -1,6 +1,7 @@
 import { execa } from "execa";
 import fs from "fs";
 import https from "https";
+import { Options } from "../types";
 
 export const EXTERNAL_EXTENSION_TMP_DIR = "tmp-external-extension";
 
@@ -73,4 +74,10 @@ export const setUpRepository = async (
   if (branch) gitArgs.push("--branch", branch);
   gitArgs.push(repository, shouldCreateDir ? targetDirectory : ".");
   await execa("git", gitArgs, { cwd: targetDirectory });
+};
+
+export const deleteTempDirectory = async (options: Options, tmpDir: string) => {
+  if (options.externalExtension && !options.dev) {
+    await fs.promises.rm(tmpDir, { recursive: true });
+  }
 };
