@@ -4,9 +4,9 @@ import fs from "fs";
 import { promisify } from "util";
 import { execa } from "execa";
 import ncp from "ncp";
+import { EXTERNAL_EXTENSIONS_DIR, prettyLog, TARGET_EXTENSION_DIR } from "./create-extension-common";
 import { fileURLToPath } from "url";
 import { BASE_DIR, SOLIDITY_FRAMEWORKS, SOLIDITY_FRAMEWORKS_DIR } from "../utils/consts";
-import { prettyLog, EXTERNAL_EXTENSIONS_DIR, TARGET_EXTENSION_DIR } from "./create-extension-common";
 import { Args } from "../types";
 import { createExtensionFromScaffoldEth } from "./create-extension-from-scaffold-eth";
 
@@ -238,6 +238,7 @@ const main = async (rawArgs: Args) => {
 
     const projectName = path.basename(projectPath);
 
+    console.log("\n");
     prettyLog.info(`Extension name: ${projectName}\n`);
 
     if (fromScaffoldEth) {

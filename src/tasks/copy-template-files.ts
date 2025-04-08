@@ -10,7 +10,7 @@ import { promisify } from "util";
 import link from "../utils/link";
 import { getArgumentFromExternalExtensionOption } from "../utils/external-extensions";
 import { BASE_DIR, SOLIDITY_FRAMEWORKS, SOLIDITY_FRAMEWORKS_DIR, EXAMPLE_CONTRACTS_DIR } from "../utils/consts";
-import { deleteTempDirectory, EXTERNAL_EXTENSION_TMP_DIR, setUpRepository } from "../utils/common";
+import { deleteTempDirectory, setUpRepository, EXTERNAL_EXTENSION_TMP_DIR } from "../utils/common";
 
 const copy = promisify(ncp);
 let copyOrLink = copy;
