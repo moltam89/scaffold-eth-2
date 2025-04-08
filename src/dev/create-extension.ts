@@ -1,22 +1,22 @@
 import arg from "arg";
 import path from "path";
 import fs from "fs";
+import { promisify } from "util";
 import { execa } from "execa";
-import { EXTERNAL_EXTENSIONS_DIR, prettyLog, TARGET_EXTENSION_DIR } from "./common";
+import ncp from "ncp";
 import { fileURLToPath } from "url";
 import { BASE_DIR, SOLIDITY_FRAMEWORKS, SOLIDITY_FRAMEWORKS_DIR } from "../utils/consts";
+import { prettyLog, EXTERNAL_EXTENSIONS_DIR, TARGET_EXTENSION_DIR } from "./common";
 import { Args } from "../types";
 import { createExtensionFromScaffoldEth } from "./create-extension-from-scaffold-eth";
-import { promisify } from "util";
-import ncp from "ncp";
-
-const ncpPromise = promisify(ncp);
 
 const TEMPLATE_FILE_SUFFIX = ".template.mjs";
 const DEPLOYED_CONTRACTS_FILE = "deployedContracts.ts";
 const YARN_LOCK_FILE = "yarn.lock";
 const PACKAGE_JSON_FILE = "package.json";
 const NEXTJS_DIR = "nextjs";
+
+const ncpPromise = promisify(ncp);
 
 const currentFileUrl = import.meta.url;
 const templateDirectory = path.resolve(decodeURI(fileURLToPath(currentFileUrl)), "../../../templates");
