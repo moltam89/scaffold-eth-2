@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { execa } from "execa";
-import { EXTERNAL_EXTENSIONS_DIR, prettyLog, TARGET_EXTENSION_DIR } from "./create-extension-common";
+import { prettyLog, EXTERNAL_EXTENSIONS_DIR, TARGET_EXTENSION_DIR } from "./create-extension-common";
 import { assertRepoExists, parseExtensionString, setUpRepository } from "../utils/common";
 import { SOLIDITY_FRAMEWORKS } from "../utils/consts";
 import { promisify } from "util";
