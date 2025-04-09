@@ -1,14 +1,13 @@
+import fs from "fs";
 import type { Args, SolidityFramework, RawOptions, SolidityFrameworkChoices } from "../types";
 import arg from "arg";
-import {
-  getSolidityFrameworkDirsFromExternalExtension,
-  detectFromScaffoldEth,
-  validateExternalExtension,
-} from "./external-extensions";
+import { getSolidityFrameworkDirsFromExternalExtension, validateExternalExtension } from "./external-extensions";
 import chalk from "chalk";
 import { SOLIDITY_FRAMEWORKS } from "./consts";
 import { validateFoundryUp } from "./system-validation";
 import { validateNpmName } from "./validate-name";
+import { deconstructGithubUrl, getExternalExtensionsDirectory } from "./common";
+import { SOLIDITY_FRAMEWORK_LOG } from "../dev/create-extension-from-scaffold-eth";
 
 // TODO update smartContractFramework code with general extensions
 export async function parseArgumentsIntoOptions(
@@ -75,9 +74,6 @@ export async function parseArgumentsIntoOptions(
     ? await detectFromScaffoldEth(extension)
     : { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
 
-  console.log("fromScaffoldEth", fromScaffoldEth);
-  console.log("fromScaffoldEthSolidityFramework", fromScaffoldEthSolidityFramework);
-
   let solidityFrameworkChoices = [
     SOLIDITY_FRAMEWORKS.HARDHAT,
     SOLIDITY_FRAMEWORKS.FOUNDRY,
@@ -129,3 +125,40 @@ function solidityFrameworkHandler(value: string) {
   // choose from cli prompts
   return null;
 }
+
+// If the extension was created from scaffold-eth, it will have a file called ${SOLIDITY_FRAMEWORK_LOG}
+export const detectFromScaffoldEth = async (
+  externalExtension: NonNullable<RawOptions["externalExtension"]>,
+): Promise<{ fromScaffoldEth: boolean; fromScaffoldEthSolidityFramework: SolidityFramework | null }> => {
+  let solidityFramework = null;
+
+  try {
+    if (typeof externalExtension === "string") {
+      // dev mode
+      const externalExtensionsDirectory = getExternalExtensionsDirectory();
+      const logPath = `${externalExtensionsDirectory}/${externalExtension}/extension/${SOLIDITY_FRAMEWORK_LOG}`;
+      solidityFramework = (await fs.promises.readFile(logPath, "utf8")).trim();
+    } else {
+      const { branch, repository } = externalExtension;
+      const { ownerName, repoName } = deconstructGithubUrl(repository);
+
+      const githubApiUrl = `https://api.github.com/repos/${ownerName}/${repoName}/contents/extension/${SOLIDITY_FRAMEWORK_LOG}${branch ? `?ref=${branch}` : ""}`;
+      const res = await fetch(githubApiUrl);
+      const data = await res.json();
+      // Use Buffer to decode base64 content
+      const content = Buffer.from(data.content, "base64").toString("utf8");
+      solidityFramework = content.trim();
+    }
+
+    if (solidityFramework) {
+      if (solidityFramework !== SOLIDITY_FRAMEWORKS.HARDHAT && solidityFramework !== SOLIDITY_FRAMEWORKS.FOUNDRY) {
+        throw new Error(`Invalid Solidity framework: ${solidityFramework}`);
+      }
+      return { fromScaffoldEth: true, fromScaffoldEthSolidityFramework: solidityFramework };
+    }
+
+    return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
+  } catch {
+    return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
+  }
+};

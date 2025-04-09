@@ -5,7 +5,6 @@ import { ExternalExtension, RawOptions, SolidityFramework } from "../types";
 import curatedExtension from "../extensions.json";
 import { SOLIDITY_FRAMEWORKS } from "./consts";
 import { assertRepoExists, deconstructGithubUrl, getExternalExtensionsDirectory, parseExtensionString } from "./common";
-import { SOLIDITY_FRAMEWORK_LOG } from "../dev/create-extension-from-scaffold-eth";
 
 type ExtensionJSON = {
   extensionFlagValue: string;
@@ -113,41 +112,4 @@ export const getSolidityFrameworkDirsFromExternalExtension = async (
   const directories = listOfContents.filter(item => item.type === "dir").map(dir => dir.name);
 
   return filterSolidityFrameworkDirs(directories);
-};
-
-// If the extension was created from scaffold-eth, it will have a file called ${SOLIDITY_FRAMEWORK_LOG}
-export const detectFromScaffoldEth = async (
-  externalExtension: NonNullable<RawOptions["externalExtension"]>,
-): Promise<{ fromScaffoldEth: boolean; fromScaffoldEthSolidityFramework: SolidityFramework | null }> => {
-  let solidityFramework = null;
-
-  try {
-    if (typeof externalExtension === "string") {
-      // dev mode
-      const externalExtensionsDirectory = getExternalExtensionsDirectory();
-      const logPath = `${externalExtensionsDirectory}/${externalExtension}/extension/${SOLIDITY_FRAMEWORK_LOG}`;
-      solidityFramework = (await fs.promises.readFile(logPath, "utf8")).trim();
-    } else {
-      const { branch, repository } = externalExtension;
-      const { ownerName, repoName } = deconstructGithubUrl(repository);
-
-      const githubApiUrl = `https://api.github.com/repos/${ownerName}/${repoName}/contents/extension/${SOLIDITY_FRAMEWORK_LOG}${branch ? `?ref=${branch}` : ""}`;
-      const res = await fetch(githubApiUrl);
-      const data = await res.json();
-      // Use Buffer to decode base64 content
-      const content = Buffer.from(data.content, "base64").toString("utf8");
-      solidityFramework = content.trim();
-    }
-
-    if (solidityFramework) {
-      if (solidityFramework !== SOLIDITY_FRAMEWORKS.HARDHAT && solidityFramework !== SOLIDITY_FRAMEWORKS.FOUNDRY) {
-        throw new Error(`Invalid Solidity framework: ${solidityFramework}`);
-      }
-      return { fromScaffoldEth: true, fromScaffoldEthSolidityFramework: solidityFramework };
-    }
-
-    return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
-  } catch {
-    return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
-  }
 };
