@@ -88,12 +88,10 @@ export async function parseArgumentsIntoOptions(
   let solidityFramework =
     solidityFrameworkChoices.length === 1 ? solidityFrameworkChoices[0] : (args["--solidity-framework"] ?? null);
 
+  const { fromScaffoldEth, fromScaffoldEthSolidityFramework } = !extension
+    ? { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null }
+    : await detectFromScaffoldEth(extension);
   // From scaffold-eth support hardhat or foundry, not both
-
-  const { fromScaffoldEth, fromScaffoldEthSolidityFramework } = extension
-    ? await detectFromScaffoldEth(extension)
-    : { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
-
   if (fromScaffoldEth) {
     solidityFramework = fromScaffoldEthSolidityFramework;
   }
