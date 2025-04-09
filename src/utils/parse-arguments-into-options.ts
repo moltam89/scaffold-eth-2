@@ -70,10 +70,6 @@ export async function parseArgumentsIntoOptions(
     }
   }
 
-  const { fromScaffoldEth, fromScaffoldEthSolidityFramework } = extension
-    ? await detectFromScaffoldEth(extension)
-    : { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
-
   let solidityFrameworkChoices = [
     SOLIDITY_FRAMEWORKS.HARDHAT,
     SOLIDITY_FRAMEWORKS.FOUNDRY,
@@ -93,6 +89,11 @@ export async function parseArgumentsIntoOptions(
     solidityFrameworkChoices.length === 1 ? solidityFrameworkChoices[0] : (args["--solidity-framework"] ?? null);
 
   // From scaffold-eth support hardhat or foundry, not both
+
+  const { fromScaffoldEth, fromScaffoldEthSolidityFramework } = extension
+    ? await detectFromScaffoldEth(extension)
+    : { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
+
   if (fromScaffoldEth) {
     solidityFramework = fromScaffoldEthSolidityFramework;
   }
