@@ -2,6 +2,8 @@ import { execa } from "execa";
 import fs from "fs";
 import https from "https";
 import { Options } from "../types";
+import path from "path";
+import { fileURLToPath } from "url";
 
 export const EXTERNAL_EXTENSION_TMP_DIR = "tmp-external-extension";
 
@@ -80,4 +82,9 @@ export const deleteTempDirectory = async (options: Options, tmpDir: string) => {
   if (options.externalExtension && !options.dev) {
     await fs.promises.rm(tmpDir, { recursive: true });
   }
+};
+
+export const getExternalExtensionsDirectory = (): string => {
+  const currentFileUrl = import.meta.url;
+  return path.resolve(decodeURI(fileURLToPath(currentFileUrl)), "../../externalExtensions");
 };

@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import { ExternalExtension, RawOptions, SolidityFramework } from "../types";
 import curatedExtension from "../extensions.json";
 import { SOLIDITY_FRAMEWORKS } from "./consts";
-import { assertRepoExists, deconstructGithubUrl, parseExtensionString } from "./common";
+import { assertRepoExists, deconstructGithubUrl, getExternalExtensionsDirectory, parseExtensionString } from "./common";
 import { SOLIDITY_FRAMEWORK_LOG } from "../dev/create-extension-from-scaffold-eth";
 
 type ExtensionJSON = {
@@ -150,9 +150,4 @@ export const detectFromScaffoldEth = async (
   } catch {
     return { fromScaffoldEth: false, fromScaffoldEthSolidityFramework: null };
   }
-};
-
-const getExternalExtensionsDirectory = (): string => {
-  const currentFileUrl = import.meta.url;
-  return path.resolve(decodeURI(fileURLToPath(currentFileUrl)), "../../externalExtensions");
 };
