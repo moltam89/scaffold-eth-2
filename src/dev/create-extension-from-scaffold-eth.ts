@@ -55,15 +55,15 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
 
     await initGitRepo(path.join(EXTERNAL_EXTENSIONS_DIR, projectName));
 
+    prettyLog.info(`Files processed successfully, updated ${EXTERNAL_EXTENSIONS_DIR}/${projectName} directory.`);
+  } catch (err: any) {
+    prettyLog.error(`Error: ${err.message}`);
+  } finally {
     if (scaffoldEthRepo) {
       const projectPath = path.join(process.cwd(), projectName);
       await fs.promises.rm(projectPath, { recursive: true, force: true });
       prettyLog.info(`Cleaned up temporary folder: ${projectPath}\n`, 1);
     }
-
-    prettyLog.info(`Files processed successfully, updated ${EXTERNAL_EXTENSIONS_DIR}/${projectName} directory.`);
-  } catch (err: any) {
-    prettyLog.error(`Error: ${err.message}`);
   }
 };
 
