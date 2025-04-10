@@ -89,6 +89,8 @@ const getMergeBaseCommitHash = async (
     const { stdout: foundryMergeBase } = await execa("git", ["merge-base", "HEAD", "scaffold-eth-2/foundry"], {
       cwd: projectName,
     });
+    console.log("mainMergeBase", mainMergeBase);
+    console.log("foundryMergeBase", foundryMergeBase);
 
     // If no merge base exists with either branch, throw an error
     if (!mainMergeBase && !foundryMergeBase) {
