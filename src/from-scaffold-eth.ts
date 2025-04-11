@@ -77,11 +77,11 @@ export const createProjectFromScaffoldEth = async (options: Options, targetDirec
   // Clone into existing targetDirectory
   await setUpRepository(SCAFFOLD_ETH_2_REPOSITORY_URL, targetDirectory, branch, false);
 
-  const tmpDir = path.join(targetDirectory, EXTERNAL_EXTENSION_TMP_DIR);
-
   let externalExtensionPath = path.join("externalExtensions", options.externalExtension as string, "extension");
 
   if (!options.dev) {
+    const tmpDir = path.join(targetDirectory, EXTERNAL_EXTENSION_TMP_DIR);
+
     // Clone into new tmpDir
     await setUpRepository(
       (options.externalExtension as ExternalExtension).repository,
