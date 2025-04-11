@@ -342,6 +342,7 @@ export async function copyTemplateFiles(options: Options, templateDir: string, t
         "extension",
       );
     } else {
+      // Create tmpDir and clone to repository folder
       await setUpRepository(
         (options.externalExtension as ExternalExtension).repository,
         tmpDir,

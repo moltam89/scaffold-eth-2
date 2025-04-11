@@ -22,6 +22,7 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
 
       prettyLog.info(`Creating ${projectName} folder and cloning ${githubBranchUrl}...`, 1);
 
+      // Create folder and clone  repository into it
       await setUpRepository(githubUrl, projectName, branch);
 
       prettyLog.success(`Cloned ${githubBranchUrl} into ${projectName}\n`, 1);
@@ -59,11 +60,11 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
   } catch (err: any) {
     prettyLog.error(`Error: ${err.message}`);
   } finally {
-    if (scaffoldEthRepo) {
-      const projectPath = path.join(process.cwd(), projectName);
-      await fs.promises.rm(projectPath, { recursive: true, force: true });
-      prettyLog.info(`Cleaned up temporary folder: ${projectPath}\n`, 1);
-    }
+    // if (scaffoldEthRepo) {
+    //   const projectPath = path.join(process.cwd(), projectName);
+    //   await fs.promises.rm(projectPath, { recursive: true, force: true });
+    //   prettyLog.info(`Cleaned up temporary folder: ${projectPath}\n`, 1);
+    // }
   }
 };
 

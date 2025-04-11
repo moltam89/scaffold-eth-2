@@ -74,20 +74,22 @@ export const createProjectFromScaffoldEth = async (options: Options, targetDirec
     branch = FOUNDRY_BRANCH;
   }
 
+  // Clone into existing targetDirectory
   await setUpRepository(SCAFFOLD_ETH_2_REPOSITORY_URL, targetDirectory, branch, false);
 
   const tmpDir = path.join(targetDirectory, EXTERNAL_EXTENSION_TMP_DIR);
 
-  let externalExtensionPath = path.join(tmpDir, "extension");
+  let externalExtensionPath = path.join("externalExtensions", options.externalExtension as string, "extension");
 
-  if (options.dev) {
-    externalExtensionPath = path.join("externalExtensions", options.externalExtension as string, "extension");
-  } else {
+  if (!options.dev) {
+    // Clone into new tmpDir
     await setUpRepository(
       (options.externalExtension as ExternalExtension).repository,
       tmpDir,
       (options.externalExtension as ExternalExtension).branch,
     );
+
+    externalExtensionPath = externalExtensionPath = path.join(tmpDir, "extension");
   }
 
   await resetToCommitHash(externalExtensionPath, targetDirectory);
