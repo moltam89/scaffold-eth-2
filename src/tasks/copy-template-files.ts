@@ -316,6 +316,7 @@ ${
 export async function copyTemplateFiles(options: Options, templateDir: string, targetDir: string) {
   copyOrLink = options.dev ? link : copy;
   const basePath = path.join(templateDir, BASE_DIR);
+  console.log("yooo targetDir", targetDir);
   const tmpDir = path.join(targetDir, EXTERNAL_EXTENSION_TMP_DIR);
 
   // 1. Copy base template to target directory
