@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import { execa } from "execa";
 import { prettyLog, EXTERNAL_EXTENSIONS_DIR, TARGET_EXTENSION_DIR } from "./create-extension-common";
-import { assertRepoExists, parseExtensionString, setUpRepository } from "../utils/common";
+import { assertRepoExists, parseExtensionString, setupRepository } from "../utils/common";
 import { SOLIDITY_FRAMEWORKS } from "../utils/consts";
 import { promisify } from "util";
 import ncp from "ncp";
@@ -22,8 +22,7 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
 
       prettyLog.info(`Creating ${projectName} folder and cloning ${githubBranchUrl}...`, 1);
 
-      // Create folder and clone  repository into it
-      await setUpRepository(githubUrl, projectName, branch);
+      await setupRepository(githubUrl, projectName, branch);
 
       prettyLog.success(`Cloned ${githubBranchUrl} into ${projectName}\n`, 1);
     }

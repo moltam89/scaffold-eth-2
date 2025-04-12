@@ -10,7 +10,7 @@ import { promisify } from "util";
 import link from "../utils/link";
 import { getArgumentFromExternalExtensionOption } from "../utils/external-extensions";
 import { BASE_DIR, SOLIDITY_FRAMEWORKS, SOLIDITY_FRAMEWORKS_DIR, EXAMPLE_CONTRACTS_DIR } from "../utils/consts";
-import { deleteTempDirectory, setUpRepository, EXTERNAL_EXTENSION_TMP_DIR } from "../utils/common";
+import { deleteTempDirectory, setupRepository, EXTERNAL_EXTENSION_TMP_DIR } from "../utils/common";
 
 const copy = promisify(ncp);
 let copyOrLink = copy;
@@ -342,8 +342,7 @@ export async function copyTemplateFiles(options: Options, templateDir: string, t
         "extension",
       );
     } else {
-      // Create tmpDir and clone to repository folder
-      await setUpRepository(
+      await setupRepository(
         (options.externalExtension as ExternalExtension).repository,
         tmpDir,
         (options.externalExtension as ExternalExtension).branch,

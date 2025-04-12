@@ -5,13 +5,49 @@ import fs from "fs";
 import { promisify } from "util";
 import ncp from "ncp";
 import { COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG } from "./dev/create-extension-from-scaffold-eth";
-import { deleteTempDirectory, EXTERNAL_EXTENSION_TMP_DIR, setUpRepository } from "./utils/common";
+import { deleteTempDirectory, EXTERNAL_EXTENSION_TMP_DIR, setupRepository } from "./utils/common";
 import { SOLIDITY_FRAMEWORKS } from "./utils/consts";
 
 const SCAFFOLD_ETH_2_REPOSITORY_URL = "https://github.com/scaffold-eth/scaffold-eth-2";
 const FOUNDRY_BRANCH = "foundry";
 
 const copy = promisify(ncp);
+
+export const createProjectFromScaffoldEth = async (options: Options, projectName: string) => {
+  let branch = null;
+  if (options.solidityFramework === SOLIDITY_FRAMEWORKS.FOUNDRY) {
+    branch = FOUNDRY_BRANCH;
+  }
+
+  await setupRepository(projectName, SCAFFOLD_ETH_2_REPOSITORY_URL, branch);
+
+  let externalExtensionPath = path.join("externalExtensions", options.externalExtension as string, "extension");
+
+  if (!options.dev) {
+    await setupRepository(
+      getTempDirectory(projectName),
+      (options.externalExtension as ExternalExtension).repository,
+      (options.externalExtension as ExternalExtension).branch,
+    );
+
+    externalExtensionPath = externalExtensionPath = path.join(getTempDirectory(projectName), "extension");
+  }
+
+  await resetToCommitHash(externalExtensionPath, projectName);
+
+  await copy(externalExtensionPath, projectName, {
+    filter: file => {
+      const relativePath = path.relative(externalExtensionPath, file);
+      return ![COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG].includes(relativePath);
+    },
+  });
+
+  await removeLoggedDeletedFiles(externalExtensionPath, projectName);
+
+  await deleteTempDirectory(options, getTempDirectory(projectName));
+
+  await commitChanges(projectName);
+};
 
 const resetToCommitHash = async (externalExtensionPath: string, targetDir: string) => {
   const logPath = path.join(externalExtensionPath, COMMIT_HASH_LOG);
@@ -68,42 +104,4 @@ const commitChanges = async (targetDir: string) => {
   }
 };
 
-export const createProjectFromScaffoldEth = async (options: Options, targetDirectory: string) => {
-  let branch = null;
-  if (options.solidityFramework === SOLIDITY_FRAMEWORKS.FOUNDRY) {
-    branch = FOUNDRY_BRANCH;
-  }
-
-  // Clone into existing targetDirectory
-  await setUpRepository(SCAFFOLD_ETH_2_REPOSITORY_URL, targetDirectory, branch, false);
-
-  let externalExtensionPath = path.join("externalExtensions", options.externalExtension as string, "extension");
-
-  if (!options.dev) {
-    const tmpDir = path.join(targetDirectory, EXTERNAL_EXTENSION_TMP_DIR);
-
-    // Clone into new tmpDir
-    await setUpRepository(
-      (options.externalExtension as ExternalExtension).repository,
-      tmpDir,
-      (options.externalExtension as ExternalExtension).branch,
-    );
-
-    externalExtensionPath = externalExtensionPath = path.join(tmpDir, "extension");
-  }
-
-  await resetToCommitHash(externalExtensionPath, targetDirectory);
-
-  await copy(externalExtensionPath, targetDirectory, {
-    filter: file => {
-      const relativePath = path.relative(externalExtensionPath, file);
-      return ![COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG].includes(relativePath);
-    },
-  });
-
-  await removeLoggedDeletedFiles(externalExtensionPath, targetDirectory);
-
-  await deleteTempDirectory(options, tmpDir);
-
-  await commitChanges(targetDirectory);
-};
+const getTempDirectory = (projectName: string) => path.join(projectName, EXTERNAL_EXTENSION_TMP_DIR);
