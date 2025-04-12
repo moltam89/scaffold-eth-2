@@ -66,6 +66,8 @@ export async function assertRepoExists(githubBranchUrl: string, githubUrl: strin
 }
 
 export const setupRepository = async (targetDirectory: string, repository: string, branch?: string | null) => {
+  console.log("yooo setting up repository...", targetDirectory, repository, branch);
+
   // 1. Create targetDirectory if needed
   await fs.promises.mkdir(targetDirectory, { recursive: true });
 
