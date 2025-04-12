@@ -343,8 +343,8 @@ export async function copyTemplateFiles(options: Options, templateDir: string, t
       );
     } else {
       await setupRepository(
-        (options.externalExtension as ExternalExtension).repository,
         tmpDir,
+        (options.externalExtension as ExternalExtension).repository,
         (options.externalExtension as ExternalExtension).branch,
       );
     }
