@@ -69,35 +69,34 @@ const resetToCommitHash = async (externalExtensionPath: string, targetDir: strin
 };
 
 const removeLoggedDeletedFiles = async (externalExtensionPath: string, targetDir: string) => {
-  const logPath = path.join(externalExtensionPath, DELETED_FILES_LOG);
-  console.log(`Checking for previously logged deleted files at: ${logPath}`);
-  if (fs.existsSync(logPath)) {
-    const deletedFilesContent = await fs.promises.readFile(logPath, "utf8");
-    const deletedFiles = deletedFilesContent.split("\n").filter(Boolean);
+  try {
+    const logPath = path.join(externalExtensionPath, DELETED_FILES_LOG);
 
-    for (const file of deletedFiles) {
-      const filePath = path.join(targetDir, file);
-      console.log(`Checking deleted file: ${file}`, filePath);
-      if (fs.existsSync(filePath)) {
-        await fs.promises.unlink(filePath);
-        console.log(`Removed previously logged deleted file: ${file}`);
+    if (fs.existsSync(logPath)) {
+      const deletedFilesContent = await fs.promises.readFile(logPath, "utf8");
+      const deletedFiles = deletedFilesContent.split("\n").filter(Boolean);
+
+      for (const file of deletedFiles) {
+        const filePath = path.join(targetDir, file);
+        if (fs.existsSync(filePath)) {
+          await fs.promises.unlink(filePath);
+          console.log(`Removed previously logged deleted file: ${file}`);
+        }
       }
     }
+  } catch (error: any) {
+    console.error(`Failed to remove logged deleted files: ${error.message}`);
+    throw error;
   }
 };
 
 const commitChanges = async (targetDir: string) => {
   try {
-    console.log("Staging all changes...");
     await execa("git", ["add", "--all"], { cwd: targetDir });
-
-    console.log("Committing changes...");
     await execa("git", ["commit", "-m", "Apply changes from extension"], { cwd: targetDir });
-
-    console.log("Changes committed successfully.");
   } catch (error: any) {
-    console.error(`Error committing changes: ${error.message}`);
-    throw error;
+    console.error(`Failed to commit changes: ${error.message}`);
+    throw new Error(`Failed to commit changes: ${error.message}`);
   }
 };
 
