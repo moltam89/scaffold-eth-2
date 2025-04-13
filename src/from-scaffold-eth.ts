@@ -8,18 +8,18 @@ import { COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG } from "./de
 import { deleteTempDirectory, EXTERNAL_EXTENSION_TMP_DIR, setupRepository } from "./utils/common";
 import { SOLIDITY_FRAMEWORKS } from "./utils/consts";
 
+// ToDo: Prepare for branch switching, main branch uses hardhat right now, but it can change in the future
 const SCAFFOLD_ETH_2_REPOSITORY_URL = "https://github.com/scaffold-eth/scaffold-eth-2";
 const FOUNDRY_BRANCH = "foundry";
 
 const copy = promisify(ncp);
 
 export const createProjectFromScaffoldEth = async (options: Options, projectName: string) => {
-  let branch = null;
-  if (options.solidityFramework === SOLIDITY_FRAMEWORKS.FOUNDRY) {
-    branch = FOUNDRY_BRANCH;
-  }
-
-  await setupRepository(projectName, SCAFFOLD_ETH_2_REPOSITORY_URL, branch);
+  await setupRepository(
+    projectName,
+    SCAFFOLD_ETH_2_REPOSITORY_URL,
+    options.solidityFramework === SOLIDITY_FRAMEWORKS.FOUNDRY ? FOUNDRY_BRANCH : null,
+  );
 
   let externalExtensionPath = path.join("externalExtensions", options.externalExtension as string, "extension");
 
