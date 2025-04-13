@@ -22,8 +22,7 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
 
       prettyLog.info(`Creating ${projectName} folder and cloning ${githubBranchUrl}...`, 1);
 
-      const targetDirectory = path.resolve(process.cwd(), projectName);
-      await setupRepository(targetDirectory, githubUrl, branch);
+      await setupRepository(getProjectDirectory(projectName), githubUrl, branch);
 
       prettyLog.success(`Cloned ${githubBranchUrl} into ${projectName}\n`, 1);
     }
@@ -60,11 +59,10 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
   } catch (err: any) {
     prettyLog.error(`Error: ${err.message}`);
   } finally {
-    // if (scaffoldEthRepo) {
-    //   const projectPath = path.join(process.cwd(), projectName);
-    //   await fs.promises.rm(projectPath, { recursive: true, force: true });
-    //   prettyLog.info(`Cleaned up temporary folder: ${projectPath}\n`, 1);
-    // }
+    if (scaffoldEthRepo) {
+      await fs.promises.rm(getProjectDirectory(projectName), { recursive: true, force: true });
+      prettyLog.info(`Cleaned up temporary folder: ${getProjectDirectory(projectName)}\n`, 1);
+    }
   }
 };
 
@@ -211,3 +209,5 @@ const initGitRepo = async (targetPath: string) => {
     prettyLog.error(`Failed to initialize git repository: ${error.message}`);
   }
 };
+
+const getProjectDirectory = (projectName: string) => path.resolve(process.cwd(), projectName);
