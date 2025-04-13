@@ -42,7 +42,6 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
 
     if (changedFiles.length) {
       await copyChangedFiles(changedFiles, projectName);
-      console.log(changedFiles);
       prettyLog.success(`Copied ${changedFiles.length} changed files\n`, 1);
     }
 
