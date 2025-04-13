@@ -21,17 +21,15 @@ export const createProjectFromScaffoldEth = async (options: Options, projectName
     options.solidityFramework === SOLIDITY_FRAMEWORKS.FOUNDRY ? FOUNDRY_BRANCH : null,
   );
 
-  let externalExtensionPath = path.join("externalExtensions", options.externalExtension as string, "extension");
-
   if (!options.dev) {
     await setupRepository(
       getTempDirectory(projectName),
       (options.externalExtension as ExternalExtension).repository,
       (options.externalExtension as ExternalExtension).branch,
     );
-
-    externalExtensionPath = externalExtensionPath = path.join(getTempDirectory(projectName), "extension");
   }
+
+  const externalExtensionPath = getExternalExtensionPath(options, projectName);
 
   await resetToCommitHash(externalExtensionPath, projectName);
 
@@ -102,6 +100,14 @@ const commitChanges = async (targetDir: string) => {
     console.error(`Error committing changes: ${error.message}`);
     throw error;
   }
+};
+
+const getExternalExtensionPath = (options: Options, projectName: string) => {
+  if (options.dev) {
+    return path.join("externalExtensions", options.externalExtension as string, "extension");
+  }
+
+  return path.join(getTempDirectory(projectName), "extension");
 };
 
 const getTempDirectory = (projectName: string) => path.join(projectName, EXTERNAL_EXTENSION_TMP_DIR);
