@@ -132,17 +132,23 @@ const getMergeBaseCommitHash = async (
       // Foundry’s merge base is more recent (or equal), so assume it’s the origin
       return { mergeBaseCommitHash: foundryMergeBase, solidityFramework: SOLIDITY_FRAMEWORKS.FOUNDRY };
     }
-  } catch (err: any) {
-    throw new Error(`Failed to get merge base: ${err.message}`);
+  } catch (error: any) {
+    console.error(`Failed to get merge base commit hash: ${error.message}`);
+    throw error;
   }
 };
 
 const getChangedFilesSinceCommit = async (projectName: string, commitHash: string): Promise<string[]> => {
-  const { stdout } = await execa("git", ["diff", "--diff-filter=d", "--name-only", `${commitHash}..HEAD`], {
-    cwd: projectName,
-  });
+  try {
+    const { stdout } = await execa("git", ["diff", "--diff-filter=d", "--name-only", `${commitHash}..HEAD`], {
+      cwd: projectName,
+    });
 
-  return stdout.split("\n").filter(Boolean);
+    return stdout.split("\n").filter(Boolean);
+  } catch (error: any) {
+    console.error(`Failed to get changed files since commit: ${error.message}`);
+    throw error;
+  }
 };
 
 const getDeletedAndRenamedFilesSinceCommit = async (projectName: string, commitHash: string): Promise<string[]> => {
