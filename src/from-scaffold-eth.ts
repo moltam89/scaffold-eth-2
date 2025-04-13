@@ -96,7 +96,7 @@ const commitChanges = async (targetDir: string) => {
     await execa("git", ["commit", "-m", "Apply changes from extension"], { cwd: targetDir });
   } catch (error: any) {
     console.error(`Failed to commit changes: ${error.message}`);
-    throw new Error(`Failed to commit changes: ${error.message}`);
+    throw error;
   }
 };
 
