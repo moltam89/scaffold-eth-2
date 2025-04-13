@@ -152,28 +152,33 @@ const getChangedFilesSinceCommit = async (projectName: string, commitHash: strin
 };
 
 const getDeletedAndRenamedFilesSinceCommit = async (projectName: string, commitHash: string): Promise<string[]> => {
-  const { stdout: gitOutput } = await execa(
-    "git",
-    ["diff", "--diff-filter=DR", "--name-status", `${commitHash}..HEAD`],
-    { cwd: projectName },
-  );
+  try {
+    const { stdout: gitOutput } = await execa(
+      "git",
+      ["diff", "--diff-filter=DR", "--name-status", `${commitHash}..HEAD`],
+      { cwd: projectName },
+    );
 
-  // Process the output to extract deleted and renamed files
-  const deletedAndRenamedFiles = gitOutput
-    .split("\n") // Split into lines
-    .filter(Boolean) // Remove empty lines
-    .map(line => {
-      const parts = line.split("\t");
-      if (line.startsWith("D")) {
-        return parts[1]; // For deleted files, return the file name
-      } else if (line.startsWith("R")) {
-        return parts[1]; // For renamed files, return the original file name
-      }
-      return null; // Ignore other cases
-    })
-    .filter(Boolean); // Remove null entries
+    // Process the output to extract deleted and renamed files
+    const deletedAndRenamedFiles = gitOutput
+      .split("\n") // Split into lines
+      .filter(Boolean) // Remove empty lines
+      .map(line => {
+        const parts = line.split("\t");
+        if (line.startsWith("D")) {
+          return parts[1]; // For deleted files, return the file name
+        } else if (line.startsWith("R")) {
+          return parts[1]; // For renamed files, return the original file name
+        }
+        return null; // Ignore other cases
+      })
+      .filter(Boolean); // Remove null entries
 
-  return deletedAndRenamedFiles as string[];
+    return deletedAndRenamedFiles as string[];
+  } catch (error: any) {
+    console.error(`Failed to get deleted and renamed files: ${error.message}`);
+    throw error;
+  }
 };
 
 const copyChangedFiles = async (changedFiles: string[], projectName: string) => {
