@@ -74,12 +74,12 @@ const removeLoggedDeletedFiles = async (externalExtensionPath: string, targetDir
 
     if (fs.existsSync(logPath)) {
       const deletedFilesContent = await fs.promises.readFile(logPath, "utf8");
-      const deletedFiles = deletedFilesContent.split("\n").filter(Boolean);
+      const deletedFilePaths = deletedFilesContent.split("\n").filter(Boolean);
 
-      for (const file of deletedFiles) {
-        const filePath = path.join(targetDir, file);
-        if (fs.existsSync(filePath)) {
-          await fs.promises.unlink(filePath);
+      for (const deletedFilePath of deletedFilePaths) {
+        const fullPath = path.join(targetDir, deletedFilePath);
+        if (fs.existsSync(fullPath)) {
+          await fs.promises.unlink(fullPath);
         }
       }
     }
