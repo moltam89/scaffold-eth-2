@@ -48,24 +48,23 @@ export const createProjectFromScaffoldEth = async (options: Options, projectName
 };
 
 const resetToCommitHash = async (externalExtensionPath: string, targetDir: string) => {
-  const logPath = path.join(externalExtensionPath, COMMIT_HASH_LOG);
+  try {
+    const logPath = path.join(externalExtensionPath, COMMIT_HASH_LOG);
 
-  if (fs.existsSync(logPath)) {
-    const commitHash = (await fs.promises.readFile(logPath, "utf8")).trim();
-    if (commitHash) {
-      try {
-        console.log(`Resetting repository to commit hash: ${commitHash}`);
-        await execa("git", ["reset", "--hard", commitHash], { cwd: targetDir });
-        console.log(`Repository successfully reset to commit hash: ${commitHash}`);
-      } catch (error: any) {
-        console.error(`Error resetting to commit hash: ${error.message}`);
-        throw error;
-      }
-    } else {
-      console.warn("Commit hash log is empty. Skipping reset.");
+    if (!fs.existsSync(logPath)) {
+      throw new Error(`No commit hash log found at: ${logPath}`);
     }
-  } else {
-    console.warn(`No commit hash log found at: ${logPath}. Skipping reset.`);
+
+    const commitHash = (await fs.promises.readFile(logPath, "utf8")).trim();
+
+    if (!commitHash) {
+      throw new Error("Commit hash log is empty");
+    }
+
+    await execa("git", ["reset", "--hard", commitHash], { cwd: targetDir });
+  } catch (error: any) {
+    console.error(`Failed to reset to commit hash: ${error.message}`);
+    throw error;
   }
 };
 
