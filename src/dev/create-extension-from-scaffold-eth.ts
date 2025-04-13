@@ -182,14 +182,19 @@ const getDeletedAndRenamedFilesSinceCommit = async (projectName: string, commitH
 };
 
 const copyChangedFiles = async (changedFiles: string[], projectName: string) => {
-  for (const filePath of changedFiles) {
-    const sourcePath = path.resolve(projectName, filePath);
-    const destPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, filePath);
+  try {
+    for (const filePath of changedFiles) {
+      const sourcePath = path.resolve(projectName, filePath);
+      const destPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, filePath);
 
-    if (!fs.existsSync(sourcePath)) continue;
+      if (!fs.existsSync(sourcePath)) continue;
 
-    await createDirectory(filePath, projectName);
-    await ncpPromise(sourcePath, destPath);
+      await createDirectory(filePath, projectName);
+      await ncpPromise(sourcePath, destPath);
+    }
+  } catch (error: any) {
+    console.error(`Failed to copy changed files: ${error.message}`);
+    throw error;
   }
 };
 const createDirectory = async (filePath: string, projectName: string) => {
@@ -198,9 +203,14 @@ const createDirectory = async (filePath: string, projectName: string) => {
 };
 
 const logData = async (projectName: string, fileName: string, fileContent: string) => {
-  const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, fileName);
-  await fs.promises.writeFile(logPath, fileContent, "utf8");
-  prettyLog.success(`${fileName} logged to ${logPath}\n`, 1);
+  try {
+    const logPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, fileName);
+    await fs.promises.writeFile(logPath, fileContent, "utf8");
+    prettyLog.success(`${fileName} logged to ${logPath}\n`, 1);
+  } catch (error: any) {
+    console.error(`Failed to log data to ${fileName}: ${error.message}`);
+    throw error;
+  }
 };
 
 const initGitRepo = async (targetPath: string) => {
