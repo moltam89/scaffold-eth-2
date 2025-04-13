@@ -5,7 +5,7 @@ import fs from "fs";
 import { promisify } from "util";
 import ncp from "ncp";
 import { COMMIT_HASH_LOG, DELETED_FILES_LOG, SOLIDITY_FRAMEWORK_LOG } from "./dev/create-extension-from-scaffold-eth";
-import { deleteTempDirectory, EXTERNAL_EXTENSION_TMP_DIR, setupRepository } from "./utils/common";
+import { deleteTempDirectory, setupRepository, EXTERNAL_EXTENSION_TMP_DIR } from "./utils/common";
 import { SOLIDITY_FRAMEWORKS } from "./utils/consts";
 
 // ToDo: Prepare for branch switching, main branch uses hardhat right now, but it can change in the future
