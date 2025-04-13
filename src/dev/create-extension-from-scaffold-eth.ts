@@ -42,6 +42,7 @@ export const createExtensionFromScaffoldEth = async (projectName: string, scaffo
 
     if (changedFiles.length) {
       await copyChangedFiles(changedFiles, projectName);
+      console.log(changedFiles);
       prettyLog.success(`Copied ${changedFiles.length} changed files\n`, 1);
     }
 
@@ -171,17 +172,16 @@ const getDeletedAndRenamedFilesSinceCommit = async (projectName: string, commitH
 };
 
 const copyChangedFiles = async (changedFiles: string[], projectName: string) => {
-  for (const file of changedFiles) {
-    const sourcePath = path.resolve(projectName, file);
-    const destPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, file);
+  for (const filePath of changedFiles) {
+    const sourcePath = path.resolve(projectName, filePath);
+    const destPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, filePath);
 
     if (!fs.existsSync(sourcePath)) continue;
 
-    await createDirectory(file, projectName);
+    await createDirectory(filePath, projectName);
     await ncpPromise(sourcePath, destPath);
   }
 };
-
 const createDirectory = async (filePath: string, projectName: string) => {
   const dirPath = path.join(EXTERNAL_EXTENSIONS_DIR, projectName, TARGET_EXTENSION_DIR, path.dirname(filePath));
   await fs.promises.mkdir(dirPath, { recursive: true });
