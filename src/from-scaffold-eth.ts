@@ -80,7 +80,6 @@ const removeLoggedDeletedFiles = async (externalExtensionPath: string, targetDir
         const filePath = path.join(targetDir, file);
         if (fs.existsSync(filePath)) {
           await fs.promises.unlink(filePath);
-          console.log(`Removed previously logged deleted file: ${file}`);
         }
       }
     }
