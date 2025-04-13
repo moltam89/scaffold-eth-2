@@ -217,7 +217,7 @@ const initGitRepo = async (targetPath: string) => {
   try {
     const gitDir = path.join(targetPath, ".git");
     if (fs.existsSync(gitDir)) {
-      return; // Git repository already exists
+      return; // Git repo already exists, likely from a previous run
     }
 
     await execa("git", ["init"], { cwd: targetPath });
@@ -226,7 +226,8 @@ const initGitRepo = async (targetPath: string) => {
 
     prettyLog.success(`Initialized git repository and made initial commit in ${targetPath}\n`, 1);
   } catch (error: any) {
-    prettyLog.error(`Failed to initialize git repository: ${error.message}`);
+    console.error(`Failed to initialize git repository: ${error.message}`);
+    throw error;
   }
 };
 
