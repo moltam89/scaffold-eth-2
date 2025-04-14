@@ -1,65 +1,95 @@
 "use client";
 
-import Link from "next/link";
-import type { NextPage } from "next";
-import { useAccount } from "wagmi";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Address } from "~~/components/scaffold-eth";
+import { useEffect, useState } from "react";
+import { Intent } from "./_components/Intent";
+import { SwapRouter02Executor } from "./_components/SwapRouter02Executor";
+import { UniswapV3_USDC_USDT_Pool } from "./_components/UniswapV3_USDC_USDT_Pool";
+import { PERMIT2_ADDRESS, SWAP_ROUTER_02_EXECUTOR_ADDRESS_HARDHAT, USDT_ADDRESS } from "./_helpers/constants";
+import { getRequiredAmounts } from "./_helpers/helpers";
+import { rawIntent } from "./_helpers/testRawIntent";
+import { CosignedV2DutchOrder } from "@banr1/uniswapx-sdk";
+import { NextPage } from "next";
+import { erc20Abi } from "viem";
+import { arbitrum } from "viem/chains";
+import { useBlock, useReadContract } from "wagmi";
 
-const Home: NextPage = () => {
-  const { address: connectedAddress } = useAccount();
+const UniswapX: NextPage = () => {
+  const intent = CosignedV2DutchOrder.parse(rawIntent.encodedOrder, arbitrum.id, PERMIT2_ADDRESS);
+  const requiredAmounts = getRequiredAmounts(intent);
+
+  const [currentTime, setCurrentTime] = useState(requiredAmounts[0][0]);
+  const [fillTime, setFillTime] = useState(0);
+
+  const { data: contractBalanceUSDT = 0n, refetch: refetchContractBalanceUSDT } = useReadContract({
+    abi: erc20Abi,
+    address: USDT_ADDRESS,
+    args: [SWAP_ROUTER_02_EXECUTOR_ADDRESS_HARDHAT],
+    functionName: "balanceOf",
+  });
+
+  const { data: block, refetch: refetchBlock } = useBlock();
+  // Refetch block when contractBalanceUSDT changes (after filling intent)
+  useEffect(() => {
+    if (contractBalanceUSDT) {
+      refetchBlock();
+    }
+  }, [contractBalanceUSDT, refetchBlock]);
+
+  useEffect(() => {
+    if (block && contractBalanceUSDT) {
+      setCurrentTime(Number(block.timestamp));
+      setFillTime(Number(block.timestamp));
+    } else {
+      setFillTime(0);
+    }
+  }, [block, contractBalanceUSDT]);
 
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
-          </h1>
-          <div className="flex justify-center items-center space-x-2 flex-col sm:flex-row">
-            <p className="my-2 font-medium">Connected Address:</p>
-            <Address address={connectedAddress} />
+        <div className="px-5 text-center max-w-4xl">
+          <h1 className="text-4xl font-bold">UniswapX</h1>
+          <div>
+            <p>
+              This extension shows you how to fill{" "}
+              <a
+                target="_blank"
+                href="https://docs.uniswap.org/contracts/uniswapx/overview"
+                className="underline font-bold text-nowrap"
+              >
+                UniswapX
+              </a>{" "}
+              intents
+            </p>
           </div>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/app/page.tsx
-            </code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              YourContract.sol
-            </code>{" "}
-            in{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/hardhat/contracts
-            </code>
-          </p>
+
+          <div className="divider my-0" />
         </div>
 
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contracts
-                </Link>{" "}
-                tab.
-              </p>
+        <div className="flex flex-col justify-center items-center bg-base-300 w-full mt-8 px-8 pt-6 pb-12">
+          <div className="flex justify-around bg-base-100 px-10 py-10 text-center items-center w-full rounded-3xl mt-10">
+            <div>
+              <UniswapV3_USDC_USDT_Pool />
             </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
+
+            <div>
+              <Intent
+                currentTime={currentTime}
+                setCurrentTime={setCurrentTime}
+                fillTime={fillTime}
+                rawIntent={rawIntent}
+                requiredAmounts={requiredAmounts}
+              ></Intent>
+            </div>
+
+            <div>
+              <SwapRouter02Executor
+                currentTime={currentTime}
+                setCurrentTime={setCurrentTime}
+                requiredAmounts={requiredAmounts}
+                contractBalanceUSDT={contractBalanceUSDT}
+                refetchContractBalanceUSDT={refetchContractBalanceUSDT}
+              />
             </div>
           </div>
         </div>
@@ -68,4 +98,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default UniswapX;

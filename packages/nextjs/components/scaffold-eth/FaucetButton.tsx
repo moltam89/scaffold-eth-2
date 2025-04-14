@@ -5,7 +5,7 @@ import { useState } from "react";
 import { arbitrum } from "viem/chains";
 import { useAccount, useBlock } from "wagmi";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
-import { ethersSendETH, logBlockNumberAndTimestamp, setNextBlockTimestamp } from "~~/app/uniswapx/_helpers/helpers";
+import { ethersSendETH, setNextBlockTimestamp } from "~~/app/_helpers/helpers";
 import { useTransactor } from "~~/hooks/scaffold-eth";
 import { useWatchBalance } from "~~/hooks/scaffold-eth/useWatchBalance";
 

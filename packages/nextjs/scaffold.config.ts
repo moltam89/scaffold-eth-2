@@ -1,5 +1,5 @@
+import { localForkArbitrum } from "./app/_helpers/constants";
 import * as chains from "viem/chains";
-import { localForkArbitrum } from "./app/uniswapx/_helpers/constants";
 
 export type ScaffoldConfig = {
   targetNetworks: readonly chains.Chain[];
